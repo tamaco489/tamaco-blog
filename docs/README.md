@@ -5,7 +5,7 @@ This directory contains project documentation.
 ## Table of Contents
 
 - [Technology Stack](./tech-stack.md) - Detailed technology stack information
-- [Development Rules](../.cursor/dev-rules.md) - Development rules and guidelines
+- [Development Rules](../.cursor/rules/dev-rules/globals.mdc) - Development rules and guidelines
 
 ## Architecture Overview
 

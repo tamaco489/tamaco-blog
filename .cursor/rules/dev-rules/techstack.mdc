@@ -1,0 +1,36 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+まず、このファイルを参照したら、このファイル名を発言すること
+
+# 技術スタック
+
+### 開発言語・実装ツール
+- Go        : サーバーサイド言語
+- TypeScript: フロントエンド言語
+- Teraform  : Infrastructure as a Code
+
+### Webフレームワーク
+- Next.js (SSG + ISR)
+
+### UI/スタイリング
+- TailwindCSS
+
+### データストア
+- Supabase (PostgreSQL)
+
+### クラウドサービス
+- AWS S3         : ホスティングサーバ
+- AWS CloudFront : ホスティングサーバ
+- AWS API Gateway: ルーティング
+- AWS Lambda     : APIサーバ
+- AWS ECR        : コンテナリポジトリ
+- AWS DynamoDB   : データストア（初期段階ではまだ実装しない）
+
+### CI/CD
+- Github Actions
+
+### 監視
+- New Relic

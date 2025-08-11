@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "path": "rules/dev-rules/globals.mdc",
+      "description": "Global development rules"
+    }
+  ]
+}

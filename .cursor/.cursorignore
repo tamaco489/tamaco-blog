@@ -1,0 +1,15 @@
+# Ignore patterns for Cursor AI
+node_modules/
+.next/
+dist/
+build/
+coverage/
+.git/
+.gitignore
+.DS_Store
+*.log
+.env
+.env.*
+.cache/
+tmp/
+out/
