@@ -6,7 +6,7 @@ This document describes the technology stack used in this project.
 ## Architecture Diagram
 
 ```mermaid
-graph TB
+graph LR
     subgraph "Frontend"
         A[Next.js<br/>SSG + ISR]
     end
@@ -18,7 +18,7 @@ graph TB
     
     subgraph "Data Store"
         D[Supabase]
-        E[DynamoDB<br/>Future Implementation]
+        E[DynamoDB<br/>Future]
     end
     
     subgraph "API Server"
@@ -35,7 +35,7 @@ graph TB
         J[GitHub Actions]
     end
     
-    subgraph "Monitoring & Analytics"
+    subgraph "Monitoring"
         K[NewRelic]
         L[Google Analytics]
     end

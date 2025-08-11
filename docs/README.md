@@ -9,7 +9,7 @@ This directory contains project documentation.
 
 ## Architecture Overview
 
-![Architecture Diagram](./architecture.svg)
+![Architecture Diagram](./architecture.png)
 
 ## Overview
 
