@@ -23,7 +23,7 @@ alwaysApply: true
 
 ### クラウドサービス
 - AWS S3         : ホスティングサーバ
-- AWS CloudFront : ホスティングサーバ
+- AWS CloudFront : CDN キャッシュ
 - AWS API Gateway: ルーティング
 - AWS Lambda     : APIサーバ
 - AWS ECR        : コンテナリポジトリ
