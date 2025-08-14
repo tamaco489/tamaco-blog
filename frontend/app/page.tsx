@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "tamaco-blog のトップページ",
+};
+
 export default function Home() {
   return (
     <div style={{ fontFamily: "sans-serif", padding: "2rem", textAlign: "center" }}>
