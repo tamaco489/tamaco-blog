@@ -1,15 +1,37 @@
 "use client";
 
-import { getMockArticles, mockCategories } from "@/lib/mock";
+import { fetchArticles, fetchCategories } from "@/lib/api";
+import { Article, Category } from "@/types/blog";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Archive() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [allArticles, setAllArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // API経由でデータを取得
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [articlesRes, categoriesRes] = await Promise.all([
+          fetchArticles(1, 100), // 全記事を取得
+          fetchCategories(),
+        ]);
+        setAllArticles(articlesRes.data);
+        setCategories(categoriesRes);
+      } catch (error) {
+        console.error("データの取得に失敗しました:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const allArticles = getMockArticles(1, 100).data;
+    loadData();
+  }, []);
 
   // 年度別グルーピング用のデータ準備
   const years = Array.from(
@@ -53,16 +75,22 @@ export default function Archive() {
   };
 
   const getCategoryName = (categoryId: string) => {
-    return (
-      mockCategories.find((cat) => cat.id === categoryId)?.name || "Unknown"
-    );
+    return categories.find((cat) => cat.id === categoryId)?.name || "Unknown";
   };
 
   const getCategoryColor = (categoryId: string) => {
-    return (
-      mockCategories.find((cat) => cat.id === categoryId)?.color || "#6B7280"
-    );
+    return categories.find((cat) => cat.id === categoryId)?.color || "#6B7280";
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-7rem)] bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="text-center">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[calc(100vh-7rem)] bg-gray-50">
@@ -89,7 +117,7 @@ export default function Archive() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 <option value="all">すべてのカテゴリー</option>
-                {mockCategories.map((category) => (
+                {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
@@ -243,7 +271,7 @@ export default function Archive() {
 
             <div className="text-center">
               <div className="text-3xl font-bold text-gray-900">
-                {mockCategories.length}
+                {categories.length}
               </div>
               <div className="text-sm text-gray-600">カテゴリー数</div>
             </div>

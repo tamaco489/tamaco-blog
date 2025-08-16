@@ -1,8 +1,10 @@
 "use client";
 
-import { getMockArticleBySlug } from "@/lib/mock";
+import { fetchArticleBySlug } from "@/lib/api";
+import { Article } from "@/types/blog";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface ArticleDetailPageProps {
   params: {
@@ -11,9 +13,38 @@ interface ArticleDetailPageProps {
 }
 
 export default function ArticleDetailPage({ params }: ArticleDetailPageProps) {
-  const article = getMockArticleBySlug(params.slug);
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!article) {
+  useEffect(() => {
+    const loadArticle = async () => {
+      try {
+        setLoading(true);
+        const articleData = await fetchArticleBySlug(params.slug);
+        setArticle(articleData);
+      } catch (err) {
+        console.error("記事の取得に失敗しました:", err);
+        setError("記事の取得に失敗しました");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadArticle();
+  }, [params.slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-7rem)] bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="text-center">読み込み中...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !article) {
     notFound();
   }
 

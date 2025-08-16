@@ -170,12 +170,20 @@ export function Header() {
           </div>
         </nav>
 
-        {/* 中央: タイトル */}
+        {/* 中央: ロゴ + タイトル */}
         <div className="justify-self-center">
           <Link
             href="/"
-            className="text-3xl font-semibold tracking-wide text-white hover:text-gray-300 transition-colors"
+            className="flex items-center gap-3 text-3xl font-semibold tracking-wide text-white hover:text-gray-300 transition-colors"
           >
+            <Image
+              src="/blog/icon/favicon.png"
+              alt="tamaco-blog ロゴ"
+              width={40}
+              height={40}
+              className="rounded-lg"
+              priority
+            />
             tamaco-blog
           </Link>
         </div>
