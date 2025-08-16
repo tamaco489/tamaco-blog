@@ -1,0 +1,65 @@
+services:
+  api:
+    platform: linux/amd64
+    image: cosmtrek/air:v1.62.0
+    container_name: article_api
+    working_dir: /go/src/github.com/tamaco489/supabase_sample/backend/api/article
+    volumes:
+      - ./article:/go/src/github.com/tamaco489/supabase_sample/backend/api/article
+      - ~/.cache/go-build:/root/.cache/go-build
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./article/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: article_postgres
+    environment:
+      POSTGRES_PASSWORD: "password#0"
+      POSTGRES_DB: "core"
+      POSTGRES_USER: "core"
+    ports:
+      - "55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c max_connections=20
+      -c shared_buffers=32MB
+      -c effective_cache_size=128MB
+      -c log_statement=none
+      -c log_min_duration_statement=1000
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U core"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  localstack:
+    image: localstack/localstack:latest
+    container_name: article_localstack
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: secretsmanager
+      DEBUG: 1
+      AWS_DEFAULT_REGION: ap-northeast-1
+      DATA_DIR: /var/lib/localstack
+    volumes:
+      - "./article/scripts/localstack/rds_secret_manager.sh:/etc/localstack/init/ready.d/rds_secret_manager.sh"
+    entrypoint: >
+      /bin/bash -c "awslocal configure set cli_follow_urlparam false && docker-entrypoint.sh"
+    env_file:
+      - ./article/.env_localstack
+    networks:
+      default:
+        aliases:
+          - localhost.localstack.cloud
+
+volumes:
+  postgres_data:
