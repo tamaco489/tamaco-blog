@@ -9,6 +9,12 @@ export const metadata: Metadata = {
     template: "%s | tamaco-blog",
   },
   description: "tamaco-blog",
+  icons: [
+    {
+      rel: 'icon',
+      url: '/blog/icon/favicon.png',
+    },
+  ],
 };
 
 export default function RootLayout({
