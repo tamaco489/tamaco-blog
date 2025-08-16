@@ -18,29 +18,38 @@ import Link from "next/link";
 export function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="w-full border-t bg-white mt-32">
-      <div className="mx-auto max-w-screen-lg px-4 py-8">
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
-          <p className="text-sm text-gray-600">© {year} tamaco-blog</p>
+    <footer className="w-full border-t border-gray-700 bg-gray-900 mt-16 relative z-10 min-h-[200px]">
+      <div className="mx-auto max-w-screen-lg px-4 py-16">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 h-full">
+          <p className="text-sm text-gray-300">© {year} tamaco-blog</p>
 
-          <nav aria-label="フッターナビゲーション" className="text-sm text-gray-600">
+          <nav
+            aria-label="フッターナビゲーション"
+            className="text-sm text-gray-300"
+          >
             <ul className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <li>
-                <Link href="/about" className="hover:underline">
+                <Link
+                  href="/about"
+                  className="hover:underline hover:text-white transition-colors"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/docs" className="hover:underline">
+                <Link
+                  href="/docs"
+                  className="hover:underline hover:text-white transition-colors"
+                >
                   Docs
                 </Link>
               </li>
               <li>
                 <a
-                  href="https://github.com/tamaco489/tamaco-blog"
+                  href="https://github.com/tamaco489"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:underline"
+                  className="hover:underline hover:text-white transition-colors"
                 >
                   GitHub
                 </a>
@@ -50,7 +59,7 @@ export function Footer() {
                   href="https://www.githubstatus.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:underline"
+                  className="hover:underline hover:text-white transition-colors"
                 >
                   Status
                 </a>
@@ -64,5 +73,3 @@ export function Footer() {
 }
 
 export default Footer;
-
-
