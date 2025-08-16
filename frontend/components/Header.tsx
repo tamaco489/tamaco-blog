@@ -1,22 +1,22 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 /**
  * Header コンポーネント
- * 
+ *
  * 目的:
  * - 画面上部にヘッダーを設置し、以下を表示する。
  *   - 左: MENU（ホバー/フォーカスでプロフィールやGitHubへのリンクを縦並び表示）
  *   - 中央: サイトタイトル "tamaco-blog"
  *   - 右: 検索窓（将来的に全文検索を実装予定のプレースホルダ）
- * 
+ *
  * 実装内容:
  * - CSS Grid（3カラム）で左・中央・右の領域をレイアウト。
  * - MENU は group-hover / focus-within でドロップダウンを表示。
  * - 検索窓は現時点では機能しないプレースホルダの input。
- * 
+ *
  * 影響範囲:
  * - `app/layout.tsx` に組み込み、全ページのヘッダーとして表示します。
  */
@@ -45,28 +45,33 @@ export function Header() {
       body.style.overflow = previous;
     };
   }, [menuOpen]);
+
   return (
-    <header className="w-full border-b">
+    <header className="w-full border-b border-gray-700 bg-gray-900">
       <div className="w-full h-28 grid grid-cols-3 items-center px-4">
         {/* 左: ハンバーガーメニュー */}
         <div ref={menuRef} className="relative justify-self-start">
           <button
-            className="inline-flex flex-col items-center justify-center gap-1.5 h-10 w-10 rounded-md hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300"
+            className="inline-flex flex-col items-center justify-center gap-1.5 h-10 w-10 rounded-md hover:bg-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500"
             aria-haspopup="true"
             aria-expanded={menuOpen}
             aria-label="メニュー"
             onClick={() => setMenuOpen((v) => !v)}
           >
             <span className="sr-only">メニュー</span>
-            <span className="block h-0.5 w-6 bg-gray-800" />
-            <span className="block h-0.5 w-6 bg-gray-800" />
-            <span className="block h-0.5 w-6 bg-gray-800" />
+            <span className="block h-0.5 w-6 bg-gray-300" />
+            <span className="block h-0.5 w-6 bg-gray-300" />
+            <span className="block h-0.5 w-6 bg-gray-300" />
           </button>
         </div>
 
         {/* スライドメニュー（左から、全高） */}
         <div
-          className={`fixed inset-0 z-40 transition-opacity duration-300 bg-black/40 ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+          className={`fixed inset-0 z-40 transition-opacity duration-300 bg-black/40 ${
+            menuOpen
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setMenuOpen(false)}
           aria-hidden={!menuOpen}
         />
@@ -75,7 +80,9 @@ export function Header() {
           role="dialog"
           aria-modal={menuOpen}
           aria-label="メニュー"
-          className={`fixed top-0 left-0 z-50 h-screen w-72 max-w-[85vw] bg-white border-r shadow-xl transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+          className={`fixed top-0 left-0 z-50 h-screen w-72 max-w-[85vw] bg-white border-r shadow-xl transition-transform duration-300 ${
+            menuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between h-14 px-4 border-b">
@@ -86,16 +93,25 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
             >
               <span className="sr-only">閉じる</span>
-              <span aria-hidden className="pointer-events-none absolute block h-0.5 w-4 bg-gray-800 rotate-45" />
-              <span aria-hidden className="pointer-events-none absolute block h-0.5 w-4 bg-gray-800 -rotate-45" />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute block h-0.5 w-4 bg-gray-800 rotate-45"
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute block h-0.5 w-4 bg-gray-800 -rotate-45"
+              />
             </button>
           </div>
           <div className="flex flex-col py-2">
-            <Link href="/profile" className="px-4 py-2 text-sm hover:bg-gray-50">
+            <Link
+              href="/profile"
+              className="px-4 py-2 text-sm hover:bg-gray-50"
+            >
               プロフィール
             </Link>
             <a
-              href="https://github.com/tamaco489/tamaco-blog"
+              href="https://github.com/tamaco489"
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 text-sm hover:bg-gray-50"
@@ -107,7 +123,10 @@ export function Header() {
 
         {/* 中央: タイトル */}
         <div className="justify-self-center">
-          <Link href="/" className="text-3xl font-semibold tracking-wide">
+          <Link
+            href="/"
+            className="text-3xl font-semibold tracking-wide text-white hover:text-gray-300 transition-colors"
+          >
             tamaco-blog
           </Link>
         </div>

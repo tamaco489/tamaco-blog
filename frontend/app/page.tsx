@@ -16,14 +16,14 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 flex-1">
       <div className="max-w-6xl mx-auto px-4 py-8">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">tamaco Blog</h1>
           <p className="text-lg text-gray-600">ブログ</p>
         </header>
 
-        <main className="flex gap-8">
+        <div className="flex gap-8">
           <div className="flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
               {articleData.data.map((article) => (
@@ -50,7 +50,7 @@ export default function Home() {
               </p>
             </div>
           </aside>
-        </main>
+        </div>
       </div>
     </div>
   );
