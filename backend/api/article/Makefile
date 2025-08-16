@@ -66,7 +66,7 @@ logs: ## dev: show logs
 rebuild: ## dev: rebuild containers
 	docker compose down -v
 	docker compose build --no-cache
-	docker compose up -d postgres
+	docker compose up -d api postgres localstack
 
 # =================================================================
 # datastore operations
