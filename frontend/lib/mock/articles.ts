@@ -319,3 +319,8 @@ export function getMockArticles(
     },
   };
 }
+
+// スラッグで記事を取得する関数
+export function getMockArticleBySlug(slug: string): Article | null {
+  return mockArticles.find(article => article.slug === slug) || null;
+}
