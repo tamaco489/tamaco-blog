@@ -19,17 +19,19 @@
 
 ### **パブリックページ**
 
-#### **トップ・基本ページ**
+#### **トップ・基本ページ（現在実装済み）**
 ```
 /                           # トップページ
 /about                      # プロフィール・サイト概要
 /contact                    # お問い合わせ
 /privacy                    # プライバシーポリシー
-/terms                      # 利用規約
 /sitemap                    # サイトマップ
+/archive                    # アーカイブページ
+/portfolio                  # ポートフォリオページ
+/tech-stack                 # 技術スタックページ
 ```
 
-#### **記事関連ページ**
+#### **記事関連ページ（将来実装予定）**
 ```
 /articles                   # 記事一覧（最新順）
 /articles/page/[page]       # 記事一覧ページネーション
@@ -38,30 +40,21 @@
 /articles/recent            # 最新記事一覧
 ```
 
-#### **カテゴリ関連ページ**
+#### **カテゴリ関連ページ（将来実装予定）**
 ```
 /categories                 # カテゴリ一覧
 /categories/[slug]          # カテゴリ別記事一覧
 /categories/[slug]/page/[page] # カテゴリ別記事一覧ページネーション
 ```
 
-#### **タグ関連ページ**
+#### **タグ関連ページ（将来実装予定）**
 ```
 /tags                       # タグ一覧
 /tags/[slug]                # タグ別記事一覧
 /tags/[slug]/page/[page]    # タグ別記事一覧ページネーション
 ```
 
-#### **アーカイブページ**
-```
-/archive                    # アーカイブトップ
-/archive/[year]             # 年別アーカイブ
-/archive/[year]/[month]     # 月別アーカイブ
-/archive/[year]/page/[page] # 年別アーカイブページネーション
-/archive/[year]/[month]/page/[page] # 月別アーカイブページネーション
-```
-
-#### **検索・フィード関連**
+#### **検索・フィード関連（将来実装予定）**
 ```
 /search                     # 検索ページ
 /search?q=[keyword]         # 検索結果
@@ -110,7 +103,7 @@
 
 ## Next.js App Router ファイル構造
 
-### **パブリックページ構造**
+### **パブリックページ構造（現在実装済み）**
 ```
 app/
 ├── page.tsx                          # / (トップページ)
@@ -118,6 +111,22 @@ app/
 │   └── page.tsx                      # /about
 ├── contact/
 │   └── page.tsx                      # /contact
+├── privacy/
+│   └── page.tsx                      # /privacy
+├── sitemap/
+│   └── page.tsx                      # /sitemap
+├── archive/
+│   └── page.tsx                      # /archive
+├── portfolio/
+│   └── page.tsx                      # /portfolio
+├── tech-stack/
+│   └── page.tsx                      # /tech-stack
+└── not-found.tsx                     # 404エラーページ
+```
+
+### **パブリックページ構造（将来実装予定）**
+```
+app/
 ├── articles/
 │   ├── page.tsx                      # /articles
 │   ├── [slug]/
@@ -143,26 +152,8 @@ app/
 │       └── page/
 │           └── [page]/
 │               └── page.tsx          # /tags/[slug]/page/[page]
-├── archive/
-│   ├── page.tsx                      # /archive
-│   ├── [year]/
-│   │   ├── page.tsx                  # /archive/[year]
-│   │   ├── [month]/
-│   │   │   ├── page.tsx              # /archive/[year]/[month]
-│   │   │   └── page/
-│   │   │       └── [page]/
-│   │   │           └── page.tsx      # /archive/[year]/[month]/page/[page]
-│   │   └── page/
-│   │       └── [page]/
-│   │           └── page.tsx          # /archive/[year]/page/[page]
 ├── search/
 │   └── page.tsx                      # /search
-├── privacy/
-│   └── page.tsx                      # /privacy
-├── terms/
-│   └── page.tsx                      # /terms
-├── sitemap/
-│   └── page.tsx                      # /sitemap
 ├── feed.xml/
 │   └── route.ts                      # /feed.xml (API Route)
 ├── sitemap.xml/
@@ -171,7 +162,7 @@ app/
     └── route.ts                      # /robots.txt (API Route)
 ```
 
-### **管理ページ構造**
+### **管理ページ構造（将来実装予定）**
 ```
 app/admin/
 ├── page.tsx                          # /admin (リダイレクト)
