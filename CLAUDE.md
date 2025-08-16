@@ -22,6 +22,16 @@ npm run dev              # 開発サーバー起動
 npm run build            # 本番ビルド
 npm run start            # 本番サーバー起動
 npm run lint             # リント実行
+npm run typecheck        # 型チェック実行
+```
+
+### エイリアス
+```bash
+cd frontend
+npm run setup            # プロジェクトセットアップ (npm ci)
+npm run test             # テスト実行
+npm run deploy           # デプロイ用ビルド (npm run build)
+npm run typecheck        # TypeScript型チェック
 ```
 
 ### 品質保証
