@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 
 export default function Portfolio() {
-  useEffect(() => {
-    console.log("💼 Portfolio ページを表示中... tamaco-blog/portfolio");
-  }, []);
 
   const projects = [
     {
@@ -21,8 +17,8 @@ export default function Portfolio() {
         "レスポンシブデザイン",
         "記事のカテゴリー・タグ管理",
         "ページネーション機能",
-        "CI/CD パイプライン"
-      ]
+        "CI/CD パイプライン",
+      ],
     },
     {
       id: "future-project-1",
@@ -36,8 +32,8 @@ export default function Portfolio() {
         "RESTful API 設計",
         "JWT 認証",
         "データベース設計",
-        "Docker コンテナ化"
-      ]
+        "Docker コンテナ化",
+      ],
     },
     {
       id: "future-project-2",
@@ -51,9 +47,9 @@ export default function Portfolio() {
         "Infrastructure as Code",
         "CDN 配信",
         "CI/CD デプロイ",
-        "セキュリティ設定"
-      ]
-    }
+        "セキュリティ設定",
+      ],
+    },
   ];
 
   return (
@@ -61,13 +57,7 @@ export default function Portfolio() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Portfolio</h1>
-          <p className="text-lg text-gray-600">
-            これまでの制作物・取り組み
-            <br />
-            <span className="text-sm text-gray-500 italic">
-              console.log("プロジェクト一覧を表示中💼");
-            </span>
-          </p>
+          <p className="text-lg text-gray-600">これまでの制作物・取り組み</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -96,7 +86,9 @@ export default function Portfolio() {
               </p>
 
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">技術スタック</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-2">
+                  技術スタック
+                </h3>
                 <div className="flex flex-wrap gap-1">
                   {project.technologies.map((tech) => (
                     <span
@@ -110,7 +102,9 @@ export default function Portfolio() {
               </div>
 
               <div className="mb-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">主な機能</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-2">
+                  主な機能
+                </h3>
                 <ul className="text-xs text-gray-600 space-y-1">
                   {project.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
@@ -157,10 +151,12 @@ export default function Portfolio() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               スキル・経験
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
               <div>
-                <h3 className="font-medium text-gray-900 mb-3">フロントエンド</h3>
+                <h3 className="font-medium text-gray-900 mb-3">
+                  フロントエンド
+                </h3>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• React / Next.js</li>
                   <li>• TypeScript / JavaScript</li>
@@ -180,7 +176,9 @@ export default function Portfolio() {
               </div>
 
               <div>
-                <h3 className="font-medium text-gray-900 mb-3">インフラ・ツール</h3>
+                <h3 className="font-medium text-gray-900 mb-3">
+                  インフラ・ツール
+                </h3>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• AWS（学習中）</li>
                   <li>• Docker</li>

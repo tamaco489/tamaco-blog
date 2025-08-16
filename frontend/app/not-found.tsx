@@ -1,12 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
 
 export default function NotFound() {
-  useEffect(() => {
-    console.log("🔍 ページが見つからないようです... tamaco-blog/404");
-  }, []);
 
   return (
     <div className="min-h-[calc(100vh-7rem)] bg-gray-50 flex items-center justify-center px-4">
@@ -18,10 +14,6 @@ export default function NotFound() {
           </h2>
           <p className="text-gray-600 mb-8">
             お探しのページは存在しないか、移動された可能性があります。
-            <br />
-            <span className="text-sm text-gray-500 italic">
-              console.log("存在しないページですね...🤔");
-            </span>
           </p>
         </div>
 
@@ -32,7 +24,7 @@ export default function NotFound() {
           >
             ホームに戻る
           </Link>
-          
+
           <div className="text-sm text-gray-500">
             <p>または以下のページをお試しください：</p>
             <div className="flex flex-wrap justify-center gap-2 mt-2">

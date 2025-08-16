@@ -1,29 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
-    message: ""
+    message: "",
   });
 
-  useEffect(() => {
-    console.log("📧 Contact ページを表示中... tamaco-blog/contact");
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("📨 フォーム送信:", formData);
-    alert("現在は開発中のため、実際の送信はできません。console.logでデータを確認してください。");
+    alert(
+      "現在は開発中のため、実際の送信はできません。"
+    );
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -32,13 +32,7 @@ export default function Contact() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact</h1>
-          <p className="text-lg text-gray-600">
-            お気軽にお問い合わせください
-            <br />
-            <span className="text-sm text-gray-500 italic">
-              console.log("メッセージをお待ちしています📨");
-            </span>
-          </p>
+          <p className="text-lg text-gray-600">お気軽にお問い合わせください</p>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -47,10 +41,13 @@ export default function Contact() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
               メッセージを送る
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   お名前 *
                 </label>
                 <input
@@ -66,7 +63,10 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   メールアドレス *
                 </label>
                 <input
@@ -82,7 +82,10 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="subject"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   件名 *
                 </label>
                 <input
@@ -98,7 +101,10 @@ export default function Contact() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   メッセージ *
                 </label>
                 <textarea
@@ -123,7 +129,8 @@ export default function Contact() {
 
             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
-                <strong>開発中:</strong> 現在フォーム送信機能は実装されていません。
+                <strong>開発中:</strong>{" "}
+                現在フォーム送信機能は実装されていません。
                 送信ボタンを押すとコンソールにデータが表示されます。
               </p>
             </div>
@@ -135,12 +142,20 @@ export default function Contact() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
                 その他の連絡方法
               </h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    <svg
+                      className="w-5 h-5 text-gray-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                   <div>
@@ -158,14 +173,20 @@ export default function Contact() {
 
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      className="w-5 h-5 text-gray-600"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                     </svg>
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-900">Email</h3>
-                    <p className="text-gray-600 text-sm">お問い合わせフォームをご利用ください</p>
+                    <p className="text-gray-600 text-sm">
+                      お問い合わせフォームをご利用ください
+                    </p>
                   </div>
                 </div>
               </div>
@@ -175,22 +196,26 @@ export default function Contact() {
               <h2 className="text-2xl font-semibold text-gray-900 mb-6">
                 よくあるお問い合わせ
               </h2>
-              
+
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">技術的な質問</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">
+                    技術的な質問
+                  </h3>
                   <p className="text-gray-600 text-sm">
                     記事の内容について質問がある場合は、お気軽にお問い合わせください。
                   </p>
                 </div>
-                
+
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-2">コラボレーション</h3>
+                  <h3 className="font-medium text-gray-900 mb-2">
+                    コラボレーション
+                  </h3>
                   <p className="text-gray-600 text-sm">
                     技術記事の共同執筆やプロジェクトのご相談も歓迎します。
                   </p>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium text-gray-900 mb-2">その他</h3>
                   <p className="text-gray-600 text-sm">
