@@ -109,7 +109,7 @@ get-secret-value: ## dev: get secret value from secrets manager
 .PHONY: healthcheck get-users-me
 healthcheck:
 	curl -sX 'GET' \
-		'http://localhost:8080/article/v1/healthcheck' \
+		'http://localhost:8080/article/v1/health' \
 		-H 'accept: application/json' | jq .
 
 get-me:
