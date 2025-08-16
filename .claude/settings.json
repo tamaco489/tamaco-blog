@@ -18,11 +18,7 @@
       "Glob(*)",
       "LS(*)"
     ],
-    "deny": [
-      "Bash(rm -rf /)",
-      "Bash(curl:*)",
-      "WebFetch(*)"
-    ]
+    "deny": ["Bash(rm -rf /)", "Bash(curl:*)", "WebFetch(*)"]
   },
   "hooks": {
     "UserPromptSubmit": [
