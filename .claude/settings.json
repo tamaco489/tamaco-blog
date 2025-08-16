@@ -1,0 +1,65 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Bash(cd frontend && npm run *)",
+      "Bash(cd frontend && npm run lint)",
+      "Bash(cd frontend && npm run test:*)",
+      "Bash(cd frontend && npm ci *)",
+      "Bash(cd frontend && npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)",
+      "Bash(git *)",
+      "Bash(echo *)",
+      "Grep(*)",
+      "Glob(*)",
+      "LS(*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(curl:*)",
+      "WebFetch(*)"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'プロンプト送信前チェック'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm ci --silent"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "git commit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd frontend && npm run lint && npx tsc --noEmit"
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "NODE_ENV": "development",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "DEBUG": "true"
+  }
+}
