@@ -1,6 +1,6 @@
-import { ArticleListResponse, Category, Tag } from "@/types/blog";
+import { Article, ArticleListResponse, Category, Tag } from "@/types/blog";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
 class ApiClient {
   private baseUrl: string;
@@ -54,6 +54,10 @@ class ApiClient {
     return this.request<ArticleListResponse>(`/api/articles?${params}`);
   }
 
+  async getArticleBySlug(slug: string): Promise<Article> {
+    return this.request<Article>(`/api/articles/${slug}`);
+  }
+
   // カテゴリ関連API
   async getCategories(): Promise<Category[]> {
     return this.request<Category[]>("/api/categories");
@@ -71,6 +75,9 @@ export const apiClient = new ApiClient();
 // 個別の関数もエクスポート（使いやすさのため）
 export const fetchArticles = (page?: number, limit?: number) =>
   apiClient.getArticles(page, limit);
+
+export const fetchArticleBySlug = (slug: string) =>
+  apiClient.getArticleBySlug(slug);
 
 export const fetchCategories = () => apiClient.getCategories();
 
