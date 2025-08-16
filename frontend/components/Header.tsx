@@ -139,6 +139,20 @@ export function Header() {
             >
               Tech Stack
             </Link>
+            <Link
+              href="/privacy"
+              className="px-4 py-2 text-sm hover:bg-gray-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/sitemap"
+              className="px-4 py-2 text-sm hover:bg-gray-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              Sitemap
+            </Link>
             <div className="border-t border-gray-200 mt-2 pt-2">
               <a
                 href="https://github.com/tamaco489"
