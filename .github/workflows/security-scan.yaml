@@ -1,0 +1,73 @@
+name: Security Scan
+
+on:
+  schedule:
+    # Run every Monday at 9:00 AM JST
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/package*.json"
+
+jobs:
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: |
+          echo "🔍 Running security audit..."
+          npm audit --json > audit-results.json || true
+
+          # Check if there are any vulnerabilities
+          VULNERABILITIES=$(cat audit-results.json | jq '.metadata.vulnerabilities.total // 0')
+
+          if [ "$VULNERABILITIES" -gt 0 ]; then
+            echo "⚠️ Found $VULNERABILITIES vulnerabilities"
+            npm audit
+            echo "Please review and fix these vulnerabilities"
+          else
+            echo "✅ No vulnerabilities found"
+          fi
+
+      - name: Check for outdated packages
+        run: |
+          echo "📦 Checking for outdated packages..."
+          npm outdated || true
+
+      - name: Generate security report
+        run: |
+          echo "# Security Report - $(date)" > security-report.md
+          echo "" >> security-report.md
+          echo "## Audit Results" >> security-report.md
+          npm audit --json | jq -r '.advisories // {} | to_entries[] | "- **\(.value.module_name)**: \(.value.title) (Severity: \(.value.severity))"' >> security-report.md || echo "No vulnerabilities found" >> security-report.md
+          echo "" >> security-report.md
+          echo "## Outdated Packages" >> security-report.md
+          npm outdated --json | jq -r 'to_entries[] | "- **\(.key)**: Current \(.value.current) → Latest \(.value.latest)"' >> security-report.md || echo "All packages are up to date" >> security-report.md
+
+          cat security-report.md
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: frontend/security-report.md
+          retention-days: 30
