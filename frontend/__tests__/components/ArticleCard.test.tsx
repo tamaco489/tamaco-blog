@@ -2,6 +2,20 @@ import ArticleCard from "@/components/ArticleCard";
 import { mockArticles } from "@/lib/mock";
 import { render, screen } from "@testing-library/react";
 
+jest.mock("next/link", () => {
+  const MockedLink = ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => {
+    return <a href={href}>{children}</a>;
+  };
+  MockedLink.displayName = "Link";
+  return MockedLink;
+});
+
 const mockArticle = mockArticles[0];
 
 describe("ArticleCard", () => {
@@ -70,5 +84,26 @@ describe("ArticleCard", () => {
     render(<ArticleCard article={articleWithoutTags} />);
 
     expect(screen.getByText(mockArticle.title)).toBeInTheDocument();
+  });
+
+  test("renders link to article detail page", () => {
+    render(<ArticleCard article={mockArticle} />);
+
+    const linkElement = screen.getByRole("link");
+    expect(linkElement).toHaveAttribute(
+      "href",
+      `/articles/${mockArticle.slug}`
+    );
+  });
+
+  test("article card is clickable", () => {
+    render(<ArticleCard article={mockArticle} />);
+
+    const linkElement = screen.getByRole("link");
+    expect(linkElement).toBeInTheDocument();
+    expect(linkElement).toHaveAttribute(
+      "href",
+      `/articles/${mockArticle.slug}`
+    );
   });
 });
