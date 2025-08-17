@@ -26,6 +26,68 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSave": true
+  },
+  "[go.sum]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "go.formatTool": "goimports",
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "workspace",
+  "go.lintFlags": ["--fast"],
+  "go.testFlags": ["-v"],
+  "go.testTimeout": "60s",
+  "go.coverOnSave": false,
+  "go.coverageDecorator": {
+    "type": "gutter",
+    "coveredHighlightColor": "rgba(64,128,128,0.5)",
+    "uncoveredHighlightColor": "rgba(128,64,64,0.25)",
+    "coveredGutterStyle": "blockgreen",
+    "uncoveredGutterStyle": "blockred"
+  },
+  "go.delveConfig": {
+    "dlvLoadConfig": {
+      "followPointers": true,
+      "maxVariableRecurse": 1,
+      "maxStringLen": 64,
+      "maxArrayValues": 64,
+      "maxStructFields": -1
+    },
+    "apiVersion": 2,
+    "showGlobalVariables": false
+  },
+  "go.buildFlags": [],
+  "go.generateTestsFlags": [],
+  "go.toolsManagement.autoUpdate": true,
+  "go.useLanguageServer": true,
+  "go.languageServerFlags": [],
+  "go.alternateTools": {},
+  "go.inferGopath": false,
+  "go.gopath": "",
+  "go.goroot": "",
+  "go.testEnvVars": {},
+  "go.testOnSave": false,
+  "go.coverOnTestPackage": true,
+  "gopls": {
+    "ui.semanticTokens": true,
+    "ui.completion.usePlaceholders": true,
+    "ui.diagnostic.staticcheck": true,
+    "ui.diagnostic.analyses": {
+      "nilness": true,
+      "unusedparams": true,
+      "unusedwrite": true,
+      "useany": true
+    }
+  },
   "eslint.workingDirectories": ["frontend"],
   "eslint.validate": [
     "javascript",
@@ -38,13 +100,25 @@
     "**/.next": true,
     "**/.git": true,
     "**/dist": true,
-    "**/build": true
+    "**/build": true,
+    "**/vendor": true,
+    "**/*.test": false,
+    "**/*.exe": true,
+    "**/*.dll": true,
+    "**/*.so": true,
+    "**/*.dylib": true
   },
   "search.exclude": {
     "**/node_modules": true,
     "**/.next": true,
     "**/dist": true,
-    "**/build": true
+    "**/build": true,
+    "**/vendor": true,
+    "**/*.exe": true,
+    "**/*.dll": true,
+    "**/*.so": true,
+    "**/*.dylib": true,
+    "**/go.sum": true
   },
   "emmet.includeLanguages": {
     "typescript": "html",
