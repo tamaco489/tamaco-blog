@@ -48,6 +48,39 @@
       "cwd": "${workspaceFolder}/frontend",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "name": "Go: Debug Article API Server",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/backend/api/article/cmd",
+      "cwd": "${workspaceFolder}/backend/api/article",
+      "env": {
+        "ENV": "dev",
+        "PORT": "8080"
+      },
+      "args": []
+    },
+    {
+      "name": "Go: Debug Current File",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}/backend/api/article",
+      "env": {},
+      "args": []
+    },
+    {
+      "name": "Go: Test Current Package",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${fileDirname}",
+      "cwd": "${workspaceFolder}/backend/api/article",
+      "env": {},
+      "args": ["-v"]
     }
   ]
 }
