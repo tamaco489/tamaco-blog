@@ -55,6 +55,58 @@ updates:
           - "@tailwindcss/*"
           - "postcss*"
 
+  # Backend Go modules
+  - package-ecosystem: "gomod"
+    directory: "/backend/api/article"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 10
+    assignees:
+      - "tamaco489"
+    commit-message:
+      prefix: "backend"
+      prefix-development: "backend(dev)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "go"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      # Major version updates require manual review
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group standard library and core tools
+      go-core:
+        patterns:
+          - "golang.org/x/*"
+      # Group testing frameworks
+      testing-tools:
+        patterns:
+          - "*testing*"
+          - "*mock*"
+          - "*testify*"
+      # Group web frameworks
+      web-frameworks:
+        patterns:
+          - "*gin*"
+          - "*echo*"
+          - "*fiber*"
+          - "*mux*"
+      # Group database drivers
+      database-drivers:
+        patterns:
+          - "*sql*"
+          - "*postgres*"
+          - "*mysql*"
+          - "*redis*"
+
   # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"
