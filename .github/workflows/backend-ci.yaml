@@ -77,12 +77,6 @@ jobs:
       - name: Build application
         run: go build -v -o build/article_api ./cmd
 
-      - name: Check build output
-        run: |
-          echo "✅ Build completed successfully"
-          ls -la build/
-          ./build/article_api --help || echo "Binary built successfully"
-
   test:
     name: Test
     runs-on: ubuntu-latest
