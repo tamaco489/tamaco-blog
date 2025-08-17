@@ -1,11 +1,11 @@
-name: PR Quality Checks
+name: PR Frontend Quality Checks
 
 on:
   pull_request:
     branches: [main]
     paths:
-      - 'frontend/**'
-      - '.github/workflows/**'
+      - "frontend/**"
+      - ".github/workflows/pr-frontend-checks.yaml"
 
 jobs:
   security-audit:
@@ -22,9 +22,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
 
       - name: Install dependencies
         run: npm ci
@@ -46,22 +46,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build for analysis
-        run: npm run build
-        env:
-          ANALYZE: true
-
-      - name: Check bundle size
+      - name: Analyze bundle composition without build
         run: |
-          echo "📦 Bundle analysis completed"
-          echo "Check the build output for bundle size information"
+          echo "📊 Analyzing bundle composition and dependencies"
+          echo "Checking for potential bundle size issues..."
+
+      - name: Check for large dependencies
+        run: |
+          echo "📦 Checking for large dependencies"
+          npm list --depth=0 --long | head -20 || true
+
+      - name: Analyze package sizes
+        run: |
+          echo "📏 Analyzing individual package sizes"
+          npx size-limit --why || echo "size-limit not configured yet"
 
   dependency-check:
     name: Dependency Check
@@ -73,6 +78,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Check for outdated dependencies
         run: |

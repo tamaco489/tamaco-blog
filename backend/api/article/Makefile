@@ -11,6 +11,7 @@ install-tools: setup-env ## dev: Install tools used in the project
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 	go install golang.org/x/tools/cmd/godoc@latest
 	go install golang.org/x/tools/cmd/goimports@latest
+	go install golang.org/x/vuln/cmd/govulncheck@latest
 	go install github.com/rubenv/sql-migrate/...@latest
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	go install go.uber.org/mock/mockgen@latest
@@ -37,12 +38,15 @@ gen-sqlc: ## dev: generate sqlc interfaces and types
 # =================================================================
 # local execution environment setup
 # =================================================================
-.PHONY: lint fmt deps build run
+.PHONY: lint fmt vuln deps build run
 lint: ## dev: static code analysis
 	golangci-lint run --timeout 3m
 
 fmt: ## dev: format go code
 	goimports -w .
+
+vuln: ## dev: check for security vulnerabilities
+	govulncheck ./...
 
 deps: ## dev: download dependencies
 	go mod download && go mod tidy
