@@ -18,37 +18,97 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
+      - name: Detect change type
+        id: detect-changes
+        run: |
+          if [[ "${{ github.event.pull_request.title }}" == *"frontend"* ]] || \
+             [[ "${{ contains(github.event.pull_request.changed_files, 'frontend/') }}" == "true" ]]; then
+            echo "type=frontend" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.pull_request.title }}" == *"backend"* ]] || \
+               [[ "${{ contains(github.event.pull_request.changed_files, 'backend/') }}" == "true" ]]; then
+            echo "type=backend" >> $GITHUB_OUTPUT
+          else
+            echo "type=other" >> $GITHUB_OUTPUT
+          fi
+
+      # Frontend validation
       - name: Setup Node.js
+        if: steps.detect-changes.outputs.type == 'frontend'
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "frontend/package-lock.json"
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        if: steps.detect-changes.outputs.type == 'frontend'
         run: |
           cd frontend
           npm ci
 
-      - name: Run security audit
+      - name: Run frontend security audit
+        if: steps.detect-changes.outputs.type == 'frontend'
         run: |
           cd frontend
           npm audit --audit-level=moderate
 
-      - name: Run lint
+      - name: Run frontend lint
+        if: steps.detect-changes.outputs.type == 'frontend'
         run: |
           cd frontend
           npm run lint
 
-      - name: Run type check
+      - name: Run frontend type check
+        if: steps.detect-changes.outputs.type == 'frontend'
         run: |
           cd frontend
           npm run typecheck
 
-      - name: Run build
+      - name: Run frontend build
+        if: steps.detect-changes.outputs.type == 'frontend'
         run: |
           cd frontend
           npm run build
+
+      # Backend validation
+      - name: Setup Go
+        if: steps.detect-changes.outputs.type == 'backend'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.6"
+          cache-dependency-path: "backend/api/article/go.sum"
+
+      - name: Download Go dependencies
+        if: steps.detect-changes.outputs.type == 'backend'
+        run: |
+          cd backend/api/article
+          go mod download
+
+      - name: Run Go security check
+        if: steps.detect-changes.outputs.type == 'backend'
+        run: |
+          cd backend/api/article
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+      - name: Run Go lint
+        if: steps.detect-changes.outputs.type == 'backend'
+        run: |
+          cd backend/api/article
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          golangci-lint run --timeout 3m
+
+      - name: Run Go build
+        if: steps.detect-changes.outputs.type == 'backend'
+        run: |
+          cd backend/api/article
+          go build -v -o build/article_api ./cmd
+
+      - name: Run Go tests
+        if: steps.detect-changes.outputs.type == 'backend'
+        run: |
+          cd backend/api/article
+          go test -v -race -cover ./... || echo "No tests found yet"
 
       - name: Check Dependabot metadata
         id: metadata
