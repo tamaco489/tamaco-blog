@@ -13,7 +13,19 @@
     "gruntfuggly.todo-tree",
     "ms-playwright.playwright",
     "github.copilot",
-    "github.copilot-chat"
+    "github.copilot-chat",
+    "golang.go",
+    "zxh404.vscode-proto3",
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "mikestead.dotenv",
+    "foxundermoon.shell-format",
+    "timonwong.shellcheck",
+    "hashicorp.terraform",
+    "ms-vscode.makefile-tools",
+    "yzhang.markdown-all-in-one",
+    "bierner.markdown-mermaid",
+    "davidanson.vscode-markdownlint"
   ],
   "unwantedRecommendations": ["ms-vscode.vscode-css", "hookyqr.beautify"]
 }
