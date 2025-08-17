@@ -45,7 +45,7 @@
   "go.lintOnSave": "workspace",
   "go.lintFlags": ["--fast"],
   "go.testFlags": ["-v"],
-  "go.testTimeout": "10s",
+  "go.testTimeout": "60s",
   "go.coverOnSave": false,
   "go.coverageDecorator": {
     "type": "gutter",
