@@ -9,10 +9,12 @@ on:
     branches: [main]
     paths:
       - "frontend/package*.json"
+      - "backend/**/go.mod"
+      - "backend/**/go.sum"
 
 jobs:
-  security-audit:
-    name: Security Audit
+  frontend-security:
+    name: Frontend Security Audit
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -65,9 +67,86 @@ jobs:
 
           cat security-report.md
 
-      - name: Upload security report
+      - name: Upload frontend security report
         uses: actions/upload-artifact@v4
         with:
-          name: security-report
+          name: frontend-security-report
           path: frontend/security-report.md
+          retention-days: 30
+
+  backend-security:
+    name: Backend Security Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/api/article
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.6"
+          cache-dependency-path: "backend/api/article/go.sum"
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Run govulncheck
+        run: |
+          echo "🔍 Running Go security vulnerability check..."
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck -json ./... > vuln-results.json || true
+
+          # Check if there are any vulnerabilities
+          VULNERABILITIES=$(cat vuln-results.json | jq -r '.message.symbol // empty' | wc -l)
+
+          if [ "$VULNERABILITIES" -gt 0 ]; then
+            echo "⚠️ Found vulnerabilities in Go dependencies"
+            govulncheck ./...
+            echo "Please review and update vulnerable dependencies"
+          else
+            echo "✅ No vulnerabilities found in Go dependencies"
+          fi
+
+      - name: Check for outdated modules
+        run: |
+          echo "📦 Checking for outdated Go modules..."
+          go list -u -m all | grep '\[' || echo "All modules are up to date"
+
+      - name: Run Go static security analysis
+        run: |
+          echo "🔒 Running static security analysis..."
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+          staticcheck ./... || echo "Static analysis completed with warnings"
+
+      - name: Generate backend security report
+        run: |
+          echo "# Backend Security Report - $(date)" > security-report.md
+          echo "" >> security-report.md
+          echo "## Vulnerability Scan Results" >> security-report.md
+
+          if [ -f vuln-results.json ]; then
+            echo "### govulncheck Results" >> security-report.md
+            cat vuln-results.json | jq -r 'select(.message.symbol) | "- **\(.message.symbol)**: \(.message.text)"' >> security-report.md || echo "No vulnerabilities found" >> security-report.md
+          fi
+
+          echo "" >> security-report.md
+          echo "## Outdated Modules" >> security-report.md
+          go list -u -m all | grep '\[' | sed 's/^/- /' >> security-report.md || echo "All modules are up to date" >> security-report.md
+
+          echo "" >> security-report.md
+          echo "## Module Information" >> security-report.md
+          echo "### Direct Dependencies" >> security-report.md
+          go list -m all | grep -v '^github.com/tamaco489/tamaco-blog' | head -10 | sed 's/^/- /' >> security-report.md || echo "No external dependencies" >> security-report.md
+
+          cat security-report.md
+
+      - name: Upload backend security report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-security-report
+          path: backend/api/article/security-report.md
           retention-days: 30
