@@ -50,26 +50,26 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
+      "name": "Go: Debug Article API Server",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/backend/api/article/cmd",
+      "cwd": "${workspaceFolder}/backend/api/article",
+      "env": {
+        "ENV": "dev",
+        "PORT": "8080"
+      },
+      "args": []
+    },
+    {
       "name": "Go: Debug Current File",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${file}",
-      "cwd": "${workspaceFolder}/backend",
+      "cwd": "${workspaceFolder}/backend/api/article",
       "env": {},
-      "args": []
-    },
-    {
-      "name": "Go: Debug API Server",
-      "type": "go",
-      "request": "launch",
-      "mode": "debug",
-      "program": "${workspaceFolder}/backend/cmd/api",
-      "cwd": "${workspaceFolder}/backend",
-      "env": {
-        "ENV": "development",
-        "PORT": "8080"
-      },
       "args": []
     },
     {
@@ -78,34 +78,9 @@
       "request": "launch",
       "mode": "test",
       "program": "${fileDirname}",
-      "cwd": "${workspaceFolder}/backend",
+      "cwd": "${workspaceFolder}/backend/api/article",
       "env": {},
       "args": ["-v"]
-    },
-    {
-      "name": "Go: Test All Packages",
-      "type": "go",
-      "request": "launch",
-      "mode": "test",
-      "program": "./...",
-      "cwd": "${workspaceFolder}/backend",
-      "env": {},
-      "args": ["-v", "-race", "-cover"]
-    },
-    {
-      "name": "Go: Attach to Process",
-      "type": "go",
-      "request": "attach",
-      "mode": "local",
-      "processId": "${command:pickProcess}"
-    },
-    {
-      "name": "Go: Debug with Delve",
-      "type": "go",
-      "request": "launch",
-      "port": 2345,
-      "host": "127.0.0.1",
-      "cwd": "${workspaceFolder}/backend"
     }
   ]
 }
