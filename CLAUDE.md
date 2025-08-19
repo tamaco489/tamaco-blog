@@ -35,18 +35,18 @@ npm run dev # 開発サーバー起動
 
 ```bash
 cd backend/api/article
-make install-tools      # 環境変数ファイルの作成、開発ツールのインストール
-make up                 # Docker環境起動（PostgreSQL含む）
-make migrate-up         # データベースマイグレーション
-make logs               # APIサーバのログ出力（起動確認）
+make install-tools # 環境変数ファイルの作成、開発ツールのインストール
+make up            # Docker環境起動（PostgreSQL含む）
+make migrate-up    # データベースマイグレーション
+make logs          # APIサーバのログ出力（起動確認）
 ```
 
 #### OpenAPI 開発
 
 ```bash
 cd backend/api/article
-make bundle-openapi      # OpenAPI specのバンドル
-make gen-api            # APIインターフェースと型定義の生成
+make bundle-openapi # OpenAPI specのバンドル
+make gen-api        # APIインターフェースと型定義の生成
 ```
 
 ## アーキテクチャ概要
