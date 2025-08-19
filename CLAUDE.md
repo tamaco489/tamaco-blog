@@ -5,6 +5,7 @@
 @.claude/rules/dev-rules/globals.md
 @.claude/rules/dev-rules/techstack.md
 @.claude/rules/dev-rules/frontend-structure.md
+@.claude/rules/dev-rules/openapi-spec.md
 @.claude/rules/domain/blog-domain.md
 @.claude/rules/domain/features.md
 @.claude/rules/domain/data-models.md
