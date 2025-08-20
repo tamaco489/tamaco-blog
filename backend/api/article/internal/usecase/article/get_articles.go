@@ -3,6 +3,7 @@ package article
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
@@ -23,6 +24,8 @@ func NewGetArticlesUseCase() GetArticlesUseCase {
 
 // GetArticles implements GetArticlesUseCase
 func (u *getArticlesUseCase) GetArticles(ctx context.Context, params gen.GetArticlesParams) (*gen.ArticleList, error) {
+	slog.InfoContext(ctx, "[TEST] GetArticles called", "params", params)
+
 	// TODO: 実装予定
 	return &gen.ArticleList{
 		Articles: []gen.Article{},

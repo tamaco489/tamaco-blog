@@ -3,6 +3,7 @@ package category
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
@@ -23,6 +24,9 @@ func NewGetCategoriesUseCase() GetCategoriesUseCase {
 
 // GetCategories implements GetCategoriesUseCase
 func (u *getCategoriesUseCase) GetCategories(ctx context.Context) (*gen.CategoryList, error) {
+
+	slog.InfoContext(ctx, "[TEST] GetCategories called")
+
 	// TODO: 実装予定
 	return &gen.CategoryList{
 		Categories: []gen.Category{},

@@ -3,6 +3,7 @@ package tag
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
@@ -23,6 +24,9 @@ func NewGetTagsUseCase() GetTagsUseCase {
 
 // GetTags implements GetTagsUseCase
 func (u *getTagsUseCase) GetTags(ctx context.Context) (*gen.TagList, error) {
+
+	slog.InfoContext(ctx, "[TEST] GetTags called")
+
 	// TODO: 実装予定
 	return &gen.TagList{
 		Tags: []gen.Tag{},

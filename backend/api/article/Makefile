@@ -120,6 +120,20 @@ health: ## dev: check health of api server
 		'http://localhost:8080/v1/health' \
 		-H 'accept: application/json' | jq .
 
+get-articles: ## dev: get articles
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/articles' \
+		-H 'accept: application/json' | jq .
+
+get-categories: ## dev: get categories
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/categories' \
+		-H 'accept: application/json' | jq .
+
+get-tags: ## dev: get tags
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/tags' \
+		-H 'accept: application/json' | jq .
 
 # =================================================================
 # other
