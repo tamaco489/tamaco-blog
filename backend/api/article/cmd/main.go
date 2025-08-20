@@ -2,56 +2,64 @@ package main
 
 import (
 	"context"
-	"log/slog"
+	"errors"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/handler"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/logger"
 )
 
 func main() {
-	logger := slog.New(
-		slog.NewTextHandler(
-			os.Stdout,
-			&slog.HandlerOptions{Level: slog.LevelInfo},
-		))
-	slog.SetDefault(logger)
+	// Context for initialization
+	ctx := context.Background()
 
-	http.HandleFunc("/article/v1/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		if _, err := w.Write([]byte(`{"status":"healthy"}`)); err != nil {
-			logger.Error("failed to write response", "error", err)
-		}
+	// Logger initialization
+	logger.Init(logger.Config{
+		Level:  logger.LevelInfo,
+		Format: "json",
 	})
 
-	port := ":8080"
-	logger.Info("starting server", "port", port)
-
-	server := &http.Server{
-		Addr:    port,
-		Handler: nil,
+	// Handler initialization with context
+	srv, err := handler.NewHandler(ctx)
+	if err != nil {
+		logger.Error("failed to create handler", "error", err)
+		os.Exit(1)
 	}
 
 	go func() {
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Error("server failed to start", "error", err)
+		logger.Info("starting server", "addr", srv.Addr)
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			logger.Error("failed to start server", "error", err)
 			os.Exit(1)
 		}
 	}()
 
+	logger.Info("server started successfully", "addr", srv.Addr)
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
 	<-quit
+	logger.Info("shutdown signal received, gracefully shutting down...")
 
-	logger.Info("shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer shutdownCancel()
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		logger.Error("server shutdown failed", "error", err)
+	if err := srv.Shutdown(ctx); err != nil {
+		logger.Error("server shutdown error", "error", err)
+		os.Exit(1)
 	}
 
-	logger.Info("server stopped")
+	<-ctx.Done()
+
+	switch ctx.Err() {
+	case context.DeadlineExceeded:
+		logger.Warn("shutdown timeout exceeded, forcing exit")
+	default:
+		logger.Info("server shutdown successfully")
+	}
 }

@@ -12,6 +12,7 @@ install-tools: setup-env ## dev: Install tools used in the project
 	go install golang.org/x/tools/cmd/godoc@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install golang.org/x/vuln/cmd/govulncheck@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	go install github.com/rubenv/sql-migrate/...@latest
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	go install go.uber.org/mock/mockgen@latest
@@ -114,17 +115,26 @@ get-secret-value: ## dev: get secret value from secrets manager
 # =================================================================
 # api request
 # =================================================================
-.PHONY: healthcheck get-users-me
-healthcheck:
+.PHONY: health
+health: ## dev: check health of api server
 	curl -sX 'GET' \
-		'http://localhost:8080/article/v1/health' \
+		'http://localhost:8080/v1/health' \
 		-H 'accept: application/json' | jq .
 
-get-me:
-	curl -i -X 'GET' \
-		'http://localhost:8080/article/v1/users/me' \
-		-H 'accept: application/json'
+get-articles: ## dev: get articles
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/articles' \
+		-H 'accept: application/json' | jq .
 
+get-categories: ## dev: get categories
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/categories' \
+		-H 'accept: application/json' | jq .
+
+get-tags: ## dev: get tags
+	curl -sX 'GET' \
+		'http://localhost:8080/v1/tags' \
+		-H 'accept: application/json' | jq .
 
 # =================================================================
 # other

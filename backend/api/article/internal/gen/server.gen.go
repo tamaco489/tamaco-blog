@@ -31,20 +31,20 @@ type ServerInterface interface {
 	// (GET /v1/articles/recent)
 	GetRecentArticles(c *gin.Context, params GetRecentArticlesParams)
 	// 記事削除
-	// (DELETE /v1/articles/{id})
-	DeleteArticleById(c *gin.Context, id IdParam)
-	// 記事更新
-	// (PUT /v1/articles/{id})
-	UpdateArticleById(c *gin.Context, id IdParam)
-	// 記事公開
-	// (PATCH /v1/articles/{id}/publish)
-	PublishArticleById(c *gin.Context, id IdParam)
-	// 閲覧数更新
-	// (PATCH /v1/articles/{id}/views)
-	IncrementArticleViewCount(c *gin.Context, id IdParam)
+	// (DELETE /v1/articles/{article_id})
+	DeleteArticleByID(c *gin.Context, articleId string)
 	// 記事詳細取得
-	// (GET /v1/articles/{slug})
-	GetArticleBySlug(c *gin.Context, slug SlugParam)
+	// (GET /v1/articles/{article_id})
+	GetArticleByID(c *gin.Context, articleId string)
+	// 記事更新
+	// (PUT /v1/articles/{article_id})
+	UpdateArticleByID(c *gin.Context, articleId string)
+	// 記事公開
+	// (PATCH /v1/articles/{article_id}/publish)
+	PublishArticleByID(c *gin.Context, articleId string)
+	// 閲覧数更新
+	// (PATCH /v1/articles/{article_id}/views)
+	IncrementArticleViewCount(c *gin.Context, articleId string)
 	// カテゴリ一覧取得
 	// (GET /v1/categories)
 	GetCategories(c *gin.Context)
@@ -52,17 +52,17 @@ type ServerInterface interface {
 	// (POST /v1/categories)
 	CreateCategory(c *gin.Context)
 	// カテゴリ削除
-	// (DELETE /v1/categories/{id})
-	DeleteCategoryById(c *gin.Context, id IdParam)
-	// カテゴリ更新
-	// (PUT /v1/categories/{id})
-	UpdateCategoryById(c *gin.Context, id IdParam)
+	// (DELETE /v1/categories/{category_id})
+	DeleteCategoryByID(c *gin.Context, categoryId string)
 	// カテゴリ詳細取得
-	// (GET /v1/categories/{slug})
-	GetCategoryBySlug(c *gin.Context, slug SlugParam)
+	// (GET /v1/categories/{category_id})
+	GetCategoryByID(c *gin.Context, categoryId string)
+	// カテゴリ更新
+	// (PUT /v1/categories/{category_id})
+	UpdateCategoryByID(c *gin.Context, categoryId string)
 	// カテゴリ別記事一覧取得
-	// (GET /v1/categories/{slug}/articles)
-	GetArticlesByCategorySlug(c *gin.Context, slug SlugParam, params GetArticlesByCategorySlugParams)
+	// (GET /v1/categories/{category_id}/articles)
+	GetArticlesByCategoryID(c *gin.Context, categoryId string, params GetArticlesByCategoryIDParams)
 	// ヘルスチェックAPI
 	// (GET /v1/health)
 	Healthcheck(c *gin.Context)
@@ -76,17 +76,17 @@ type ServerInterface interface {
 	// (POST /v1/tags)
 	CreateTag(c *gin.Context)
 	// タグ削除
-	// (DELETE /v1/tags/{id})
-	DeleteTagById(c *gin.Context, id IdParam)
-	// タグ更新
-	// (PUT /v1/tags/{id})
-	UpdateTagById(c *gin.Context, id IdParam)
+	// (DELETE /v1/tags/{tag_id})
+	DeleteTagByID(c *gin.Context, tagId string)
 	// タグ詳細取得
-	// (GET /v1/tags/{slug})
-	GetTagBySlug(c *gin.Context, slug SlugParam)
+	// (GET /v1/tags/{tag_id})
+	GetTagByID(c *gin.Context, tagId string)
+	// タグ更新
+	// (PUT /v1/tags/{tag_id})
+	UpdateTagByID(c *gin.Context, tagId string)
 	// タグ別記事一覧取得
-	// (GET /v1/tags/{slug}/articles)
-	GetArticlesByTagSlug(c *gin.Context, slug SlugParam, params GetArticlesByTagSlugParams)
+	// (GET /v1/tags/{tag_id}/articles)
+	GetArticlesByTagID(c *gin.Context, tagId string, params GetArticlesByTagIDParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -315,17 +315,17 @@ func (siw *ServerInterfaceWrapper) GetRecentArticles(c *gin.Context) {
 	siw.Handler.GetRecentArticles(c, params)
 }
 
-// DeleteArticleById operation middleware
-func (siw *ServerInterfaceWrapper) DeleteArticleById(c *gin.Context) {
+// DeleteArticleByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteArticleByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "article_id" -------------
+	var articleId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "article_id", c.Param("article_id"), &articleId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter article_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -338,24 +338,22 @@ func (siw *ServerInterfaceWrapper) DeleteArticleById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteArticleById(c, id)
+	siw.Handler.DeleteArticleByID(c, articleId)
 }
 
-// UpdateArticleById operation middleware
-func (siw *ServerInterfaceWrapper) UpdateArticleById(c *gin.Context) {
+// GetArticleByID operation middleware
+func (siw *ServerInterfaceWrapper) GetArticleByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "article_id" -------------
+	var articleId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "article_id", c.Param("article_id"), &articleId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter article_id: %w", err), http.StatusBadRequest)
 		return
 	}
-
-	c.Set(BearerAuthScopes, []string{})
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -364,20 +362,20 @@ func (siw *ServerInterfaceWrapper) UpdateArticleById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UpdateArticleById(c, id)
+	siw.Handler.GetArticleByID(c, articleId)
 }
 
-// PublishArticleById operation middleware
-func (siw *ServerInterfaceWrapper) PublishArticleById(c *gin.Context) {
+// UpdateArticleByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateArticleByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "article_id" -------------
+	var articleId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "article_id", c.Param("article_id"), &articleId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter article_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -390,7 +388,33 @@ func (siw *ServerInterfaceWrapper) PublishArticleById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PublishArticleById(c, id)
+	siw.Handler.UpdateArticleByID(c, articleId)
+}
+
+// PublishArticleByID operation middleware
+func (siw *ServerInterfaceWrapper) PublishArticleByID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "article_id" -------------
+	var articleId string
+
+	err = runtime.BindStyledParameter("simple", false, "article_id", c.Param("article_id"), &articleId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter article_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.PublishArticleByID(c, articleId)
 }
 
 // IncrementArticleViewCount operation middleware
@@ -398,12 +422,12 @@ func (siw *ServerInterfaceWrapper) IncrementArticleViewCount(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "article_id" -------------
+	var articleId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "article_id", c.Param("article_id"), &articleId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter article_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -414,31 +438,7 @@ func (siw *ServerInterfaceWrapper) IncrementArticleViewCount(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.IncrementArticleViewCount(c, id)
-}
-
-// GetArticleBySlug operation middleware
-func (siw *ServerInterfaceWrapper) GetArticleBySlug(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "slug" -------------
-	var slug SlugParam
-
-	err = runtime.BindStyledParameter("simple", false, "slug", c.Param("slug"), &slug)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter slug: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetArticleBySlug(c, slug)
+	siw.Handler.IncrementArticleViewCount(c, articleId)
 }
 
 // GetCategories operation middleware
@@ -469,17 +469,17 @@ func (siw *ServerInterfaceWrapper) CreateCategory(c *gin.Context) {
 	siw.Handler.CreateCategory(c)
 }
 
-// DeleteCategoryById operation middleware
-func (siw *ServerInterfaceWrapper) DeleteCategoryById(c *gin.Context) {
+// DeleteCategoryByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteCategoryByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "category_id" -------------
+	var categoryId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "category_id", c.Param("category_id"), &categoryId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter category_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -492,20 +492,44 @@ func (siw *ServerInterfaceWrapper) DeleteCategoryById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteCategoryById(c, id)
+	siw.Handler.DeleteCategoryByID(c, categoryId)
 }
 
-// UpdateCategoryById operation middleware
-func (siw *ServerInterfaceWrapper) UpdateCategoryById(c *gin.Context) {
+// GetCategoryByID operation middleware
+func (siw *ServerInterfaceWrapper) GetCategoryByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "category_id" -------------
+	var categoryId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "category_id", c.Param("category_id"), &categoryId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter category_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetCategoryByID(c, categoryId)
+}
+
+// UpdateCategoryByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateCategoryByID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "category_id" -------------
+	var categoryId string
+
+	err = runtime.BindStyledParameter("simple", false, "category_id", c.Param("category_id"), &categoryId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter category_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -518,49 +542,25 @@ func (siw *ServerInterfaceWrapper) UpdateCategoryById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UpdateCategoryById(c, id)
+	siw.Handler.UpdateCategoryByID(c, categoryId)
 }
 
-// GetCategoryBySlug operation middleware
-func (siw *ServerInterfaceWrapper) GetCategoryBySlug(c *gin.Context) {
+// GetArticlesByCategoryID operation middleware
+func (siw *ServerInterfaceWrapper) GetArticlesByCategoryID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "slug" -------------
-	var slug SlugParam
+	// ------------- Path parameter "category_id" -------------
+	var categoryId string
 
-	err = runtime.BindStyledParameter("simple", false, "slug", c.Param("slug"), &slug)
+	err = runtime.BindStyledParameter("simple", false, "category_id", c.Param("category_id"), &categoryId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter slug: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetCategoryBySlug(c, slug)
-}
-
-// GetArticlesByCategorySlug operation middleware
-func (siw *ServerInterfaceWrapper) GetArticlesByCategorySlug(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "slug" -------------
-	var slug SlugParam
-
-	err = runtime.BindStyledParameter("simple", false, "slug", c.Param("slug"), &slug)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter slug: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter category_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetArticlesByCategorySlugParams
+	var params GetArticlesByCategoryIDParams
 
 	// ------------- Optional query parameter "page" -------------
 
@@ -601,7 +601,7 @@ func (siw *ServerInterfaceWrapper) GetArticlesByCategorySlug(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetArticlesByCategorySlug(c, slug, params)
+	siw.Handler.GetArticlesByCategoryID(c, categoryId, params)
 }
 
 // Healthcheck operation middleware
@@ -727,17 +727,17 @@ func (siw *ServerInterfaceWrapper) CreateTag(c *gin.Context) {
 	siw.Handler.CreateTag(c)
 }
 
-// DeleteTagById operation middleware
-func (siw *ServerInterfaceWrapper) DeleteTagById(c *gin.Context) {
+// DeleteTagByID operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTagByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "tag_id", c.Param("tag_id"), &tagId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter tag_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -750,20 +750,44 @@ func (siw *ServerInterfaceWrapper) DeleteTagById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.DeleteTagById(c, id)
+	siw.Handler.DeleteTagByID(c, tagId)
 }
 
-// UpdateTagById operation middleware
-func (siw *ServerInterfaceWrapper) UpdateTagById(c *gin.Context) {
+// GetTagByID operation middleware
+func (siw *ServerInterfaceWrapper) GetTagByID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "id" -------------
-	var id IdParam
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameter("simple", false, "id", c.Param("id"), &id)
+	err = runtime.BindStyledParameter("simple", false, "tag_id", c.Param("tag_id"), &tagId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter id: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter tag_id: %w", err), http.StatusBadRequest)
+		return
+	}
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.GetTagByID(c, tagId)
+}
+
+// UpdateTagByID operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTagByID(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
+
+	err = runtime.BindStyledParameter("simple", false, "tag_id", c.Param("tag_id"), &tagId)
+	if err != nil {
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter tag_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
@@ -776,49 +800,25 @@ func (siw *ServerInterfaceWrapper) UpdateTagById(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UpdateTagById(c, id)
+	siw.Handler.UpdateTagByID(c, tagId)
 }
 
-// GetTagBySlug operation middleware
-func (siw *ServerInterfaceWrapper) GetTagBySlug(c *gin.Context) {
+// GetArticlesByTagID operation middleware
+func (siw *ServerInterfaceWrapper) GetArticlesByTagID(c *gin.Context) {
 
 	var err error
 
-	// ------------- Path parameter "slug" -------------
-	var slug SlugParam
+	// ------------- Path parameter "tag_id" -------------
+	var tagId string
 
-	err = runtime.BindStyledParameter("simple", false, "slug", c.Param("slug"), &slug)
+	err = runtime.BindStyledParameter("simple", false, "tag_id", c.Param("tag_id"), &tagId)
 	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter slug: %w", err), http.StatusBadRequest)
-		return
-	}
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		middleware(c)
-		if c.IsAborted() {
-			return
-		}
-	}
-
-	siw.Handler.GetTagBySlug(c, slug)
-}
-
-// GetArticlesByTagSlug operation middleware
-func (siw *ServerInterfaceWrapper) GetArticlesByTagSlug(c *gin.Context) {
-
-	var err error
-
-	// ------------- Path parameter "slug" -------------
-	var slug SlugParam
-
-	err = runtime.BindStyledParameter("simple", false, "slug", c.Param("slug"), &slug)
-	if err != nil {
-		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter slug: %w", err), http.StatusBadRequest)
+		siw.ErrorHandler(c, fmt.Errorf("Invalid format for parameter tag_id: %w", err), http.StatusBadRequest)
 		return
 	}
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params GetArticlesByTagSlugParams
+	var params GetArticlesByTagIDParams
 
 	// ------------- Optional query parameter "page" -------------
 
@@ -859,7 +859,7 @@ func (siw *ServerInterfaceWrapper) GetArticlesByTagSlug(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.GetArticlesByTagSlug(c, slug, params)
+	siw.Handler.GetArticlesByTagID(c, tagId, params)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -894,25 +894,25 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 	router.GET(options.BaseURL+"/v1/articles/archive/:year/:month", wrapper.GetArticlesByMonth)
 	router.GET(options.BaseURL+"/v1/articles/popular", wrapper.GetPopularArticles)
 	router.GET(options.BaseURL+"/v1/articles/recent", wrapper.GetRecentArticles)
-	router.DELETE(options.BaseURL+"/v1/articles/:id", wrapper.DeleteArticleById)
-	router.PUT(options.BaseURL+"/v1/articles/:id", wrapper.UpdateArticleById)
-	router.PATCH(options.BaseURL+"/v1/articles/:id/publish", wrapper.PublishArticleById)
-	router.PATCH(options.BaseURL+"/v1/articles/:id/views", wrapper.IncrementArticleViewCount)
-	router.GET(options.BaseURL+"/v1/articles/:slug", wrapper.GetArticleBySlug)
+	router.DELETE(options.BaseURL+"/v1/articles/:article_id", wrapper.DeleteArticleByID)
+	router.GET(options.BaseURL+"/v1/articles/:article_id", wrapper.GetArticleByID)
+	router.PUT(options.BaseURL+"/v1/articles/:article_id", wrapper.UpdateArticleByID)
+	router.PATCH(options.BaseURL+"/v1/articles/:article_id/publish", wrapper.PublishArticleByID)
+	router.PATCH(options.BaseURL+"/v1/articles/:article_id/views", wrapper.IncrementArticleViewCount)
 	router.GET(options.BaseURL+"/v1/categories", wrapper.GetCategories)
 	router.POST(options.BaseURL+"/v1/categories", wrapper.CreateCategory)
-	router.DELETE(options.BaseURL+"/v1/categories/:id", wrapper.DeleteCategoryById)
-	router.PUT(options.BaseURL+"/v1/categories/:id", wrapper.UpdateCategoryById)
-	router.GET(options.BaseURL+"/v1/categories/:slug", wrapper.GetCategoryBySlug)
-	router.GET(options.BaseURL+"/v1/categories/:slug/articles", wrapper.GetArticlesByCategorySlug)
+	router.DELETE(options.BaseURL+"/v1/categories/:category_id", wrapper.DeleteCategoryByID)
+	router.GET(options.BaseURL+"/v1/categories/:category_id", wrapper.GetCategoryByID)
+	router.PUT(options.BaseURL+"/v1/categories/:category_id", wrapper.UpdateCategoryByID)
+	router.GET(options.BaseURL+"/v1/categories/:category_id/articles", wrapper.GetArticlesByCategoryID)
 	router.GET(options.BaseURL+"/v1/health", wrapper.Healthcheck)
 	router.GET(options.BaseURL+"/v1/search", wrapper.SearchArticles)
 	router.GET(options.BaseURL+"/v1/tags", wrapper.GetTags)
 	router.POST(options.BaseURL+"/v1/tags", wrapper.CreateTag)
-	router.DELETE(options.BaseURL+"/v1/tags/:id", wrapper.DeleteTagById)
-	router.PUT(options.BaseURL+"/v1/tags/:id", wrapper.UpdateTagById)
-	router.GET(options.BaseURL+"/v1/tags/:slug", wrapper.GetTagBySlug)
-	router.GET(options.BaseURL+"/v1/tags/:slug/articles", wrapper.GetArticlesByTagSlug)
+	router.DELETE(options.BaseURL+"/v1/tags/:tag_id", wrapper.DeleteTagByID)
+	router.GET(options.BaseURL+"/v1/tags/:tag_id", wrapper.GetTagByID)
+	router.PUT(options.BaseURL+"/v1/tags/:tag_id", wrapper.UpdateTagByID)
+	router.GET(options.BaseURL+"/v1/tags/:tag_id/articles", wrapper.GetArticlesByTagID)
 }
 
 type GetArticlesRequestObject struct {
@@ -1110,150 +1110,185 @@ func (response GetRecentArticles500JSONResponse) VisitGetRecentArticlesResponse(
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteArticleByIdRequestObject struct {
-	Id IdParam `json:"id"`
+type DeleteArticleByIDRequestObject struct {
+	ArticleId string `json:"article_id"`
 }
 
-type DeleteArticleByIdResponseObject interface {
-	VisitDeleteArticleByIdResponse(w http.ResponseWriter) error
+type DeleteArticleByIDResponseObject interface {
+	VisitDeleteArticleByIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteArticleById204Response struct {
+type DeleteArticleByID204Response struct {
 }
 
-func (response DeleteArticleById204Response) VisitDeleteArticleByIdResponse(w http.ResponseWriter) error {
+func (response DeleteArticleByID204Response) VisitDeleteArticleByIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteArticleById401JSONResponse Unauthorized
+type DeleteArticleByID401JSONResponse Unauthorized
 
-func (response DeleteArticleById401JSONResponse) VisitDeleteArticleByIdResponse(w http.ResponseWriter) error {
+func (response DeleteArticleByID401JSONResponse) VisitDeleteArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteArticleById404JSONResponse NotFound
+type DeleteArticleByID404JSONResponse NotFound
 
-func (response DeleteArticleById404JSONResponse) VisitDeleteArticleByIdResponse(w http.ResponseWriter) error {
+func (response DeleteArticleByID404JSONResponse) VisitDeleteArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteArticleById500JSONResponse InternalServerError
+type DeleteArticleByID500JSONResponse InternalServerError
 
-func (response DeleteArticleById500JSONResponse) VisitDeleteArticleByIdResponse(w http.ResponseWriter) error {
+func (response DeleteArticleByID500JSONResponse) VisitDeleteArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleByIdRequestObject struct {
-	Id   IdParam `json:"id"`
-	Body *UpdateArticleByIdJSONRequestBody
+type GetArticleByIDRequestObject struct {
+	ArticleId string `json:"article_id"`
 }
 
-type UpdateArticleByIdResponseObject interface {
-	VisitUpdateArticleByIdResponse(w http.ResponseWriter) error
+type GetArticleByIDResponseObject interface {
+	VisitGetArticleByIDResponse(w http.ResponseWriter) error
 }
 
-type UpdateArticleById200JSONResponse Article
+type GetArticleByID200JSONResponse Article
 
-func (response UpdateArticleById200JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response GetArticleByID200JSONResponse) VisitGetArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleById400JSONResponse BadRequest
+type GetArticleByID404JSONResponse NotFound
 
-func (response UpdateArticleById400JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response GetArticleByID404JSONResponse) VisitGetArticleByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetArticleByID500JSONResponse InternalServerError
+
+func (response GetArticleByID500JSONResponse) VisitGetArticleByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateArticleByIDRequestObject struct {
+	ArticleId string `json:"article_id"`
+	Body      *UpdateArticleByIDJSONRequestBody
+}
+
+type UpdateArticleByIDResponseObject interface {
+	VisitUpdateArticleByIDResponse(w http.ResponseWriter) error
+}
+
+type UpdateArticleByID200JSONResponse Article
+
+func (response UpdateArticleByID200JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateArticleByID400JSONResponse BadRequest
+
+func (response UpdateArticleByID400JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleById401JSONResponse Unauthorized
+type UpdateArticleByID401JSONResponse Unauthorized
 
-func (response UpdateArticleById401JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response UpdateArticleByID401JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleById404JSONResponse NotFound
+type UpdateArticleByID404JSONResponse NotFound
 
-func (response UpdateArticleById404JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response UpdateArticleByID404JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleById409JSONResponse AlreadyExists
+type UpdateArticleByID409JSONResponse AlreadyExists
 
-func (response UpdateArticleById409JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response UpdateArticleByID409JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateArticleById500JSONResponse InternalServerError
+type UpdateArticleByID500JSONResponse InternalServerError
 
-func (response UpdateArticleById500JSONResponse) VisitUpdateArticleByIdResponse(w http.ResponseWriter) error {
+func (response UpdateArticleByID500JSONResponse) VisitUpdateArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PublishArticleByIdRequestObject struct {
-	Id IdParam `json:"id"`
+type PublishArticleByIDRequestObject struct {
+	ArticleId string `json:"article_id"`
 }
 
-type PublishArticleByIdResponseObject interface {
-	VisitPublishArticleByIdResponse(w http.ResponseWriter) error
+type PublishArticleByIDResponseObject interface {
+	VisitPublishArticleByIDResponse(w http.ResponseWriter) error
 }
 
-type PublishArticleById200JSONResponse Article
+type PublishArticleByID200JSONResponse Article
 
-func (response PublishArticleById200JSONResponse) VisitPublishArticleByIdResponse(w http.ResponseWriter) error {
+func (response PublishArticleByID200JSONResponse) VisitPublishArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PublishArticleById401JSONResponse Unauthorized
+type PublishArticleByID401JSONResponse Unauthorized
 
-func (response PublishArticleById401JSONResponse) VisitPublishArticleByIdResponse(w http.ResponseWriter) error {
+func (response PublishArticleByID401JSONResponse) VisitPublishArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PublishArticleById404JSONResponse NotFound
+type PublishArticleByID404JSONResponse NotFound
 
-func (response PublishArticleById404JSONResponse) VisitPublishArticleByIdResponse(w http.ResponseWriter) error {
+func (response PublishArticleByID404JSONResponse) VisitPublishArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PublishArticleById500JSONResponse InternalServerError
+type PublishArticleByID500JSONResponse InternalServerError
 
-func (response PublishArticleById500JSONResponse) VisitPublishArticleByIdResponse(w http.ResponseWriter) error {
+func (response PublishArticleByID500JSONResponse) VisitPublishArticleByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1261,7 +1296,7 @@ func (response PublishArticleById500JSONResponse) VisitPublishArticleByIdRespons
 }
 
 type IncrementArticleViewCountRequestObject struct {
-	Id IdParam `json:"id"`
+	ArticleId string `json:"article_id"`
 }
 
 type IncrementArticleViewCountResponseObject interface {
@@ -1292,41 +1327,6 @@ func (response IncrementArticleViewCount404JSONResponse) VisitIncrementArticleVi
 type IncrementArticleViewCount500JSONResponse InternalServerError
 
 func (response IncrementArticleViewCount500JSONResponse) VisitIncrementArticleViewCountResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticleBySlugRequestObject struct {
-	Slug SlugParam `json:"slug"`
-}
-
-type GetArticleBySlugResponseObject interface {
-	VisitGetArticleBySlugResponse(w http.ResponseWriter) error
-}
-
-type GetArticleBySlug200JSONResponse Article
-
-func (response GetArticleBySlug200JSONResponse) VisitGetArticleBySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticleBySlug404JSONResponse NotFound
-
-func (response GetArticleBySlug404JSONResponse) VisitGetArticleBySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticleBySlug500JSONResponse InternalServerError
-
-func (response GetArticleBySlug500JSONResponse) VisitGetArticleBySlugResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1411,177 +1411,177 @@ func (response CreateCategory500JSONResponse) VisitCreateCategoryResponse(w http
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCategoryByIdRequestObject struct {
-	Id IdParam `json:"id"`
+type DeleteCategoryByIDRequestObject struct {
+	CategoryId string `json:"category_id"`
 }
 
-type DeleteCategoryByIdResponseObject interface {
-	VisitDeleteCategoryByIdResponse(w http.ResponseWriter) error
+type DeleteCategoryByIDResponseObject interface {
+	VisitDeleteCategoryByIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteCategoryById204Response struct {
+type DeleteCategoryByID204Response struct {
 }
 
-func (response DeleteCategoryById204Response) VisitDeleteCategoryByIdResponse(w http.ResponseWriter) error {
+func (response DeleteCategoryByID204Response) VisitDeleteCategoryByIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteCategoryById401JSONResponse Unauthorized
+type DeleteCategoryByID401JSONResponse Unauthorized
 
-func (response DeleteCategoryById401JSONResponse) VisitDeleteCategoryByIdResponse(w http.ResponseWriter) error {
+func (response DeleteCategoryByID401JSONResponse) VisitDeleteCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCategoryById404JSONResponse NotFound
+type DeleteCategoryByID404JSONResponse NotFound
 
-func (response DeleteCategoryById404JSONResponse) VisitDeleteCategoryByIdResponse(w http.ResponseWriter) error {
+func (response DeleteCategoryByID404JSONResponse) VisitDeleteCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteCategoryById500JSONResponse InternalServerError
+type DeleteCategoryByID500JSONResponse InternalServerError
 
-func (response DeleteCategoryById500JSONResponse) VisitDeleteCategoryByIdResponse(w http.ResponseWriter) error {
+func (response DeleteCategoryByID500JSONResponse) VisitDeleteCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryByIdRequestObject struct {
-	Id   IdParam `json:"id"`
-	Body *UpdateCategoryByIdJSONRequestBody
+type GetCategoryByIDRequestObject struct {
+	CategoryId string `json:"category_id"`
 }
 
-type UpdateCategoryByIdResponseObject interface {
-	VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error
+type GetCategoryByIDResponseObject interface {
+	VisitGetCategoryByIDResponse(w http.ResponseWriter) error
 }
 
-type UpdateCategoryById200JSONResponse Category
+type GetCategoryByID200JSONResponse Category
 
-func (response UpdateCategoryById200JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response GetCategoryByID200JSONResponse) VisitGetCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryById400JSONResponse BadRequest
+type GetCategoryByID404JSONResponse NotFound
 
-func (response UpdateCategoryById400JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response GetCategoryByID404JSONResponse) VisitGetCategoryByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetCategoryByID500JSONResponse InternalServerError
+
+func (response GetCategoryByID500JSONResponse) VisitGetCategoryByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateCategoryByIDRequestObject struct {
+	CategoryId string `json:"category_id"`
+	Body       *UpdateCategoryByIDJSONRequestBody
+}
+
+type UpdateCategoryByIDResponseObject interface {
+	VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error
+}
+
+type UpdateCategoryByID200JSONResponse Category
+
+func (response UpdateCategoryByID200JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateCategoryByID400JSONResponse BadRequest
+
+func (response UpdateCategoryByID400JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryById401JSONResponse Unauthorized
+type UpdateCategoryByID401JSONResponse Unauthorized
 
-func (response UpdateCategoryById401JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response UpdateCategoryByID401JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryById404JSONResponse NotFound
+type UpdateCategoryByID404JSONResponse NotFound
 
-func (response UpdateCategoryById404JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response UpdateCategoryByID404JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryById409JSONResponse AlreadyExists
+type UpdateCategoryByID409JSONResponse AlreadyExists
 
-func (response UpdateCategoryById409JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response UpdateCategoryByID409JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateCategoryById500JSONResponse InternalServerError
+type UpdateCategoryByID500JSONResponse InternalServerError
 
-func (response UpdateCategoryById500JSONResponse) VisitUpdateCategoryByIdResponse(w http.ResponseWriter) error {
+func (response UpdateCategoryByID500JSONResponse) VisitUpdateCategoryByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetCategoryBySlugRequestObject struct {
-	Slug SlugParam `json:"slug"`
+type GetArticlesByCategoryIDRequestObject struct {
+	CategoryId string `json:"category_id"`
+	Params     GetArticlesByCategoryIDParams
 }
 
-type GetCategoryBySlugResponseObject interface {
-	VisitGetCategoryBySlugResponse(w http.ResponseWriter) error
+type GetArticlesByCategoryIDResponseObject interface {
+	VisitGetArticlesByCategoryIDResponse(w http.ResponseWriter) error
 }
 
-type GetCategoryBySlug200JSONResponse Category
+type GetArticlesByCategoryID200JSONResponse ArticleList
 
-func (response GetCategoryBySlug200JSONResponse) VisitGetCategoryBySlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByCategoryID200JSONResponse) VisitGetArticlesByCategoryIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetCategoryBySlug404JSONResponse NotFound
+type GetArticlesByCategoryID404JSONResponse NotFound
 
-func (response GetCategoryBySlug404JSONResponse) VisitGetCategoryBySlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByCategoryID404JSONResponse) VisitGetArticlesByCategoryIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetCategoryBySlug500JSONResponse InternalServerError
+type GetArticlesByCategoryID500JSONResponse InternalServerError
 
-func (response GetCategoryBySlug500JSONResponse) VisitGetCategoryBySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByCategorySlugRequestObject struct {
-	Slug   SlugParam `json:"slug"`
-	Params GetArticlesByCategorySlugParams
-}
-
-type GetArticlesByCategorySlugResponseObject interface {
-	VisitGetArticlesByCategorySlugResponse(w http.ResponseWriter) error
-}
-
-type GetArticlesByCategorySlug200JSONResponse ArticleList
-
-func (response GetArticlesByCategorySlug200JSONResponse) VisitGetArticlesByCategorySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByCategorySlug404JSONResponse NotFound
-
-func (response GetArticlesByCategorySlug404JSONResponse) VisitGetArticlesByCategorySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByCategorySlug500JSONResponse InternalServerError
-
-func (response GetArticlesByCategorySlug500JSONResponse) VisitGetArticlesByCategorySlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByCategoryID500JSONResponse) VisitGetArticlesByCategoryIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1717,177 +1717,177 @@ func (response CreateTag500JSONResponse) VisitCreateTagResponse(w http.ResponseW
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTagByIdRequestObject struct {
-	Id IdParam `json:"id"`
+type DeleteTagByIDRequestObject struct {
+	TagId string `json:"tag_id"`
 }
 
-type DeleteTagByIdResponseObject interface {
-	VisitDeleteTagByIdResponse(w http.ResponseWriter) error
+type DeleteTagByIDResponseObject interface {
+	VisitDeleteTagByIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteTagById204Response struct {
+type DeleteTagByID204Response struct {
 }
 
-func (response DeleteTagById204Response) VisitDeleteTagByIdResponse(w http.ResponseWriter) error {
+func (response DeleteTagByID204Response) VisitDeleteTagByIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type DeleteTagById401JSONResponse Unauthorized
+type DeleteTagByID401JSONResponse Unauthorized
 
-func (response DeleteTagById401JSONResponse) VisitDeleteTagByIdResponse(w http.ResponseWriter) error {
+func (response DeleteTagByID401JSONResponse) VisitDeleteTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTagById404JSONResponse NotFound
+type DeleteTagByID404JSONResponse NotFound
 
-func (response DeleteTagById404JSONResponse) VisitDeleteTagByIdResponse(w http.ResponseWriter) error {
+func (response DeleteTagByID404JSONResponse) VisitDeleteTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteTagById500JSONResponse InternalServerError
+type DeleteTagByID500JSONResponse InternalServerError
 
-func (response DeleteTagById500JSONResponse) VisitDeleteTagByIdResponse(w http.ResponseWriter) error {
+func (response DeleteTagByID500JSONResponse) VisitDeleteTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagByIdRequestObject struct {
-	Id   IdParam `json:"id"`
-	Body *UpdateTagByIdJSONRequestBody
+type GetTagByIDRequestObject struct {
+	TagId string `json:"tag_id"`
 }
 
-type UpdateTagByIdResponseObject interface {
-	VisitUpdateTagByIdResponse(w http.ResponseWriter) error
+type GetTagByIDResponseObject interface {
+	VisitGetTagByIDResponse(w http.ResponseWriter) error
 }
 
-type UpdateTagById200JSONResponse Tag
+type GetTagByID200JSONResponse Tag
 
-func (response UpdateTagById200JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response GetTagByID200JSONResponse) VisitGetTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagById400JSONResponse BadRequest
+type GetTagByID404JSONResponse NotFound
 
-func (response UpdateTagById400JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response GetTagByID404JSONResponse) VisitGetTagByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(404)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type GetTagByID500JSONResponse InternalServerError
+
+func (response GetTagByID500JSONResponse) VisitGetTagByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateTagByIDRequestObject struct {
+	TagId string `json:"tag_id"`
+	Body  *UpdateTagByIDJSONRequestBody
+}
+
+type UpdateTagByIDResponseObject interface {
+	VisitUpdateTagByIDResponse(w http.ResponseWriter) error
+}
+
+type UpdateTagByID200JSONResponse Tag
+
+func (response UpdateTagByID200JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type UpdateTagByID400JSONResponse BadRequest
+
+func (response UpdateTagByID400JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagById401JSONResponse Unauthorized
+type UpdateTagByID401JSONResponse Unauthorized
 
-func (response UpdateTagById401JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response UpdateTagByID401JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagById404JSONResponse NotFound
+type UpdateTagByID404JSONResponse NotFound
 
-func (response UpdateTagById404JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response UpdateTagByID404JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagById409JSONResponse AlreadyExists
+type UpdateTagByID409JSONResponse AlreadyExists
 
-func (response UpdateTagById409JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response UpdateTagByID409JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type UpdateTagById500JSONResponse InternalServerError
+type UpdateTagByID500JSONResponse InternalServerError
 
-func (response UpdateTagById500JSONResponse) VisitUpdateTagByIdResponse(w http.ResponseWriter) error {
+func (response UpdateTagByID500JSONResponse) VisitUpdateTagByIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetTagBySlugRequestObject struct {
-	Slug SlugParam `json:"slug"`
+type GetArticlesByTagIDRequestObject struct {
+	TagId  string `json:"tag_id"`
+	Params GetArticlesByTagIDParams
 }
 
-type GetTagBySlugResponseObject interface {
-	VisitGetTagBySlugResponse(w http.ResponseWriter) error
+type GetArticlesByTagIDResponseObject interface {
+	VisitGetArticlesByTagIDResponse(w http.ResponseWriter) error
 }
 
-type GetTagBySlug200JSONResponse Tag
+type GetArticlesByTagID200JSONResponse ArticleList
 
-func (response GetTagBySlug200JSONResponse) VisitGetTagBySlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByTagID200JSONResponse) VisitGetArticlesByTagIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetTagBySlug404JSONResponse NotFound
+type GetArticlesByTagID404JSONResponse NotFound
 
-func (response GetTagBySlug404JSONResponse) VisitGetTagBySlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByTagID404JSONResponse) VisitGetArticlesByTagIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(404)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetTagBySlug500JSONResponse InternalServerError
+type GetArticlesByTagID500JSONResponse InternalServerError
 
-func (response GetTagBySlug500JSONResponse) VisitGetTagBySlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(500)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByTagSlugRequestObject struct {
-	Slug   SlugParam `json:"slug"`
-	Params GetArticlesByTagSlugParams
-}
-
-type GetArticlesByTagSlugResponseObject interface {
-	VisitGetArticlesByTagSlugResponse(w http.ResponseWriter) error
-}
-
-type GetArticlesByTagSlug200JSONResponse ArticleList
-
-func (response GetArticlesByTagSlug200JSONResponse) VisitGetArticlesByTagSlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByTagSlug404JSONResponse NotFound
-
-func (response GetArticlesByTagSlug404JSONResponse) VisitGetArticlesByTagSlugResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetArticlesByTagSlug500JSONResponse InternalServerError
-
-func (response GetArticlesByTagSlug500JSONResponse) VisitGetArticlesByTagSlugResponse(w http.ResponseWriter) error {
+func (response GetArticlesByTagID500JSONResponse) VisitGetArticlesByTagIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -1912,20 +1912,20 @@ type StrictServerInterface interface {
 	// (GET /v1/articles/recent)
 	GetRecentArticles(ctx *gin.Context, request GetRecentArticlesRequestObject) (GetRecentArticlesResponseObject, error)
 	// 記事削除
-	// (DELETE /v1/articles/{id})
-	DeleteArticleById(ctx *gin.Context, request DeleteArticleByIdRequestObject) (DeleteArticleByIdResponseObject, error)
-	// 記事更新
-	// (PUT /v1/articles/{id})
-	UpdateArticleById(ctx *gin.Context, request UpdateArticleByIdRequestObject) (UpdateArticleByIdResponseObject, error)
-	// 記事公開
-	// (PATCH /v1/articles/{id}/publish)
-	PublishArticleById(ctx *gin.Context, request PublishArticleByIdRequestObject) (PublishArticleByIdResponseObject, error)
-	// 閲覧数更新
-	// (PATCH /v1/articles/{id}/views)
-	IncrementArticleViewCount(ctx *gin.Context, request IncrementArticleViewCountRequestObject) (IncrementArticleViewCountResponseObject, error)
+	// (DELETE /v1/articles/{article_id})
+	DeleteArticleByID(ctx *gin.Context, request DeleteArticleByIDRequestObject) (DeleteArticleByIDResponseObject, error)
 	// 記事詳細取得
-	// (GET /v1/articles/{slug})
-	GetArticleBySlug(ctx *gin.Context, request GetArticleBySlugRequestObject) (GetArticleBySlugResponseObject, error)
+	// (GET /v1/articles/{article_id})
+	GetArticleByID(ctx *gin.Context, request GetArticleByIDRequestObject) (GetArticleByIDResponseObject, error)
+	// 記事更新
+	// (PUT /v1/articles/{article_id})
+	UpdateArticleByID(ctx *gin.Context, request UpdateArticleByIDRequestObject) (UpdateArticleByIDResponseObject, error)
+	// 記事公開
+	// (PATCH /v1/articles/{article_id}/publish)
+	PublishArticleByID(ctx *gin.Context, request PublishArticleByIDRequestObject) (PublishArticleByIDResponseObject, error)
+	// 閲覧数更新
+	// (PATCH /v1/articles/{article_id}/views)
+	IncrementArticleViewCount(ctx *gin.Context, request IncrementArticleViewCountRequestObject) (IncrementArticleViewCountResponseObject, error)
 	// カテゴリ一覧取得
 	// (GET /v1/categories)
 	GetCategories(ctx *gin.Context, request GetCategoriesRequestObject) (GetCategoriesResponseObject, error)
@@ -1933,17 +1933,17 @@ type StrictServerInterface interface {
 	// (POST /v1/categories)
 	CreateCategory(ctx *gin.Context, request CreateCategoryRequestObject) (CreateCategoryResponseObject, error)
 	// カテゴリ削除
-	// (DELETE /v1/categories/{id})
-	DeleteCategoryById(ctx *gin.Context, request DeleteCategoryByIdRequestObject) (DeleteCategoryByIdResponseObject, error)
-	// カテゴリ更新
-	// (PUT /v1/categories/{id})
-	UpdateCategoryById(ctx *gin.Context, request UpdateCategoryByIdRequestObject) (UpdateCategoryByIdResponseObject, error)
+	// (DELETE /v1/categories/{category_id})
+	DeleteCategoryByID(ctx *gin.Context, request DeleteCategoryByIDRequestObject) (DeleteCategoryByIDResponseObject, error)
 	// カテゴリ詳細取得
-	// (GET /v1/categories/{slug})
-	GetCategoryBySlug(ctx *gin.Context, request GetCategoryBySlugRequestObject) (GetCategoryBySlugResponseObject, error)
+	// (GET /v1/categories/{category_id})
+	GetCategoryByID(ctx *gin.Context, request GetCategoryByIDRequestObject) (GetCategoryByIDResponseObject, error)
+	// カテゴリ更新
+	// (PUT /v1/categories/{category_id})
+	UpdateCategoryByID(ctx *gin.Context, request UpdateCategoryByIDRequestObject) (UpdateCategoryByIDResponseObject, error)
 	// カテゴリ別記事一覧取得
-	// (GET /v1/categories/{slug}/articles)
-	GetArticlesByCategorySlug(ctx *gin.Context, request GetArticlesByCategorySlugRequestObject) (GetArticlesByCategorySlugResponseObject, error)
+	// (GET /v1/categories/{category_id}/articles)
+	GetArticlesByCategoryID(ctx *gin.Context, request GetArticlesByCategoryIDRequestObject) (GetArticlesByCategoryIDResponseObject, error)
 	// ヘルスチェックAPI
 	// (GET /v1/health)
 	Healthcheck(ctx *gin.Context, request HealthcheckRequestObject) (HealthcheckResponseObject, error)
@@ -1957,17 +1957,17 @@ type StrictServerInterface interface {
 	// (POST /v1/tags)
 	CreateTag(ctx *gin.Context, request CreateTagRequestObject) (CreateTagResponseObject, error)
 	// タグ削除
-	// (DELETE /v1/tags/{id})
-	DeleteTagById(ctx *gin.Context, request DeleteTagByIdRequestObject) (DeleteTagByIdResponseObject, error)
-	// タグ更新
-	// (PUT /v1/tags/{id})
-	UpdateTagById(ctx *gin.Context, request UpdateTagByIdRequestObject) (UpdateTagByIdResponseObject, error)
+	// (DELETE /v1/tags/{tag_id})
+	DeleteTagByID(ctx *gin.Context, request DeleteTagByIDRequestObject) (DeleteTagByIDResponseObject, error)
 	// タグ詳細取得
-	// (GET /v1/tags/{slug})
-	GetTagBySlug(ctx *gin.Context, request GetTagBySlugRequestObject) (GetTagBySlugResponseObject, error)
+	// (GET /v1/tags/{tag_id})
+	GetTagByID(ctx *gin.Context, request GetTagByIDRequestObject) (GetTagByIDResponseObject, error)
+	// タグ更新
+	// (PUT /v1/tags/{tag_id})
+	UpdateTagByID(ctx *gin.Context, request UpdateTagByIDRequestObject) (UpdateTagByIDResponseObject, error)
 	// タグ別記事一覧取得
-	// (GET /v1/tags/{slug}/articles)
-	GetArticlesByTagSlug(ctx *gin.Context, request GetArticlesByTagSlugRequestObject) (GetArticlesByTagSlugResponseObject, error)
+	// (GET /v1/tags/{tag_id}/articles)
+	GetArticlesByTagID(ctx *gin.Context, request GetArticlesByTagIDRequestObject) (GetArticlesByTagIDResponseObject, error)
 }
 
 type StrictHandlerFunc = strictgin.StrictGinHandlerFunc
@@ -2125,17 +2125,17 @@ func (sh *strictHandler) GetRecentArticles(ctx *gin.Context, params GetRecentArt
 	}
 }
 
-// DeleteArticleById operation middleware
-func (sh *strictHandler) DeleteArticleById(ctx *gin.Context, id IdParam) {
-	var request DeleteArticleByIdRequestObject
+// DeleteArticleByID operation middleware
+func (sh *strictHandler) DeleteArticleByID(ctx *gin.Context, articleId string) {
+	var request DeleteArticleByIDRequestObject
 
-	request.Id = id
+	request.ArticleId = articleId
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteArticleById(ctx, request.(DeleteArticleByIdRequestObject))
+		return sh.ssi.DeleteArticleByID(ctx, request.(DeleteArticleByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteArticleById")
+		handler = middleware(handler, "DeleteArticleByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2143,8 +2143,8 @@ func (sh *strictHandler) DeleteArticleById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(DeleteArticleByIdResponseObject); ok {
-		if err := validResponse.VisitDeleteArticleByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(DeleteArticleByIDResponseObject); ok {
+		if err := validResponse.VisitDeleteArticleByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2152,13 +2152,40 @@ func (sh *strictHandler) DeleteArticleById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// UpdateArticleById operation middleware
-func (sh *strictHandler) UpdateArticleById(ctx *gin.Context, id IdParam) {
-	var request UpdateArticleByIdRequestObject
+// GetArticleByID operation middleware
+func (sh *strictHandler) GetArticleByID(ctx *gin.Context, articleId string) {
+	var request GetArticleByIDRequestObject
 
-	request.Id = id
+	request.ArticleId = articleId
 
-	var body UpdateArticleByIdJSONRequestBody
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetArticleByID(ctx, request.(GetArticleByIDRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetArticleByID")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		ctx.Error(err)
+		ctx.Status(http.StatusInternalServerError)
+	} else if validResponse, ok := response.(GetArticleByIDResponseObject); ok {
+		if err := validResponse.VisitGetArticleByIDResponse(ctx.Writer); err != nil {
+			ctx.Error(err)
+		}
+	} else if response != nil {
+		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateArticleByID operation middleware
+func (sh *strictHandler) UpdateArticleByID(ctx *gin.Context, articleId string) {
+	var request UpdateArticleByIDRequestObject
+
+	request.ArticleId = articleId
+
+	var body UpdateArticleByIDJSONRequestBody
 	if err := ctx.ShouldBind(&body); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		ctx.Error(err)
@@ -2167,10 +2194,10 @@ func (sh *strictHandler) UpdateArticleById(ctx *gin.Context, id IdParam) {
 	request.Body = &body
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateArticleById(ctx, request.(UpdateArticleByIdRequestObject))
+		return sh.ssi.UpdateArticleByID(ctx, request.(UpdateArticleByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateArticleById")
+		handler = middleware(handler, "UpdateArticleByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2178,8 +2205,8 @@ func (sh *strictHandler) UpdateArticleById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(UpdateArticleByIdResponseObject); ok {
-		if err := validResponse.VisitUpdateArticleByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(UpdateArticleByIDResponseObject); ok {
+		if err := validResponse.VisitUpdateArticleByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2187,17 +2214,17 @@ func (sh *strictHandler) UpdateArticleById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// PublishArticleById operation middleware
-func (sh *strictHandler) PublishArticleById(ctx *gin.Context, id IdParam) {
-	var request PublishArticleByIdRequestObject
+// PublishArticleByID operation middleware
+func (sh *strictHandler) PublishArticleByID(ctx *gin.Context, articleId string) {
+	var request PublishArticleByIDRequestObject
 
-	request.Id = id
+	request.ArticleId = articleId
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PublishArticleById(ctx, request.(PublishArticleByIdRequestObject))
+		return sh.ssi.PublishArticleByID(ctx, request.(PublishArticleByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PublishArticleById")
+		handler = middleware(handler, "PublishArticleByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2205,8 +2232,8 @@ func (sh *strictHandler) PublishArticleById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(PublishArticleByIdResponseObject); ok {
-		if err := validResponse.VisitPublishArticleByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(PublishArticleByIDResponseObject); ok {
+		if err := validResponse.VisitPublishArticleByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2215,10 +2242,10 @@ func (sh *strictHandler) PublishArticleById(ctx *gin.Context, id IdParam) {
 }
 
 // IncrementArticleViewCount operation middleware
-func (sh *strictHandler) IncrementArticleViewCount(ctx *gin.Context, id IdParam) {
+func (sh *strictHandler) IncrementArticleViewCount(ctx *gin.Context, articleId string) {
 	var request IncrementArticleViewCountRequestObject
 
-	request.Id = id
+	request.ArticleId = articleId
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
 		return sh.ssi.IncrementArticleViewCount(ctx, request.(IncrementArticleViewCountRequestObject))
@@ -2234,33 +2261,6 @@ func (sh *strictHandler) IncrementArticleViewCount(ctx *gin.Context, id IdParam)
 		ctx.Status(http.StatusInternalServerError)
 	} else if validResponse, ok := response.(IncrementArticleViewCountResponseObject); ok {
 		if err := validResponse.VisitIncrementArticleViewCountResponse(ctx.Writer); err != nil {
-			ctx.Error(err)
-		}
-	} else if response != nil {
-		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetArticleBySlug operation middleware
-func (sh *strictHandler) GetArticleBySlug(ctx *gin.Context, slug SlugParam) {
-	var request GetArticleBySlugRequestObject
-
-	request.Slug = slug
-
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetArticleBySlug(ctx, request.(GetArticleBySlugRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetArticleBySlug")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(GetArticleBySlugResponseObject); ok {
-		if err := validResponse.VisitGetArticleBySlugResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2326,17 +2326,17 @@ func (sh *strictHandler) CreateCategory(ctx *gin.Context) {
 	}
 }
 
-// DeleteCategoryById operation middleware
-func (sh *strictHandler) DeleteCategoryById(ctx *gin.Context, id IdParam) {
-	var request DeleteCategoryByIdRequestObject
+// DeleteCategoryByID operation middleware
+func (sh *strictHandler) DeleteCategoryByID(ctx *gin.Context, categoryId string) {
+	var request DeleteCategoryByIDRequestObject
 
-	request.Id = id
+	request.CategoryId = categoryId
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteCategoryById(ctx, request.(DeleteCategoryByIdRequestObject))
+		return sh.ssi.DeleteCategoryByID(ctx, request.(DeleteCategoryByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteCategoryById")
+		handler = middleware(handler, "DeleteCategoryByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2344,8 +2344,8 @@ func (sh *strictHandler) DeleteCategoryById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(DeleteCategoryByIdResponseObject); ok {
-		if err := validResponse.VisitDeleteCategoryByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(DeleteCategoryByIDResponseObject); ok {
+		if err := validResponse.VisitDeleteCategoryByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2353,13 +2353,40 @@ func (sh *strictHandler) DeleteCategoryById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// UpdateCategoryById operation middleware
-func (sh *strictHandler) UpdateCategoryById(ctx *gin.Context, id IdParam) {
-	var request UpdateCategoryByIdRequestObject
+// GetCategoryByID operation middleware
+func (sh *strictHandler) GetCategoryByID(ctx *gin.Context, categoryId string) {
+	var request GetCategoryByIDRequestObject
 
-	request.Id = id
+	request.CategoryId = categoryId
 
-	var body UpdateCategoryByIdJSONRequestBody
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetCategoryByID(ctx, request.(GetCategoryByIDRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetCategoryByID")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		ctx.Error(err)
+		ctx.Status(http.StatusInternalServerError)
+	} else if validResponse, ok := response.(GetCategoryByIDResponseObject); ok {
+		if err := validResponse.VisitGetCategoryByIDResponse(ctx.Writer); err != nil {
+			ctx.Error(err)
+		}
+	} else if response != nil {
+		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateCategoryByID operation middleware
+func (sh *strictHandler) UpdateCategoryByID(ctx *gin.Context, categoryId string) {
+	var request UpdateCategoryByIDRequestObject
+
+	request.CategoryId = categoryId
+
+	var body UpdateCategoryByIDJSONRequestBody
 	if err := ctx.ShouldBind(&body); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		ctx.Error(err)
@@ -2368,10 +2395,10 @@ func (sh *strictHandler) UpdateCategoryById(ctx *gin.Context, id IdParam) {
 	request.Body = &body
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateCategoryById(ctx, request.(UpdateCategoryByIdRequestObject))
+		return sh.ssi.UpdateCategoryByID(ctx, request.(UpdateCategoryByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateCategoryById")
+		handler = middleware(handler, "UpdateCategoryByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2379,8 +2406,8 @@ func (sh *strictHandler) UpdateCategoryById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(UpdateCategoryByIdResponseObject); ok {
-		if err := validResponse.VisitUpdateCategoryByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(UpdateCategoryByIDResponseObject); ok {
+		if err := validResponse.VisitUpdateCategoryByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2388,45 +2415,18 @@ func (sh *strictHandler) UpdateCategoryById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// GetCategoryBySlug operation middleware
-func (sh *strictHandler) GetCategoryBySlug(ctx *gin.Context, slug SlugParam) {
-	var request GetCategoryBySlugRequestObject
+// GetArticlesByCategoryID operation middleware
+func (sh *strictHandler) GetArticlesByCategoryID(ctx *gin.Context, categoryId string, params GetArticlesByCategoryIDParams) {
+	var request GetArticlesByCategoryIDRequestObject
 
-	request.Slug = slug
-
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetCategoryBySlug(ctx, request.(GetCategoryBySlugRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetCategoryBySlug")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(GetCategoryBySlugResponseObject); ok {
-		if err := validResponse.VisitGetCategoryBySlugResponse(ctx.Writer); err != nil {
-			ctx.Error(err)
-		}
-	} else if response != nil {
-		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetArticlesByCategorySlug operation middleware
-func (sh *strictHandler) GetArticlesByCategorySlug(ctx *gin.Context, slug SlugParam, params GetArticlesByCategorySlugParams) {
-	var request GetArticlesByCategorySlugRequestObject
-
-	request.Slug = slug
+	request.CategoryId = categoryId
 	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetArticlesByCategorySlug(ctx, request.(GetArticlesByCategorySlugRequestObject))
+		return sh.ssi.GetArticlesByCategoryID(ctx, request.(GetArticlesByCategoryIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetArticlesByCategorySlug")
+		handler = middleware(handler, "GetArticlesByCategoryID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2434,8 +2434,8 @@ func (sh *strictHandler) GetArticlesByCategorySlug(ctx *gin.Context, slug SlugPa
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(GetArticlesByCategorySlugResponseObject); ok {
-		if err := validResponse.VisitGetArticlesByCategorySlugResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(GetArticlesByCategoryIDResponseObject); ok {
+		if err := validResponse.VisitGetArticlesByCategoryIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2553,17 +2553,17 @@ func (sh *strictHandler) CreateTag(ctx *gin.Context) {
 	}
 }
 
-// DeleteTagById operation middleware
-func (sh *strictHandler) DeleteTagById(ctx *gin.Context, id IdParam) {
-	var request DeleteTagByIdRequestObject
+// DeleteTagByID operation middleware
+func (sh *strictHandler) DeleteTagByID(ctx *gin.Context, tagId string) {
+	var request DeleteTagByIDRequestObject
 
-	request.Id = id
+	request.TagId = tagId
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteTagById(ctx, request.(DeleteTagByIdRequestObject))
+		return sh.ssi.DeleteTagByID(ctx, request.(DeleteTagByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteTagById")
+		handler = middleware(handler, "DeleteTagByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2571,8 +2571,8 @@ func (sh *strictHandler) DeleteTagById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(DeleteTagByIdResponseObject); ok {
-		if err := validResponse.VisitDeleteTagByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(DeleteTagByIDResponseObject); ok {
+		if err := validResponse.VisitDeleteTagByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2580,13 +2580,40 @@ func (sh *strictHandler) DeleteTagById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// UpdateTagById operation middleware
-func (sh *strictHandler) UpdateTagById(ctx *gin.Context, id IdParam) {
-	var request UpdateTagByIdRequestObject
+// GetTagByID operation middleware
+func (sh *strictHandler) GetTagByID(ctx *gin.Context, tagId string) {
+	var request GetTagByIDRequestObject
 
-	request.Id = id
+	request.TagId = tagId
 
-	var body UpdateTagByIdJSONRequestBody
+	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
+		return sh.ssi.GetTagByID(ctx, request.(GetTagByIDRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "GetTagByID")
+	}
+
+	response, err := handler(ctx, request)
+
+	if err != nil {
+		ctx.Error(err)
+		ctx.Status(http.StatusInternalServerError)
+	} else if validResponse, ok := response.(GetTagByIDResponseObject); ok {
+		if err := validResponse.VisitGetTagByIDResponse(ctx.Writer); err != nil {
+			ctx.Error(err)
+		}
+	} else if response != nil {
+		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// UpdateTagByID operation middleware
+func (sh *strictHandler) UpdateTagByID(ctx *gin.Context, tagId string) {
+	var request UpdateTagByIDRequestObject
+
+	request.TagId = tagId
+
+	var body UpdateTagByIDJSONRequestBody
 	if err := ctx.ShouldBind(&body); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		ctx.Error(err)
@@ -2595,10 +2622,10 @@ func (sh *strictHandler) UpdateTagById(ctx *gin.Context, id IdParam) {
 	request.Body = &body
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.UpdateTagById(ctx, request.(UpdateTagByIdRequestObject))
+		return sh.ssi.UpdateTagByID(ctx, request.(UpdateTagByIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "UpdateTagById")
+		handler = middleware(handler, "UpdateTagByID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2606,8 +2633,8 @@ func (sh *strictHandler) UpdateTagById(ctx *gin.Context, id IdParam) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(UpdateTagByIdResponseObject); ok {
-		if err := validResponse.VisitUpdateTagByIdResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(UpdateTagByIDResponseObject); ok {
+		if err := validResponse.VisitUpdateTagByIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -2615,45 +2642,18 @@ func (sh *strictHandler) UpdateTagById(ctx *gin.Context, id IdParam) {
 	}
 }
 
-// GetTagBySlug operation middleware
-func (sh *strictHandler) GetTagBySlug(ctx *gin.Context, slug SlugParam) {
-	var request GetTagBySlugRequestObject
+// GetArticlesByTagID operation middleware
+func (sh *strictHandler) GetArticlesByTagID(ctx *gin.Context, tagId string, params GetArticlesByTagIDParams) {
+	var request GetArticlesByTagIDRequestObject
 
-	request.Slug = slug
-
-	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetTagBySlug(ctx, request.(GetTagBySlugRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetTagBySlug")
-	}
-
-	response, err := handler(ctx, request)
-
-	if err != nil {
-		ctx.Error(err)
-		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(GetTagBySlugResponseObject); ok {
-		if err := validResponse.VisitGetTagBySlugResponse(ctx.Writer); err != nil {
-			ctx.Error(err)
-		}
-	} else if response != nil {
-		ctx.Error(fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetArticlesByTagSlug operation middleware
-func (sh *strictHandler) GetArticlesByTagSlug(ctx *gin.Context, slug SlugParam, params GetArticlesByTagSlugParams) {
-	var request GetArticlesByTagSlugRequestObject
-
-	request.Slug = slug
+	request.TagId = tagId
 	request.Params = params
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetArticlesByTagSlug(ctx, request.(GetArticlesByTagSlugRequestObject))
+		return sh.ssi.GetArticlesByTagID(ctx, request.(GetArticlesByTagIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetArticlesByTagSlug")
+		handler = middleware(handler, "GetArticlesByTagID")
 	}
 
 	response, err := handler(ctx, request)
@@ -2661,8 +2661,8 @@ func (sh *strictHandler) GetArticlesByTagSlug(ctx *gin.Context, slug SlugParam, 
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(GetArticlesByTagSlugResponseObject); ok {
-		if err := validResponse.VisitGetArticlesByTagSlugResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(GetArticlesByTagIDResponseObject); ok {
+		if err := validResponse.VisitGetArticlesByTagIDResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
