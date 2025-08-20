@@ -6,22 +6,22 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetArticleBySlugUseCase handles getting article by slug
-type GetArticleBySlugUseCase interface {
-	GetArticleBySlug(ctx context.Context, slug string) (*gen.Article, error)
+// GetArticleByIDUseCase handles getting article by ID
+type GetArticleByIDUseCase interface {
+	GetArticleByID(ctx context.Context, articleID string) (*gen.Article, error)
 }
 
-type getArticleBySlugUseCase struct {
+type getArticleByIDUseCase struct {
 	// repository層は未実装のため、今回は空
 }
 
-// NewGetArticleBySlugUseCase creates a new get article by slug usecase
-func NewGetArticleBySlugUseCase() GetArticleBySlugUseCase {
-	return &getArticleBySlugUseCase{}
+// NewGetArticleByIDUseCase creates a new get article by ID usecase
+func NewGetArticleByIDUseCase() GetArticleByIDUseCase {
+	return &getArticleByIDUseCase{}
 }
 
-// GetArticleBySlug implements GetArticleBySlugUseCase
-func (u *getArticleBySlugUseCase) GetArticleBySlug(ctx context.Context, slug string) (*gen.Article, error) {
+// GetArticleByID implements GetArticleByIDUseCase
+func (u *getArticleByIDUseCase) GetArticleByID(ctx context.Context, articleID string) (*gen.Article, error) {
 	// TODO: 実装予定
 	return &gen.Article{}, nil
 }
