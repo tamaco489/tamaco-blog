@@ -1,0 +1,23 @@
+title: InternalServerError
+type: object
+description: サーバー内部エラーが発生した場合のエラーレスポンス
+required:
+  - code
+  - message
+properties:
+  code:
+    type: string
+    description: エラーコード
+    example: "INTERNAL_SERVER_ERROR"
+  message:
+    type: string
+    description: エラーメッセージ
+    example: "サーバー内部でエラーが発生しました"
+  request_id:
+    type: string
+    description: リクエストID（トレーシング用）
+    example: "req-123456789"
+example:
+  code: "INTERNAL_SERVER_ERROR"
+  message: "サーバー内部でエラーが発生しました"
+  request_id: "req-123456789"

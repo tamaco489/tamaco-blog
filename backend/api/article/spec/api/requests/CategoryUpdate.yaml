@@ -1,0 +1,25 @@
+title: CategoryUpdateRequest
+type: object
+description: カテゴリ更新リクエスト
+properties:
+  name:
+    type: string
+    description: カテゴリ名
+    minLength: 1
+    maxLength: 100
+    example: "バックエンド開発（更新）"
+  slug:
+    type: string
+    description: URL用の識別子
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    example: "backend-development-updated"
+  description:
+    type: string
+    description: カテゴリの説明
+    maxLength: 500
+    example: "バックエンド開発に関する技術記事（更新）"
+  display_order:
+    type: integer
+    description: 表示順
+    minimum: 0
+    example: 2

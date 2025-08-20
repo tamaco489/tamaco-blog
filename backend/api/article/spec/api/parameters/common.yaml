@@ -1,0 +1,83 @@
+IdParam:
+  name: id
+  in: path
+  description: リソースのID（UUID）
+  required: true
+  schema:
+    type: string
+    format: uuid
+  example: "550e8400-e29b-41d4-a716-446655440000"
+
+SlugParam:
+  name: slug
+  in: path
+  description: URL用の識別子
+  required: true
+  schema:
+    type: string
+    pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+  example: "how-to-build-restful-api"
+
+StatusParam:
+  name: status
+  in: query
+  description: 記事の公開状態でフィルタリング
+  required: false
+  schema:
+    type: string
+    enum:
+      - draft
+      - published
+      - private
+  example: published
+
+CategoryParam:
+  name: category
+  in: query
+  description: カテゴリスラッグでフィルタリング
+  required: false
+  schema:
+    type: string
+  example: "backend-development"
+
+TagParam:
+  name: tag
+  in: query
+  description: タグスラッグでフィルタリング
+  required: false
+  schema:
+    type: string
+  example: "golang"
+
+SearchParam:
+  name: q
+  in: query
+  description: 検索キーワード
+  required: false
+  schema:
+    type: string
+    minLength: 1
+    maxLength: 100
+  example: "RESTful API"
+
+YearParam:
+  name: year
+  in: path
+  description: 年（YYYY形式）
+  required: true
+  schema:
+    type: integer
+    minimum: 2020
+    maximum: 2100
+  example: 2024
+
+MonthParam:
+  name: month
+  in: path
+  description: 月（1-12）
+  required: true
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 12
+  example: 1

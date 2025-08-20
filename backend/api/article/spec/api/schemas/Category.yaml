@@ -1,0 +1,49 @@
+title: Category
+type: object
+description: 記事カテゴリのデータモデル
+required:
+  - id
+  - name
+  - slug
+properties:
+  id:
+    type: string
+    format: uuid
+    description: カテゴリの一意識別子
+    example: "123e4567-e89b-12d3-a456-426614174000"
+  name:
+    type: string
+    description: カテゴリ名
+    minLength: 1
+    maxLength: 100
+    example: "バックエンド開発"
+  slug:
+    type: string
+    description: URL用の識別子
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    example: "backend-development"
+  description:
+    type: string
+    description: カテゴリの説明
+    maxLength: 500
+    example: "バックエンド開発に関する技術記事"
+  display_order:
+    type: integer
+    description: 表示順
+    minimum: 0
+    example: 1
+  article_count:
+    type: integer
+    description: このカテゴリの記事数
+    minimum: 0
+    example: 42
+  created_at:
+    type: string
+    format: date-time
+    description: 作成日時
+    example: "2024-01-01T09:00:00Z"
+  updated_at:
+    type: string
+    format: date-time
+    description: 更新日時
+    example: "2024-01-02T10:30:00Z"
