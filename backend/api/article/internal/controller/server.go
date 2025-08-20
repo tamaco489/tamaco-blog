@@ -81,7 +81,6 @@ func (s *ServerController) Healthcheck(c *gin.Context) {
 	s.healthcheckCtrl.Healthcheck(c)
 }
 
-// Stub implementations for other endpoints (TODO: implement)
 func (s *ServerController) GetArticlesByMonth(c *gin.Context, year gen.YearParam, month gen.MonthParam, params gen.GetArticlesByMonthParams) {
 	// TODO: implement
 }
