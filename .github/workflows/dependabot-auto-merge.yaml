@@ -22,10 +22,10 @@ jobs:
         id: detect-changes
         run: |
           if [[ "${{ github.event.pull_request.title }}" == *"frontend"* ]] || \
-             [[ "${{ contains(github.event.pull_request.changed_files, 'frontend/') }}" == "true" ]]; then
+            [[ "${{ contains(github.event.pull_request.changed_files, 'frontend/') }}" == "true" ]]; then
             echo "type=frontend" >> $GITHUB_OUTPUT
           elif [[ "${{ github.event.pull_request.title }}" == *"backend"* ]] || \
-               [[ "${{ contains(github.event.pull_request.changed_files, 'backend/') }}" == "true" ]]; then
+              [[ "${{ contains(github.event.pull_request.changed_files, 'backend/') }}" == "true" ]]; then
             echo "type=backend" >> $GITHUB_OUTPUT
           else
             echo "type=other" >> $GITHUB_OUTPUT
