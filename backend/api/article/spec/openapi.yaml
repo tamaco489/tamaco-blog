@@ -34,6 +34,809 @@ paths:
               schema:
                 $ref: '#/components/schemas/HealthCheck'
       security: []
+  /v1/articles:
+    get:
+      tags:
+        - articles
+      summary: 記事一覧取得
+      description: |
+        記事の一覧を取得します。
+        ページネーション、フィルタリング、ソートに対応しています。
+      operationId: getArticles
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+        - $ref: '#/components/parameters/StatusParam'
+        - $ref: '#/components/parameters/CategoryParam'
+        - $ref: '#/components/parameters/TagParam'
+        - $ref: '#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: 記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+    post:
+      tags:
+        - articles
+      summary: 記事作成
+      description: 新しい記事を作成します。認証が必要です。
+      operationId: createArticle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleCreate'
+      responses:
+        '201':
+          description: 記事の作成に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '409':
+          description: 同じスラッグの記事が既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/articles/{slug}:
+    get:
+      tags:
+        - articles
+      summary: 記事詳細取得
+      description: スラッグを指定して記事の詳細を取得します。
+      operationId: getArticleBySlug
+      parameters:
+        - $ref: '#/components/parameters/SlugParam'
+      responses:
+        '200':
+          description: 記事詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '404':
+          description: 記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/articles/{id}:
+    put:
+      tags:
+        - articles
+      summary: 記事更新
+      description: IDを指定して記事を更新します。認証が必要です。
+      operationId: updateArticleById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleUpdate'
+      responses:
+        '200':
+          description: 記事の更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: 記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '409':
+          description: 同じスラッグの記事が既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - articles
+      summary: 記事削除
+      description: IDを指定して記事を削除します。認証が必要です。
+      operationId: deleteArticleById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: 記事の削除に成功
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: 記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/articles/{id}/publish:
+    patch:
+      tags:
+        - articles
+      summary: 記事公開
+      description: IDを指定して記事を公開状態にします。認証が必要です。
+      operationId: publishArticleById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: 記事の公開に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: 記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/articles/{id}/views:
+    patch:
+      tags:
+        - articles
+      summary: 閲覧数更新
+      description: IDを指定して記事の閲覧数を更新します。
+      operationId: incrementArticleViewCount
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: 閲覧数の更新に成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  view_count:
+                    type: integer
+                    description: 更新後の閲覧数
+                    example: 1235
+        '404':
+          description: 記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/articles/popular:
+    get:
+      tags:
+        - articles
+      summary: 人気記事一覧取得
+      description: 閲覧数の多い記事一覧を取得します。
+      operationId: getPopularArticles
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        '200':
+          description: 人気記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/articles/recent:
+    get:
+      tags:
+        - articles
+      summary: 最新記事一覧取得
+      description: 最新の記事一覧を取得します。
+      operationId: getRecentArticles
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        '200':
+          description: 最新記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/articles/archive/{year}/{month}:
+    get:
+      tags:
+        - articles
+      summary: 月別アーカイブ取得
+      description: 指定された年月の記事一覧を取得します。
+      operationId: getArticlesByMonth
+      parameters:
+        - $ref: '#/components/parameters/YearParam'
+        - $ref: '#/components/parameters/MonthParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+      responses:
+        '200':
+          description: 月別記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/categories:
+    get:
+      tags:
+        - categories
+      summary: カテゴリ一覧取得
+      description: すべてのカテゴリの一覧を取得します。
+      operationId: getCategories
+      responses:
+        '200':
+          description: カテゴリ一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+    post:
+      tags:
+        - categories
+      summary: カテゴリ作成
+      description: 新しいカテゴリを作成します。認証が必要です。
+      operationId: createCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryCreate'
+      responses:
+        '201':
+          description: カテゴリの作成に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '409':
+          description: 同じスラッグのカテゴリが既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/categories/{slug}:
+    get:
+      tags:
+        - categories
+      summary: カテゴリ詳細取得
+      description: スラッグを指定してカテゴリの詳細を取得します。
+      operationId: getCategoryBySlug
+      parameters:
+        - $ref: '#/components/parameters/SlugParam'
+      responses:
+        '200':
+          description: カテゴリ詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: カテゴリが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/categories/{slug}/articles:
+    get:
+      tags:
+        - categories
+      summary: カテゴリ別記事一覧取得
+      description: 指定されたカテゴリの記事一覧を取得します。
+      operationId: getArticlesByCategorySlug
+      parameters:
+        - $ref: '#/components/parameters/SlugParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+      responses:
+        '200':
+          description: カテゴリ別記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '404':
+          description: カテゴリが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/categories/{id}:
+    put:
+      tags:
+        - categories
+      summary: カテゴリ更新
+      description: IDを指定してカテゴリを更新します。認証が必要です。
+      operationId: updateCategoryById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdate'
+      responses:
+        '200':
+          description: カテゴリの更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: カテゴリが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '409':
+          description: 同じスラッグのカテゴリが既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - categories
+      summary: カテゴリ削除
+      description: IDを指定してカテゴリを削除します。認証が必要です。
+      operationId: deleteCategoryById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: カテゴリの削除に成功
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: カテゴリが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/tags:
+    get:
+      tags:
+        - tags
+      summary: タグ一覧取得
+      description: すべてのタグの一覧を取得します。
+      operationId: getTags
+      responses:
+        '200':
+          description: タグ一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagList'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+    post:
+      tags:
+        - tags
+      summary: タグ作成
+      description: 新しいタグを作成します。認証が必要です。
+      operationId: createTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreate'
+      responses:
+        '201':
+          description: タグの作成に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '409':
+          description: 同じスラッグのタグが既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/tags/{slug}:
+    get:
+      tags:
+        - tags
+      summary: タグ詳細取得
+      description: スラッグを指定してタグの詳細を取得します。
+      operationId: getTagBySlug
+      parameters:
+        - $ref: '#/components/parameters/SlugParam'
+      responses:
+        '200':
+          description: タグ詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '404':
+          description: タグが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/tags/{slug}/articles:
+    get:
+      tags:
+        - tags
+      summary: タグ別記事一覧取得
+      description: 指定されたタグの記事一覧を取得します。
+      operationId: getArticlesByTagSlug
+      parameters:
+        - $ref: '#/components/parameters/SlugParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+      responses:
+        '200':
+          description: タグ別記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '404':
+          description: タグが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
+  /v1/tags/{id}:
+    put:
+      tags:
+        - tags
+      summary: タグ更新
+      description: IDを指定してタグを更新します。認証が必要です。
+      operationId: updateTagById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagUpdate'
+      responses:
+        '200':
+          description: タグの更新に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: タグが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '409':
+          description: 同じスラッグのタグが既に存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlreadyExists'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - tags
+      summary: タグ削除
+      description: IDを指定してタグを削除します。認証が必要です。
+      operationId: deleteTagById
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: タグの削除に成功
+        '401':
+          description: 認証が必要
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '404':
+          description: タグが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /v1/search:
+    get:
+      tags:
+        - search
+      summary: 記事検索
+      description: |
+        キーワードを指定して記事を検索します。
+        タイトル、内容、要約を対象に検索を行います。
+      operationId: searchArticles
+      parameters:
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+        - $ref: '#/components/parameters/StatusParam'
+        - $ref: '#/components/parameters/CategoryParam'
+        - $ref: '#/components/parameters/TagParam'
+      responses:
+        '200':
+          description: 検索結果の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '400':
+          description: リクエストパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
 components:
   securitySchemes:
     bearerAuth:
@@ -53,3 +856,818 @@ components:
           type: string
       example:
         message: ok
+    Category:
+      title: Category
+      type: object
+      description: 記事カテゴリのデータモデル
+      required:
+        - id
+        - name
+        - slug
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: カテゴリの一意識別子
+          example: 123e4567-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          description: カテゴリ名
+          minLength: 1
+          maxLength: 100
+          example: バックエンド開発
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: backend-development
+        description:
+          type: string
+          description: カテゴリの説明
+          maxLength: 500
+          example: バックエンド開発に関する技術記事
+        display_order:
+          type: integer
+          description: 表示順
+          minimum: 0
+          example: 1
+        article_count:
+          type: integer
+          description: このカテゴリの記事数
+          minimum: 0
+          example: 42
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: '2024-01-01T09:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: '2024-01-02T10:30:00Z'
+    Tag:
+      title: Tag
+      type: object
+      description: 記事タグのデータモデル
+      required:
+        - id
+        - name
+        - slug
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: タグの一意識別子
+          example: 456e7890-e89b-12d3-a456-426614174000
+        name:
+          type: string
+          description: タグ名
+          minLength: 1
+          maxLength: 50
+          example: Go
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: golang
+        usage_count:
+          type: integer
+          description: タグが使用されている記事数
+          minimum: 0
+          example: 15
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: '2024-01-01T09:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: '2024-01-02T10:30:00Z'
+    Article:
+      title: Article
+      type: object
+      description: ブログ記事のデータモデル
+      required:
+        - id
+        - title
+        - content
+        - slug
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: 記事の一意識別子
+          example: 550e8400-e29b-41d4-a716-446655440000
+        title:
+          type: string
+          description: 記事のタイトル
+          minLength: 1
+          maxLength: 200
+          example: GoでRESTful APIを構築する方法
+        content:
+          type: string
+          description: Markdown形式の記事本文
+          example: |-
+            # はじめに
+
+            この記事では...
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: how-to-build-restful-api-with-go
+        summary:
+          type: string
+          description: 記事の要約（SEO用）
+          maxLength: 500
+          example: Go言語を使用したRESTful APIの構築方法について解説します
+        status:
+          type: string
+          description: 記事の公開状態
+          enum:
+            - draft
+            - published
+            - private
+          example: published
+        category_id:
+          type: string
+          format: uuid
+          description: カテゴリID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        category:
+          $ref: '#/components/schemas/Category'
+        tags:
+          type: array
+          description: 記事に付与されたタグ
+          items:
+            $ref: '#/components/schemas/Tag'
+        view_count:
+          type: integer
+          description: 閲覧数
+          minimum: 0
+          example: 1234
+        published_at:
+          type: string
+          format: date-time
+          description: 公開日時
+          example: '2024-01-01T09:00:00Z'
+        created_at:
+          type: string
+          format: date-time
+          description: 作成日時
+          example: '2024-01-01T09:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          description: 更新日時
+          example: '2024-01-02T10:30:00Z'
+        seo_metadata:
+          type: object
+          description: SEOメタデータ
+          properties:
+            description:
+              type: string
+              description: メタディスクリプション
+              maxLength: 160
+            keywords:
+              type: array
+              description: キーワード
+              items:
+                type: string
+            og_image:
+              type: string
+              description: OGP画像URL
+              format: uri
+    ArticleList:
+      title: ArticleListResponse
+      type: object
+      description: 記事一覧レスポンス
+      required:
+        - articles
+        - pagination
+      properties:
+        articles:
+          type: array
+          description: 記事のリスト
+          items:
+            $ref: '#/components/schemas/Article'
+        pagination:
+          type: object
+          description: ページネーション情報
+          required:
+            - current_page
+            - total_pages
+            - total_count
+            - page_size
+          properties:
+            current_page:
+              type: integer
+              description: 現在のページ番号
+              minimum: 1
+              example: 1
+            total_pages:
+              type: integer
+              description: 総ページ数
+              minimum: 0
+              example: 5
+            total_count:
+              type: integer
+              description: 総件数
+              minimum: 0
+              example: 100
+            page_size:
+              type: integer
+              description: 1ページあたりの件数
+              minimum: 1
+              example: 20
+            has_next:
+              type: boolean
+              description: 次のページがあるかどうか
+              example: true
+            has_prev:
+              type: boolean
+              description: 前のページがあるかどうか
+              example: false
+      example:
+        articles:
+          - id: 550e8400-e29b-41d4-a716-446655440000
+            title: GoでRESTful APIを構築する方法
+            slug: how-to-build-restful-api-with-go
+            summary: Go言語を使用したRESTful APIの構築方法について解説します
+            status: published
+            view_count: 1234
+            published_at: '2024-01-01T09:00:00Z'
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+        pagination:
+          current_page: 1
+          total_pages: 5
+          total_count: 100
+          page_size: 20
+          has_next: true
+          has_prev: false
+    BadRequest:
+      title: BadRequest
+      type: object
+      description: リクエストが不正な場合のエラーレスポンス
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: BAD_REQUEST
+        message:
+          type: string
+          description: エラーメッセージ
+          example: リクエストパラメータが不正です
+        details:
+          type: array
+          description: エラーの詳細情報
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                description: エラーが発生したフィールド名
+              reason:
+                type: string
+                description: エラーの理由
+      example:
+        code: BAD_REQUEST
+        message: リクエストパラメータが不正です
+        details:
+          - field: title
+            reason: タイトルは必須です
+          - field: content
+            reason: コンテンツは必須です
+    InternalServerError:
+      title: InternalServerError
+      type: object
+      description: サーバー内部エラーが発生した場合のエラーレスポンス
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: INTERNAL_SERVER_ERROR
+        message:
+          type: string
+          description: エラーメッセージ
+          example: サーバー内部でエラーが発生しました
+        request_id:
+          type: string
+          description: リクエストID（トレーシング用）
+          example: req-123456789
+      example:
+        code: INTERNAL_SERVER_ERROR
+        message: サーバー内部でエラーが発生しました
+        request_id: req-123456789
+    ArticleCreate:
+      title: ArticleCreateRequest
+      type: object
+      description: 記事作成リクエスト
+      required:
+        - title
+        - content
+        - slug
+        - status
+      properties:
+        title:
+          type: string
+          description: 記事のタイトル
+          minLength: 1
+          maxLength: 200
+          example: GoでRESTful APIを構築する方法
+        content:
+          type: string
+          description: Markdown形式の記事本文
+          minLength: 1
+          example: |-
+            # はじめに
+
+            この記事では...
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: how-to-build-restful-api-with-go
+        summary:
+          type: string
+          description: 記事の要約（SEO用）
+          maxLength: 500
+          example: Go言語を使用したRESTful APIの構築方法について解説します
+        status:
+          type: string
+          description: 記事の公開状態
+          enum:
+            - draft
+            - published
+            - private
+          example: draft
+        category_id:
+          type: string
+          format: uuid
+          description: カテゴリID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        tag_ids:
+          type: array
+          description: タグIDのリスト
+          items:
+            type: string
+            format: uuid
+          example:
+            - 456e7890-e89b-12d3-a456-426614174000
+            - 789e0123-e89b-12d3-a456-426614174000
+        published_at:
+          type: string
+          format: date-time
+          description: 公開日時（予約投稿用）
+          example: '2024-01-01T09:00:00Z'
+        seo_metadata:
+          type: object
+          description: SEOメタデータ
+          properties:
+            description:
+              type: string
+              description: メタディスクリプション
+              maxLength: 160
+            keywords:
+              type: array
+              description: キーワード
+              items:
+                type: string
+            og_image:
+              type: string
+              description: OGP画像URL
+              format: uri
+    Unauthorized:
+      title: Unauthorized
+      type: object
+      description: 認証が必要な場合のエラーレスポンス
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: UNAUTHORIZED
+        message:
+          type: string
+          description: エラーメッセージ
+          example: 認証が必要です
+      example:
+        code: UNAUTHORIZED
+        message: 認証が必要です
+    AlreadyExists:
+      title: AlreadyExists
+      type: object
+      description: リソースが既に存在する場合のエラーレスポンス
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: ALREADY_EXISTS
+        message:
+          type: string
+          description: エラーメッセージ
+          example: 指定されたリソースは既に存在します
+        resource:
+          type: string
+          description: 既に存在するリソースの種類
+          example: article
+        identifier:
+          type: string
+          description: 重複したリソースの識別子
+          example: how-to-use-golang
+      example:
+        code: ALREADY_EXISTS
+        message: 指定されたリソースは既に存在します
+        resource: article
+        identifier: how-to-use-golang
+    NotFound:
+      title: NotFound
+      type: object
+      description: リソースが見つからない場合のエラーレスポンス
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: エラーコード
+          example: NOT_FOUND
+        message:
+          type: string
+          description: エラーメッセージ
+          example: 指定されたリソースが見つかりません
+        resource:
+          type: string
+          description: 見つからなかったリソースの種類
+          example: article
+      example:
+        code: NOT_FOUND
+        message: 指定されたリソースが見つかりません
+        resource: article
+    ArticleUpdate:
+      title: ArticleUpdateRequest
+      type: object
+      description: 記事更新リクエスト
+      properties:
+        title:
+          type: string
+          description: 記事のタイトル
+          minLength: 1
+          maxLength: 200
+          example: GoでRESTful APIを構築する方法（改訂版）
+        content:
+          type: string
+          description: Markdown形式の記事本文
+          minLength: 1
+          example: |-
+            # はじめに
+
+            この記事では...
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: how-to-build-restful-api-with-go-revised
+        summary:
+          type: string
+          description: 記事の要約（SEO用）
+          maxLength: 500
+          example: Go言語を使用したRESTful APIの構築方法について解説します（改訂版）
+        status:
+          type: string
+          description: 記事の公開状態
+          enum:
+            - draft
+            - published
+            - private
+          example: published
+        category_id:
+          type: string
+          format: uuid
+          description: カテゴリID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        tag_ids:
+          type: array
+          description: タグIDのリスト
+          items:
+            type: string
+            format: uuid
+          example:
+            - 456e7890-e89b-12d3-a456-426614174000
+            - 789e0123-e89b-12d3-a456-426614174000
+        published_at:
+          type: string
+          format: date-time
+          description: 公開日時
+          example: '2024-01-01T09:00:00Z'
+        seo_metadata:
+          type: object
+          description: SEOメタデータ
+          properties:
+            description:
+              type: string
+              description: メタディスクリプション
+              maxLength: 160
+            keywords:
+              type: array
+              description: キーワード
+              items:
+                type: string
+            og_image:
+              type: string
+              description: OGP画像URL
+              format: uri
+    CategoryList:
+      title: CategoryListResponse
+      type: object
+      description: カテゴリ一覧レスポンス
+      required:
+        - categories
+      properties:
+        categories:
+          type: array
+          description: カテゴリのリスト
+          items:
+            $ref: '#/components/schemas/Category'
+      example:
+        categories:
+          - id: 123e4567-e89b-12d3-a456-426614174000
+            name: バックエンド開発
+            slug: backend-development
+            description: バックエンド開発に関する技術記事
+            display_order: 1
+            article_count: 42
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+          - id: 234e5678-e89b-12d3-a456-426614174000
+            name: フロントエンド開発
+            slug: frontend-development
+            description: フロントエンド開発に関する技術記事
+            display_order: 2
+            article_count: 38
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+    CategoryCreate:
+      title: CategoryCreateRequest
+      type: object
+      description: カテゴリ作成リクエスト
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          description: カテゴリ名
+          minLength: 1
+          maxLength: 100
+          example: バックエンド開発
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: backend-development
+        description:
+          type: string
+          description: カテゴリの説明
+          maxLength: 500
+          example: バックエンド開発に関する技術記事
+        display_order:
+          type: integer
+          description: 表示順
+          minimum: 0
+          example: 1
+    CategoryUpdate:
+      title: CategoryUpdateRequest
+      type: object
+      description: カテゴリ更新リクエスト
+      properties:
+        name:
+          type: string
+          description: カテゴリ名
+          minLength: 1
+          maxLength: 100
+          example: バックエンド開発（更新）
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: backend-development-updated
+        description:
+          type: string
+          description: カテゴリの説明
+          maxLength: 500
+          example: バックエンド開発に関する技術記事（更新）
+        display_order:
+          type: integer
+          description: 表示順
+          minimum: 0
+          example: 2
+    TagList:
+      title: TagListResponse
+      type: object
+      description: タグ一覧レスポンス
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          description: タグのリスト
+          items:
+            $ref: '#/components/schemas/Tag'
+      example:
+        tags:
+          - id: 456e7890-e89b-12d3-a456-426614174000
+            name: Go
+            slug: golang
+            usage_count: 15
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+          - id: 567e8901-e89b-12d3-a456-426614174000
+            name: Docker
+            slug: docker
+            usage_count: 12
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+          - id: 678e9012-e89b-12d3-a456-426614174000
+            name: Kubernetes
+            slug: kubernetes
+            usage_count: 8
+            created_at: '2024-01-01T09:00:00Z'
+            updated_at: '2024-01-02T10:30:00Z'
+    TagCreate:
+      title: TagCreateRequest
+      type: object
+      description: タグ作成リクエスト
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          description: タグ名
+          minLength: 1
+          maxLength: 50
+          example: Go
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: golang
+    TagUpdate:
+      title: TagUpdateRequest
+      type: object
+      description: タグ更新リクエスト
+      properties:
+        name:
+          type: string
+          description: タグ名
+          minLength: 1
+          maxLength: 50
+          example: Go言語
+        slug:
+          type: string
+          description: URL用の識別子
+          pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+          example: go-lang
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: ページ番号
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      example: 1
+    PageSizeParam:
+      name: page_size
+      in: query
+      description: 1ページあたりの取得件数
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      example: 20
+    SortParam:
+      name: sort
+      in: query
+      description: ソート項目
+      required: false
+      schema:
+        type: string
+        enum:
+          - created_at
+          - updated_at
+          - view_count
+          - published_at
+        default: created_at
+      example: created_at
+    OrderParam:
+      name: order
+      in: query
+      description: ソート順
+      required: false
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+      example: desc
+    StatusParam:
+      name: status
+      in: query
+      description: 記事の公開状態でフィルタリング
+      required: false
+      schema:
+        type: string
+        enum:
+          - draft
+          - published
+          - private
+      example: published
+    CategoryParam:
+      name: category
+      in: query
+      description: カテゴリスラッグでフィルタリング
+      required: false
+      schema:
+        type: string
+      example: backend-development
+    TagParam:
+      name: tag
+      in: query
+      description: タグスラッグでフィルタリング
+      required: false
+      schema:
+        type: string
+      example: golang
+    SearchParam:
+      name: q
+      in: query
+      description: 検索キーワード
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+      example: RESTful API
+    SlugParam:
+      name: slug
+      in: path
+      description: URL用の識別子
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+      example: how-to-build-restful-api
+    IdParam:
+      name: id
+      in: path
+      description: リソースのID（UUID）
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 550e8400-e29b-41d4-a716-446655440000
+    YearParam:
+      name: year
+      in: path
+      description: 年（YYYY形式）
+      required: true
+      schema:
+        type: integer
+        minimum: 2020
+        maximum: 2100
+      example: 2024
+    MonthParam:
+      name: month
+      in: path
+      description: 月（1-12）
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 12
+      example: 1
