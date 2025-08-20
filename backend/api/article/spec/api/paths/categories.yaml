@@ -52,7 +52,7 @@
             schema:
               $ref: "../responses/Unauthorized.yaml"
       "409":
-        description: 同じスラッグのカテゴリが既に存在
+        description: 同じIDのカテゴリが既に存在
         content:
           application/json:
             schema:
@@ -64,15 +64,21 @@
             schema:
               $ref: "../responses/InternalServerError.yaml"
 
-/v1/categories/{slug}:
+/v1/categories/{category_id}:
   get:
     tags:
       - categories
     summary: カテゴリ詳細取得
-    description: スラッグを指定してカテゴリの詳細を取得します。
-    operationId: getCategoryBySlug
+    description: カテゴリIDを指定してカテゴリの詳細を取得します。
+    operationId: getCategoryByID
     parameters:
-      - $ref: "../parameters/common.yaml#/SlugParam"
+      - name: category_id
+        in: path
+        required: true
+        description: カテゴリID
+        schema:
+          type: string
+          example: "technology"
     responses:
       "200":
         description: カテゴリ詳細の取得に成功
@@ -94,49 +100,20 @@
               $ref: "../responses/InternalServerError.yaml"
     security: []
 
-/v1/categories/{slug}/articles:
-  get:
-    tags:
-      - categories
-    summary: カテゴリ別記事一覧取得
-    description: 指定されたカテゴリの記事一覧を取得します。
-    operationId: getArticlesByCategorySlug
-    parameters:
-      - $ref: "../parameters/common.yaml#/SlugParam"
-      - $ref: "../parameters/pagination.yaml#/PageParam"
-      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
-      - $ref: "../parameters/pagination.yaml#/SortParam"
-      - $ref: "../parameters/pagination.yaml#/OrderParam"
-    responses:
-      "200":
-        description: カテゴリ別記事一覧の取得に成功
-        content:
-          application/json:
-            schema:
-              $ref: "../responses/ArticleList.yaml"
-      "404":
-        description: カテゴリが見つからない
-        content:
-          application/json:
-            schema:
-              $ref: "../responses/NotFound.yaml"
-      "500":
-        description: サーバー内部エラー
-        content:
-          application/json:
-            schema:
-              $ref: "../responses/InternalServerError.yaml"
-    security: []
-
-/v1/categories/{id}:
   put:
     tags:
       - categories
     summary: カテゴリ更新
-    description: IDを指定してカテゴリを更新します。認証が必要です。
-    operationId: updateCategoryById
+    description: カテゴリIDを指定してカテゴリを更新します。認証が必要です。
+    operationId: updateCategoryByID
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: category_id
+        in: path
+        required: true
+        description: カテゴリID
+        schema:
+          type: string
+          example: "technology"
     requestBody:
       required: true
       content:
@@ -169,7 +146,7 @@
             schema:
               $ref: "../responses/NotFound.yaml"
       "409":
-        description: 同じスラッグのカテゴリが既に存在
+        description: 同じIDのカテゴリが既に存在
         content:
           application/json:
             schema:
@@ -185,10 +162,16 @@
     tags:
       - categories
     summary: カテゴリ削除
-    description: IDを指定してカテゴリを削除します。認証が必要です。
-    operationId: deleteCategoryById
+    description: カテゴリIDを指定してカテゴリを削除します。認証が必要です。
+    operationId: deleteCategoryByID
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: category_id
+        in: path
+        required: true
+        description: カテゴリID
+        schema:
+          type: string
+          example: "technology"
     responses:
       "204":
         description: カテゴリの削除に成功
@@ -210,3 +193,43 @@
           application/json:
             schema:
               $ref: "../responses/InternalServerError.yaml"
+
+/v1/categories/{category_id}/articles:
+  get:
+    tags:
+      - categories
+    summary: カテゴリ別記事一覧取得
+    description: 指定されたカテゴリの記事一覧を取得します。
+    operationId: getArticlesByCategoryID
+    parameters:
+      - name: category_id
+        in: path
+        required: true
+        description: カテゴリID
+        schema:
+          type: string
+          example: "technology"
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+      - $ref: "../parameters/pagination.yaml#/SortParam"
+      - $ref: "../parameters/pagination.yaml#/OrderParam"
+    responses:
+      "200":
+        description: カテゴリ別記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "404":
+        description: カテゴリが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
