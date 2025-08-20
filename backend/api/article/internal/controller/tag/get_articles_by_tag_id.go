@@ -1,3 +1,6 @@
+// Package tag provides controllers for tag-related HTTP endpoints.
+// These controllers handle HTTP requests for tag operations such as
+// retrieving, creating, updating, and deleting tags.
 package tag
 
 import (
@@ -19,7 +22,6 @@ func NewGetArticlesByTagIDController() *GetArticlesByTagIDController {
 }
 
 func (ctrl *GetArticlesByTagIDController) Handle(c *gin.Context, tagID string, params gen.GetArticlesByTagIDParams) {
-	// Execute use case
 	result, err := ctrl.useCase.Execute(c.Request.Context(), tagID, params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

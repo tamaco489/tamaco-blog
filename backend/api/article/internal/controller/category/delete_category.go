@@ -1,3 +1,6 @@
+// Package category provides controllers for category-related HTTP endpoints.
+// These controllers handle HTTP requests for category operations such as
+// retrieving, creating, updating, and deleting categories.
 package category
 
 import (

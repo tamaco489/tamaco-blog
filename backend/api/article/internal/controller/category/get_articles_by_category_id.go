@@ -1,3 +1,6 @@
+// Package category provides controllers for category-related HTTP endpoints.
+// These controllers handle HTTP requests for category operations such as
+// retrieving, creating, updating, and deleting categories.
 package category
 
 import (
@@ -19,7 +22,6 @@ func NewGetArticlesByCategoryIDController() *GetArticlesByCategoryIDController {
 }
 
 func (ctrl *GetArticlesByCategoryIDController) Handle(c *gin.Context, categoryID string, params gen.GetArticlesByCategoryIDParams) {
-	// Execute use case
 	result, err := ctrl.useCase.Execute(c.Request.Context(), categoryID, params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

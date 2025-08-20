@@ -1,4 +1,6 @@
-// Package tag provides HTTP controllers for tag endpoints.
+// Package tag provides controllers for tag-related HTTP endpoints.
+// These controllers handle HTTP requests for tag operations such as
+// retrieving, creating, updating, and deleting tags.
 package tag
 
 import (

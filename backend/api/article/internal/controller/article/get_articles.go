@@ -1,4 +1,6 @@
-// Package article provides HTTP controllers for article endpoints.
+// Package article provides controllers for article-related HTTP endpoints.
+// These controllers handle HTTP requests for article operations such as
+// retrieving, creating, updating, and deleting articles.
 package article
 
 import (
@@ -9,19 +11,16 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/article"
 )
 
-// GetArticlesController handles getting articles list
 type GetArticlesController struct {
 	useCase article.GetArticlesUseCase
 }
 
-// NewGetArticlesController creates a new get articles controller
 func NewGetArticlesController() *GetArticlesController {
 	return &GetArticlesController{
 		useCase: article.NewGetArticlesUseCase(),
 	}
 }
 
-// GetArticles implements gen.ServerInterface
 func (ctrl *GetArticlesController) GetArticles(c *gin.Context, params gen.GetArticlesParams) {
 	result, err := ctrl.useCase.GetArticles(c.Request.Context(), params)
 	if err != nil {

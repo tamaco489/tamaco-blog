@@ -1,4 +1,6 @@
-// Package health provides HTTP controllers for health check endpoints.
+// Package health provides controllers for health check endpoints.
+// This package implements health monitoring functionality to verify
+// the application's operational status.
 package health
 
 import (

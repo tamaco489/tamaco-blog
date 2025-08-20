@@ -1,3 +1,6 @@
+// Package article provides controllers for article-related HTTP endpoints.
+// These controllers handle HTTP requests for article operations such as
+// retrieving, creating, updating, and deleting articles.
 package article
 
 import (
@@ -7,19 +10,16 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/article"
 )
 
-// IncrementArticleViewCountController handles incrementing an article view count
 type IncrementArticleViewCountController struct {
 	usecase article.IncrementArticleViewCountUseCase
 }
 
-// NewIncrementArticleViewCountController creates a new increment article view count controller
 func NewIncrementArticleViewCountController() *IncrementArticleViewCountController {
 	return &IncrementArticleViewCountController{
 		usecase: article.NewIncrementArticleViewCountUseCase(),
 	}
 }
 
-// Handle processes the increment article view count request
 func (ctrl *IncrementArticleViewCountController) Handle(c *gin.Context, articleID string) {
 	err := ctrl.usecase.IncrementArticleViewCount(c.Request.Context(), articleID)
 	if err != nil {

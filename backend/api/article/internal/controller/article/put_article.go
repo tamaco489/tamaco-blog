@@ -1,3 +1,6 @@
+// Package article provides controllers for article-related HTTP endpoints.
+// These controllers handle HTTP requests for article operations such as
+// retrieving, creating, updating, and deleting articles.
 package article
 
 import (
@@ -8,19 +11,16 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/article"
 )
 
-// UpdateArticleByIDController handles updating an article by ID
 type UpdateArticleByIDController struct {
 	usecase article.UpdateArticleByIDUseCase
 }
 
-// NewUpdateArticleByIDController creates a new update article by ID controller
 func NewUpdateArticleByIDController() *UpdateArticleByIDController {
 	return &UpdateArticleByIDController{
 		usecase: article.NewUpdateArticleByIDUseCase(),
 	}
 }
 
-// Handle processes the update article by ID request
 func (ctrl *UpdateArticleByIDController) Handle(c *gin.Context, articleID string, req gen.UpdateArticleByIDJSONRequestBody) {
 	result, err := ctrl.usecase.UpdateArticleByID(c.Request.Context(), articleID, req)
 	if err != nil {

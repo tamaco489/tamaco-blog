@@ -1,3 +1,4 @@
+// Package controller provides HTTP request handlers and routing logic for the article API.
 package controller
 
 import (
@@ -7,17 +8,14 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetArticles implements gen.ServerInterface
 func (s *ServerController) GetArticles(c *gin.Context, params gen.GetArticlesParams) {
 	s.getArticlesCtrl.GetArticles(c, params)
 }
 
-// CreateArticle implements gen.ServerInterface
 func (s *ServerController) CreateArticle(c *gin.Context) {
 	s.createArticleCtrl.CreateArticle(c)
 }
 
-// Healthcheck implements gen.ServerInterface
 func (s *ServerController) Healthcheck(c *gin.Context) {
 	s.healthcheckCtrl.Healthcheck(c)
 }

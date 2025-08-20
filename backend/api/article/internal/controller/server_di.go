@@ -1,4 +1,6 @@
-// Package controller provides HTTP controllers for the API.
+// Package controller provides HTTP request handlers and routing logic for the article API.
+// This package implements the ServerInterface from the generated OpenAPI specification
+// and orchestrates the interaction between HTTP requests and business logic through controllers.
 package controller
 
 import (
@@ -9,9 +11,9 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/tag"
 )
 
-// ServerController aggregates all controllers and implements gen.ServerInterface
 type ServerController struct {
-	// Article controllers
+	healthcheckCtrl *health.HealthcheckController
+
 	getArticlesCtrl             *article.GetArticlesController
 	createArticleCtrl           *article.CreateArticleController
 	getArticlesByMonthCtrl      *article.GetArticlesByMonthController
@@ -25,34 +27,25 @@ type ServerController struct {
 	getArticlesByTagIDCtrl      *tag.GetArticlesByTagIDController
 	getArticlesByCategoryIDCtrl *category.GetArticlesByCategoryIDController
 
-	// Search controllers
-	searchArticlesCtrl *search.SearchArticlesController
-
-	// Health controller
-	healthcheckCtrl *health.HealthcheckController
-
-	// Category controllers
 	getCategoriesCtrl   *category.GetCategoriesController
 	createCategoryCtrl  *category.CreateCategoryController
 	deleteCategoryCtrl  *category.DeleteCategoryController
 	updateCategoryCtrl  *category.UpdateCategoryController
 	getCategoryByIDCtrl *category.GetCategoryByIDController
 
-	// Tag controllers
 	getTagsCtrl    *tag.GetTagsController
 	createTagCtrl  *tag.CreateTagController
 	deleteTagCtrl  *tag.DeleteTagController
 	updateTagCtrl  *tag.UpdateTagController
 	getTagByIDCtrl *tag.GetTagByIDController
+
+	searchArticlesCtrl *search.SearchArticlesController
 }
 
-// NewServerController creates a new server controller
 func NewServerController() *ServerController {
 	return &ServerController{
-		// Health controller
 		healthcheckCtrl: health.NewHealthcheckController(),
 
-		// Article controllers
 		getArticlesCtrl:             article.NewGetArticlesController(),
 		createArticleCtrl:           article.NewCreateArticleController(),
 		getArticlesByMonthCtrl:      article.NewGetArticlesByMonthController(),
@@ -66,21 +59,18 @@ func NewServerController() *ServerController {
 		getArticlesByTagIDCtrl:      tag.NewGetArticlesByTagIDController(),
 		getArticlesByCategoryIDCtrl: category.NewGetArticlesByCategoryIDController(),
 
-		// Search controllers
-		searchArticlesCtrl: search.NewSearchArticlesController(),
-
-		// Category controllers
 		getCategoriesCtrl:   category.NewGetCategoriesController(),
 		createCategoryCtrl:  category.NewCreateCategoryController(),
 		deleteCategoryCtrl:  category.NewDeleteCategoryController(),
 		updateCategoryCtrl:  category.NewUpdateCategoryController(),
 		getCategoryByIDCtrl: category.NewGetCategoryByIDController(),
 
-		// Tag controllers
 		getTagsCtrl:    tag.NewGetTagsController(),
 		createTagCtrl:  tag.NewCreateTagController(),
 		deleteTagCtrl:  tag.NewDeleteTagController(),
 		updateTagCtrl:  tag.NewUpdateTagController(),
 		getTagByIDCtrl: tag.NewGetTagByIDController(),
+
+		searchArticlesCtrl: search.NewSearchArticlesController(),
 	}
 }
