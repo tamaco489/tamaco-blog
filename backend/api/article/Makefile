@@ -12,6 +12,7 @@ install-tools: setup-env ## dev: Install tools used in the project
 	go install golang.org/x/tools/cmd/godoc@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install golang.org/x/vuln/cmd/govulncheck@latest
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
 	go install github.com/rubenv/sql-migrate/...@latest
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 	go install go.uber.org/mock/mockgen@latest
