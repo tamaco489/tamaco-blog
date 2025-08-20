@@ -70,7 +70,7 @@
       - tags
     summary: タグ詳細取得
     description: タグIDを指定してタグの詳細を取得します。
-    operationId: getTagById
+    operationId: getTagByID
     parameters:
       - name: tag_id
         in: path
@@ -105,7 +105,7 @@
       - tags
     summary: タグ更新
     description: タグIDを指定してタグを更新します。認証が必要です。
-    operationId: updateTagById
+    operationId: updateTagByID
     parameters:
       - name: tag_id
         in: path
@@ -163,7 +163,7 @@
       - tags
     summary: タグ削除
     description: タグIDを指定してタグを削除します。認証が必要です。
-    operationId: deleteTagById
+    operationId: deleteTagByID
     parameters:
       - name: tag_id
         in: path
@@ -200,7 +200,7 @@
       - tags
     summary: タグ別記事一覧取得
     description: 指定されたタグの記事一覧を取得します。
-    operationId: getArticlesByTagId
+    operationId: getArticlesByTagID
     parameters:
       - name: tag_id
         in: path

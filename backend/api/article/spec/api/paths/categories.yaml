@@ -70,7 +70,7 @@
       - categories
     summary: カテゴリ詳細取得
     description: カテゴリIDを指定してカテゴリの詳細を取得します。
-    operationId: getCategoryById
+    operationId: getCategoryByID
     parameters:
       - name: category_id
         in: path
@@ -105,7 +105,7 @@
       - categories
     summary: カテゴリ更新
     description: カテゴリIDを指定してカテゴリを更新します。認証が必要です。
-    operationId: updateCategoryById
+    operationId: updateCategoryByID
     parameters:
       - name: category_id
         in: path
@@ -163,7 +163,7 @@
       - categories
     summary: カテゴリ削除
     description: カテゴリIDを指定してカテゴリを削除します。認証が必要です。
-    operationId: deleteCategoryById
+    operationId: deleteCategoryByID
     parameters:
       - name: category_id
         in: path
@@ -200,7 +200,7 @@
       - categories
     summary: カテゴリ別記事一覧取得
     description: 指定されたカテゴリの記事一覧を取得します。
-    operationId: getArticlesByCategoryId
+    operationId: getArticlesByCategoryID
     parameters:
       - name: category_id
         in: path

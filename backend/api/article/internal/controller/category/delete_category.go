@@ -9,12 +9,12 @@ import (
 )
 
 type DeleteCategoryController struct {
-	usecase category.DeleteCategoryUseCase
+	useCase category.DeleteCategoryUseCase
 }
 
 func NewDeleteCategoryController() *DeleteCategoryController {
 	return &DeleteCategoryController{
-		usecase: category.NewDeleteCategoryUseCase(),
+		useCase: category.NewDeleteCategoryUseCase(),
 	}
 }
 
@@ -25,7 +25,7 @@ func (ctrl *DeleteCategoryController) Handle(c *gin.Context, categoryID string) 
 		return
 	}
 
-	err = ctrl.usecase.DeleteCategory(c.Request.Context(), id)
+	err = ctrl.useCase.DeleteCategory(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

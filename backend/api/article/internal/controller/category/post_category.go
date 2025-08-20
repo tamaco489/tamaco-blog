@@ -8,19 +8,16 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/category"
 )
 
-// CreateCategoryController handles creating a new category
 type CreateCategoryController struct {
-	usecase category.CreateCategoryUseCase
+	useCase category.CreateCategoryUseCase
 }
 
-// NewCreateCategoryController creates a new create category controller
 func NewCreateCategoryController() *CreateCategoryController {
 	return &CreateCategoryController{
-		usecase: category.NewCreateCategoryUseCase(),
+		useCase: category.NewCreateCategoryUseCase(),
 	}
 }
 
-// CreateCategory implements gen.ServerInterface
 func (ctrl *CreateCategoryController) CreateCategory(c *gin.Context) {
 	var req gen.CategoryCreate
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -28,7 +25,7 @@ func (ctrl *CreateCategoryController) CreateCategory(c *gin.Context) {
 		return
 	}
 
-	result, err := ctrl.usecase.CreateCategory(c.Request.Context(), req)
+	result, err := ctrl.useCase.CreateCategory(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

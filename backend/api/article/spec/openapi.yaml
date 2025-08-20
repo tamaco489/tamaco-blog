@@ -121,7 +121,7 @@ paths:
         - articles
       summary: 記事詳細取得
       description: 記事IDを指定して記事の詳細を取得します。
-      operationId: getArticleById
+      operationId: getArticleByID
       parameters:
         - name: article_id
           in: path
@@ -155,7 +155,7 @@ paths:
         - articles
       summary: 記事更新
       description: 記事IDを指定して記事を更新します。認証が必要です。
-      operationId: updateArticleById
+      operationId: updateArticleByID
       parameters:
         - name: article_id
           in: path
@@ -212,7 +212,7 @@ paths:
         - articles
       summary: 記事削除
       description: 記事IDを指定して記事を削除します。認証が必要です。
-      operationId: deleteArticleById
+      operationId: deleteArticleByID
       parameters:
         - name: article_id
           in: path
@@ -248,7 +248,7 @@ paths:
         - articles
       summary: 記事公開
       description: 記事IDを指定して記事を公開状態にします。認証が必要です。
-      operationId: publishArticleById
+      operationId: publishArticleByID
       parameters:
         - name: article_id
           in: path
@@ -484,7 +484,7 @@ paths:
         - categories
       summary: カテゴリ詳細取得
       description: カテゴリIDを指定してカテゴリの詳細を取得します。
-      operationId: getCategoryById
+      operationId: getCategoryByID
       parameters:
         - name: category_id
           in: path
@@ -518,7 +518,7 @@ paths:
         - categories
       summary: カテゴリ更新
       description: カテゴリIDを指定してカテゴリを更新します。認証が必要です。
-      operationId: updateCategoryById
+      operationId: updateCategoryByID
       parameters:
         - name: category_id
           in: path
@@ -575,7 +575,7 @@ paths:
         - categories
       summary: カテゴリ削除
       description: カテゴリIDを指定してカテゴリを削除します。認証が必要です。
-      operationId: deleteCategoryById
+      operationId: deleteCategoryByID
       parameters:
         - name: category_id
           in: path
@@ -611,7 +611,7 @@ paths:
         - categories
       summary: カテゴリ別記事一覧取得
       description: 指定されたカテゴリの記事一覧を取得します。
-      operationId: getArticlesByCategoryId
+      operationId: getArticlesByCategoryID
       parameters:
         - name: category_id
           in: path
@@ -714,7 +714,7 @@ paths:
         - tags
       summary: タグ詳細取得
       description: タグIDを指定してタグの詳細を取得します。
-      operationId: getTagById
+      operationId: getTagByID
       parameters:
         - name: tag_id
           in: path
@@ -748,7 +748,7 @@ paths:
         - tags
       summary: タグ更新
       description: タグIDを指定してタグを更新します。認証が必要です。
-      operationId: updateTagById
+      operationId: updateTagByID
       parameters:
         - name: tag_id
           in: path
@@ -805,7 +805,7 @@ paths:
         - tags
       summary: タグ削除
       description: タグIDを指定してタグを削除します。認証が必要です。
-      operationId: deleteTagById
+      operationId: deleteTagByID
       parameters:
         - name: tag_id
           in: path
@@ -841,7 +841,7 @@ paths:
         - tags
       summary: タグ別記事一覧取得
       description: 指定されたタグの記事一覧を取得します。
-      operationId: getArticlesByTagId
+      operationId: getArticlesByTagID
       parameters:
         - name: tag_id
           in: path

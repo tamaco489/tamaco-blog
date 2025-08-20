@@ -9,17 +9,17 @@ import (
 )
 
 type GetCategoriesController struct {
-	usecase category.GetCategoriesUseCase
+	useCase category.GetCategoriesUseCase
 }
 
 func NewGetCategoriesController() *GetCategoriesController {
 	return &GetCategoriesController{
-		usecase: category.NewGetCategoriesUseCase(),
+		useCase: category.NewGetCategoriesUseCase(),
 	}
 }
 
 func (ctrl *GetCategoriesController) GetCategories(c *gin.Context) {
-	result, err := ctrl.usecase.GetCategories(c.Request.Context())
+	result, err := ctrl.useCase.GetCategories(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -9,17 +9,17 @@ import (
 )
 
 type GetTagsController struct {
-	usecase tag.GetTagsUseCase
+	useCase tag.GetTagsUseCase
 }
 
 func NewGetTagsController() *GetTagsController {
 	return &GetTagsController{
-		usecase: tag.NewGetTagsUseCase(),
+		useCase: tag.NewGetTagsUseCase(),
 	}
 }
 
 func (ctrl *GetTagsController) GetTags(c *gin.Context) {
-	result, err := ctrl.usecase.GetTags(c.Request.Context())
+	result, err := ctrl.useCase.GetTags(c.Request.Context())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

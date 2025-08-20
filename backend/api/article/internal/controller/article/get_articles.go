@@ -11,19 +11,19 @@ import (
 
 // GetArticlesController handles getting articles list
 type GetArticlesController struct {
-	usecase article.GetArticlesUseCase
+	useCase article.GetArticlesUseCase
 }
 
 // NewGetArticlesController creates a new get articles controller
 func NewGetArticlesController() *GetArticlesController {
 	return &GetArticlesController{
-		usecase: article.NewGetArticlesUseCase(),
+		useCase: article.NewGetArticlesUseCase(),
 	}
 }
 
 // GetArticles implements gen.ServerInterface
 func (ctrl *GetArticlesController) GetArticles(c *gin.Context, params gen.GetArticlesParams) {
-	result, err := ctrl.usecase.GetArticles(c.Request.Context(), params)
+	result, err := ctrl.useCase.GetArticles(c.Request.Context(), params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

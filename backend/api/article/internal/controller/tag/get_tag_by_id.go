@@ -8,17 +8,17 @@ import (
 )
 
 type GetTagByIDController struct {
-	usecase tag.GetTagByIdUseCase
+	useCase tag.GetTagByIDUseCase
 }
 
 func NewGetTagByIDController() *GetTagByIDController {
 	return &GetTagByIDController{
-		usecase: tag.NewGetTagByIdUseCase(),
+		useCase: tag.NewGetTagByIDUseCase(),
 	}
 }
 
 func (ctrl *GetTagByIDController) Handle(c *gin.Context, tagID string) {
-	result, err := ctrl.usecase.GetTagById(c.Request.Context(), tagID)
+	result, err := ctrl.useCase.GetTagByID(c.Request.Context(), tagID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -7,26 +7,23 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetCategoryByIdUseCase handles getting a category by ID
-type GetCategoryByIdUseCase interface {
-	GetCategoryById(ctx context.Context, categoryId string) (*gen.Category, error)
+type GetCategoryByIDUseCase interface {
+	GetCategoryByID(ctx context.Context, categoryID string) (*gen.Category, error)
 }
 
-type getCategoryByIdUseCase struct {
+type getCategoryByIDUseCase struct {
 	// repository層は未実装のため、今回は空
 }
 
-// NewGetCategoryByIdUseCase creates a new get category by ID usecase
-func NewGetCategoryByIdUseCase() GetCategoryByIdUseCase {
-	return &getCategoryByIdUseCase{}
+func NewGetCategoryByIDUseCase() GetCategoryByIDUseCase {
+	return &getCategoryByIDUseCase{}
 }
 
-// GetCategoryById implements GetCategoryByIdUseCase
-func (u *getCategoryByIdUseCase) GetCategoryById(ctx context.Context, categoryId string) (*gen.Category, error) {
+func (u *getCategoryByIDUseCase) GetCategoryByID(ctx context.Context, categoryID string) (*gen.Category, error) {
 	// TODO: 実装予定
-	id, _ := uuid.Parse(categoryId)
+	id, _ := uuid.Parse(categoryID)
 	return &gen.Category{
-		Id: id,
+		Id:   id,
 		Name: "Sample Category",
 	}, nil
 }

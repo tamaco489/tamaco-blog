@@ -6,20 +6,17 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetArticlesByCategoryIdUseCase handles getting articles by category ID
-type GetArticlesByCategoryIdUseCase interface {
-	Execute(ctx context.Context, categoryId string, params gen.GetArticlesByCategoryIdParams) (*gen.ArticleList, error)
+type GetArticlesByCategoryIDUseCase interface {
+	Execute(ctx context.Context, categoryID string, params gen.GetArticlesByCategoryIDParams) (*gen.ArticleList, error)
 }
 
-type getArticlesByCategoryIdUseCase struct{}
+type getArticlesByCategoryIDUseCase struct{}
 
-// NewGetArticlesByCategoryIdUseCase creates a new get articles by category ID usecase
-func NewGetArticlesByCategoryIdUseCase() GetArticlesByCategoryIdUseCase {
-	return &getArticlesByCategoryIdUseCase{}
+func NewGetArticlesByCategoryIDUseCase() GetArticlesByCategoryIDUseCase {
+	return &getArticlesByCategoryIDUseCase{}
 }
 
-// Execute implements GetArticlesByCategoryIdUseCase
-func (u *getArticlesByCategoryIdUseCase) Execute(ctx context.Context, categoryId string, params gen.GetArticlesByCategoryIdParams) (*gen.ArticleList, error) {
+func (u *getArticlesByCategoryIDUseCase) Execute(ctx context.Context, categoryID string, params gen.GetArticlesByCategoryIDParams) (*gen.ArticleList, error) {
 	return &gen.ArticleList{
 		Articles: []gen.Article{},
 		Pagination: struct {

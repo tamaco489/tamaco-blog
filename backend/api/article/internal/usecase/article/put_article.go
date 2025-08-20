@@ -8,7 +8,7 @@ import (
 
 // UpdateArticleByIDUseCase handles updating articles by ID
 type UpdateArticleByIDUseCase interface {
-	UpdateArticleByID(ctx context.Context, id string, req gen.UpdateArticleByIdJSONRequestBody) (*gen.Article, error)
+	UpdateArticleByID(ctx context.Context, id string, req gen.UpdateArticleByIDJSONRequestBody) (*gen.Article, error)
 }
 
 type updateArticleByIDUseCase struct {
@@ -21,7 +21,7 @@ func NewUpdateArticleByIDUseCase() UpdateArticleByIDUseCase {
 }
 
 // UpdateArticleByID implements UpdateArticleByIDUseCase
-func (u *updateArticleByIDUseCase) UpdateArticleByID(ctx context.Context, id string, req gen.UpdateArticleByIdJSONRequestBody) (*gen.Article, error) {
+func (u *updateArticleByIDUseCase) UpdateArticleByID(ctx context.Context, id string, req gen.UpdateArticleByIDJSONRequestBody) (*gen.Article, error) {
 	// TODO: 実装予定
 	return &gen.Article{}, nil
 }

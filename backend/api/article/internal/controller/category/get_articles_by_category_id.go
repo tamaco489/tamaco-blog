@@ -9,18 +9,18 @@ import (
 )
 
 type GetArticlesByCategoryIDController struct {
-	usecase category.GetArticlesByCategoryIdUseCase
+	useCase category.GetArticlesByCategoryIDUseCase
 }
 
 func NewGetArticlesByCategoryIDController() *GetArticlesByCategoryIDController {
 	return &GetArticlesByCategoryIDController{
-		usecase: category.NewGetArticlesByCategoryIdUseCase(),
+		useCase: category.NewGetArticlesByCategoryIDUseCase(),
 	}
 }
 
-func (ctrl *GetArticlesByCategoryIDController) Handle(c *gin.Context, categoryID string, params gen.GetArticlesByCategoryIdParams) {
+func (ctrl *GetArticlesByCategoryIDController) Handle(c *gin.Context, categoryID string, params gen.GetArticlesByCategoryIDParams) {
 	// Execute use case
-	result, err := ctrl.usecase.Execute(c.Request.Context(), categoryID, params)
+	result, err := ctrl.useCase.Execute(c.Request.Context(), categoryID, params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

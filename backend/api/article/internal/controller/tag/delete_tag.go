@@ -9,12 +9,12 @@ import (
 )
 
 type DeleteTagController struct {
-	usecase tag.DeleteTagUseCase
+	useCase tag.DeleteTagUseCase
 }
 
 func NewDeleteTagController() *DeleteTagController {
 	return &DeleteTagController{
-		usecase: tag.NewDeleteTagUseCase(),
+		useCase: tag.NewDeleteTagUseCase(),
 	}
 }
 
@@ -25,7 +25,7 @@ func (ctrl *DeleteTagController) Handle(c *gin.Context, tagID string) {
 		return
 	}
 
-	err = ctrl.usecase.DeleteTag(c.Request.Context(), id)
+	err = ctrl.useCase.DeleteTag(c.Request.Context(), id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

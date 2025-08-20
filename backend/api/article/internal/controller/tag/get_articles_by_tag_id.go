@@ -9,18 +9,18 @@ import (
 )
 
 type GetArticlesByTagIDController struct {
-	usecase tag.GetArticlesByTagIdUseCase
+	useCase tag.GetArticlesByTagIDUseCase
 }
 
 func NewGetArticlesByTagIDController() *GetArticlesByTagIDController {
 	return &GetArticlesByTagIDController{
-		usecase: tag.NewGetArticlesByTagIdUseCase(),
+		useCase: tag.NewGetArticlesByTagIDUseCase(),
 	}
 }
 
-func (ctrl *GetArticlesByTagIDController) Handle(c *gin.Context, tagID string, params gen.GetArticlesByTagIdParams) {
+func (ctrl *GetArticlesByTagIDController) Handle(c *gin.Context, tagID string, params gen.GetArticlesByTagIDParams) {
 	// Execute use case
-	result, err := ctrl.usecase.Execute(c.Request.Context(), tagID, params)
+	result, err := ctrl.useCase.Execute(c.Request.Context(), tagID, params)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

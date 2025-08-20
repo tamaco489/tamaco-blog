@@ -10,13 +10,13 @@ import (
 
 // CreateArticleController handles creating new articles
 type CreateArticleController struct {
-	usecase article.CreateArticleUseCase
+	useCase article.CreateArticleUseCase
 }
 
 // NewCreateArticleController creates a new create article controller
 func NewCreateArticleController() *CreateArticleController {
 	return &CreateArticleController{
-		usecase: article.NewCreateArticleUseCase(),
+		useCase: article.NewCreateArticleUseCase(),
 	}
 }
 
@@ -28,7 +28,7 @@ func (ctrl *CreateArticleController) CreateArticle(c *gin.Context) {
 		return
 	}
 
-	result, err := ctrl.usecase.CreateArticle(c.Request.Context(), req)
+	result, err := ctrl.useCase.CreateArticle(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -15,27 +15,27 @@ import (
 // ServerController aggregates all controllers and implements gen.ServerInterface
 type ServerController struct {
 	// Article controllers
-	getArticlesCtrl               *article.GetArticlesController
-	createArticleCtrl             *article.CreateArticleController
-	getArticlesByTagIdCtrl        *tag.GetArticlesByTagIDController
-	getArticlesByCategoryIdCtrl   *category.GetArticlesByCategoryIDController
+	getArticlesCtrl             *article.GetArticlesController
+	createArticleCtrl           *article.CreateArticleController
+	getArticlesByTagIDCtrl      *tag.GetArticlesByTagIDController
+	getArticlesByCategoryIDCtrl *category.GetArticlesByCategoryIDController
 
 	// Health controller
 	healthcheckCtrl *health.HealthcheckController
 
 	// Category controllers
-	getCategoriesCtrl     *category.GetCategoriesController
-	createCategoryCtrl    *category.CreateCategoryController
-	deleteCategoryCtrl    *category.DeleteCategoryController
-	updateCategoryCtrl    *category.UpdateCategoryController
-	getCategoryByIdCtrl   *category.GetCategoryByIDController
+	getCategoriesCtrl   *category.GetCategoriesController
+	createCategoryCtrl  *category.CreateCategoryController
+	deleteCategoryCtrl  *category.DeleteCategoryController
+	updateCategoryCtrl  *category.UpdateCategoryController
+	getCategoryByIDCtrl *category.GetCategoryByIDController
 
 	// Tag controllers
-	getTagsCtrl      *tag.GetTagsController
-	createTagCtrl    *tag.CreateTagController
-	deleteTagCtrl    *tag.DeleteTagController
-	updateTagCtrl    *tag.UpdateTagController
-	getTagByIdCtrl   *tag.GetTagByIDController
+	getTagsCtrl    *tag.GetTagsController
+	createTagCtrl  *tag.CreateTagController
+	deleteTagCtrl  *tag.DeleteTagController
+	updateTagCtrl  *tag.UpdateTagController
+	getTagByIDCtrl *tag.GetTagByIDController
 }
 
 // NewServerController creates a new server controller
@@ -45,24 +45,24 @@ func NewServerController() *ServerController {
 		healthcheckCtrl: health.NewHealthcheckController(),
 
 		// Article controllers
-		getArticlesCtrl:               article.NewGetArticlesController(),
-		createArticleCtrl:             article.NewCreateArticleController(),
-		getArticlesByTagIdCtrl:        tag.NewGetArticlesByTagIDController(),
-		getArticlesByCategoryIdCtrl:   category.NewGetArticlesByCategoryIDController(),
+		getArticlesCtrl:             article.NewGetArticlesController(),
+		createArticleCtrl:           article.NewCreateArticleController(),
+		getArticlesByTagIDCtrl:      tag.NewGetArticlesByTagIDController(),
+		getArticlesByCategoryIDCtrl: category.NewGetArticlesByCategoryIDController(),
 
 		// Category controllers
-		getCategoriesCtrl:     category.NewGetCategoriesController(),
-		createCategoryCtrl:    category.NewCreateCategoryController(),
-		deleteCategoryCtrl:    category.NewDeleteCategoryController(),
-		updateCategoryCtrl:    category.NewUpdateCategoryController(),
-		getCategoryByIdCtrl:   category.NewGetCategoryByIDController(),
+		getCategoriesCtrl:   category.NewGetCategoriesController(),
+		createCategoryCtrl:  category.NewCreateCategoryController(),
+		deleteCategoryCtrl:  category.NewDeleteCategoryController(),
+		updateCategoryCtrl:  category.NewUpdateCategoryController(),
+		getCategoryByIDCtrl: category.NewGetCategoryByIDController(),
 
 		// Tag controllers
-		getTagsCtrl:      tag.NewGetTagsController(),
-		createTagCtrl:    tag.NewCreateTagController(),
-		deleteTagCtrl:    tag.NewDeleteTagController(),
-		updateTagCtrl:    tag.NewUpdateTagController(),
-		getTagByIdCtrl:   tag.NewGetTagByIDController(),
+		getTagsCtrl:    tag.NewGetTagsController(),
+		createTagCtrl:  tag.NewCreateTagController(),
+		deleteTagCtrl:  tag.NewDeleteTagController(),
+		updateTagCtrl:  tag.NewUpdateTagController(),
+		getTagByIDCtrl: tag.NewGetTagByIDController(),
 	}
 }
 
@@ -94,23 +94,23 @@ func (s *ServerController) GetRecentArticles(c *gin.Context, params gen.GetRecen
 	// TODO: implement
 }
 
-func (s *ServerController) DeleteArticleById(c *gin.Context, articleId string) {
+func (s *ServerController) DeleteArticleByID(c *gin.Context, articleID string) {
 	// TODO: implement
 }
 
-func (s *ServerController) UpdateArticleById(c *gin.Context, articleId string) {
+func (s *ServerController) UpdateArticleByID(c *gin.Context, articleID string) {
 	// TODO: implement
 }
 
-func (s *ServerController) PublishArticleById(c *gin.Context, articleId string) {
+func (s *ServerController) PublishArticleByID(c *gin.Context, articleID string) {
 	// TODO: implement
 }
 
-func (s *ServerController) IncrementArticleViewCount(c *gin.Context, articleId string) {
+func (s *ServerController) IncrementArticleViewCount(c *gin.Context, articleID string) {
 	// TODO: implement
 }
 
-func (s *ServerController) GetArticleById(c *gin.Context, articleId string) {
+func (s *ServerController) GetArticleByID(c *gin.Context, articleID string) {
 	// TODO: implement
 }
 
@@ -122,25 +122,25 @@ func (s *ServerController) CreateCategory(c *gin.Context) {
 	s.createCategoryCtrl.CreateCategory(c)
 }
 
-func (s *ServerController) DeleteCategoryById(c *gin.Context, categoryId string) {
-	s.deleteCategoryCtrl.Handle(c, categoryId)
+func (s *ServerController) DeleteCategoryByID(c *gin.Context, categoryID string) {
+	s.deleteCategoryCtrl.Handle(c, categoryID)
 }
 
-func (s *ServerController) UpdateCategoryById(c *gin.Context, categoryId string) {
+func (s *ServerController) UpdateCategoryByID(c *gin.Context, categoryID string) {
 	var req gen.CategoryUpdate
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	s.updateCategoryCtrl.Handle(c, categoryId, req)
+	s.updateCategoryCtrl.Handle(c, categoryID, req)
 }
 
-func (s *ServerController) GetCategoryById(c *gin.Context, categoryId string) {
-	s.getCategoryByIdCtrl.Handle(c, categoryId)
+func (s *ServerController) GetCategoryByID(c *gin.Context, categoryID string) {
+	s.getCategoryByIDCtrl.Handle(c, categoryID)
 }
 
-func (s *ServerController) GetArticlesByCategoryId(c *gin.Context, categoryId string, params gen.GetArticlesByCategoryIdParams) {
-	s.getArticlesByCategoryIdCtrl.Handle(c, categoryId, params)
+func (s *ServerController) GetArticlesByCategoryID(c *gin.Context, categoryID string, params gen.GetArticlesByCategoryIDParams) {
+	s.getArticlesByCategoryIDCtrl.Handle(c, categoryID, params)
 }
 
 func (s *ServerController) SearchArticles(c *gin.Context, params gen.SearchArticlesParams) {
@@ -155,23 +155,23 @@ func (s *ServerController) CreateTag(c *gin.Context) {
 	s.createTagCtrl.CreateTag(c)
 }
 
-func (s *ServerController) DeleteTagById(c *gin.Context, tagId string) {
-	s.deleteTagCtrl.Handle(c, tagId)
+func (s *ServerController) DeleteTagByID(c *gin.Context, tagID string) {
+	s.deleteTagCtrl.Handle(c, tagID)
 }
 
-func (s *ServerController) UpdateTagById(c *gin.Context, tagId string) {
+func (s *ServerController) UpdateTagByID(c *gin.Context, tagID string) {
 	var req gen.TagUpdate
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	s.updateTagCtrl.Handle(c, tagId, req)
+	s.updateTagCtrl.Handle(c, tagID, req)
 }
 
-func (s *ServerController) GetTagById(c *gin.Context, tagId string) {
-	s.getTagByIdCtrl.Handle(c, tagId)
+func (s *ServerController) GetTagByID(c *gin.Context, tagID string) {
+	s.getTagByIDCtrl.Handle(c, tagID)
 }
 
-func (s *ServerController) GetArticlesByTagId(c *gin.Context, tagId string, params gen.GetArticlesByTagIdParams) {
-	s.getArticlesByTagIdCtrl.Handle(c, tagId, params)
+func (s *ServerController) GetArticlesByTagID(c *gin.Context, tagID string, params gen.GetArticlesByTagIDParams) {
+	s.getArticlesByTagIDCtrl.Handle(c, tagID, params)
 }

@@ -9,12 +9,12 @@ import (
 )
 
 type CreateTagController struct {
-	usecase tag.CreateTagUseCase
+	useCase tag.CreateTagUseCase
 }
 
 func NewCreateTagController() *CreateTagController {
 	return &CreateTagController{
-		usecase: tag.NewCreateTagUseCase(),
+		useCase: tag.NewCreateTagUseCase(),
 	}
 }
 
@@ -25,7 +25,7 @@ func (ctrl *CreateTagController) CreateTag(c *gin.Context) {
 		return
 	}
 
-	result, err := ctrl.usecase.CreateTag(c.Request.Context(), req)
+	result, err := ctrl.useCase.CreateTag(c.Request.Context(), req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

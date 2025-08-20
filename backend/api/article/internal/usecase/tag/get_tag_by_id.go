@@ -7,26 +7,23 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetTagByIdUseCase handles getting a tag by ID
-type GetTagByIdUseCase interface {
-	GetTagById(ctx context.Context, tagId string) (*gen.Tag, error)
+type GetTagByIDUseCase interface {
+	GetTagByID(ctx context.Context, tagID string) (*gen.Tag, error)
 }
 
-type getTagByIdUseCase struct {
+type getTagByIDUseCase struct {
 	// repository層は未実装のため、今回は空
 }
 
-// NewGetTagByIdUseCase creates a new get tag by ID usecase
-func NewGetTagByIdUseCase() GetTagByIdUseCase {
-	return &getTagByIdUseCase{}
+func NewGetTagByIDUseCase() GetTagByIDUseCase {
+	return &getTagByIDUseCase{}
 }
 
-// GetTagById implements GetTagByIdUseCase
-func (u *getTagByIdUseCase) GetTagById(ctx context.Context, tagId string) (*gen.Tag, error) {
+func (u *getTagByIDUseCase) GetTagByID(ctx context.Context, tagID string) (*gen.Tag, error) {
 	// TODO: 実装予定
-	id, _ := uuid.Parse(tagId)
+	id, _ := uuid.Parse(tagID)
 	return &gen.Tag{
-		Id: id,
+		Id:   id,
 		Name: "Sample Tag",
 	}, nil
 }

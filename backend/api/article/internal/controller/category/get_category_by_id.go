@@ -8,17 +8,17 @@ import (
 )
 
 type GetCategoryByIDController struct {
-	usecase category.GetCategoryByIdUseCase
+	useCase category.GetCategoryByIDUseCase
 }
 
 func NewGetCategoryByIDController() *GetCategoryByIDController {
 	return &GetCategoryByIDController{
-		usecase: category.NewGetCategoryByIdUseCase(),
+		useCase: category.NewGetCategoryByIDUseCase(),
 	}
 }
 
 func (ctrl *GetCategoryByIDController) Handle(c *gin.Context, categoryID string) {
-	result, err := ctrl.usecase.GetCategoryById(c.Request.Context(), categoryID)
+	result, err := ctrl.useCase.GetCategoryByID(c.Request.Context(), categoryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

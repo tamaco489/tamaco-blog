@@ -10,12 +10,12 @@ import (
 )
 
 type UpdateTagController struct {
-	usecase tag.UpdateTagUseCase
+	useCase tag.UpdateTagUseCase
 }
 
 func NewUpdateTagController() *UpdateTagController {
 	return &UpdateTagController{
-		usecase: tag.NewUpdateTagUseCase(),
+		useCase: tag.NewUpdateTagUseCase(),
 	}
 }
 
@@ -26,7 +26,7 @@ func (ctrl *UpdateTagController) Handle(c *gin.Context, tagID string, req gen.Ta
 		return
 	}
 
-	result, err := ctrl.usecase.UpdateTag(c.Request.Context(), id, req)
+	result, err := ctrl.useCase.UpdateTag(c.Request.Context(), id, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

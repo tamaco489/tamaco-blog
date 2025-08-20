@@ -6,20 +6,17 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 )
 
-// GetArticlesByTagIdUseCase handles getting articles by tag ID
-type GetArticlesByTagIdUseCase interface {
-	Execute(ctx context.Context, tagId string, params gen.GetArticlesByTagIdParams) (*gen.ArticleList, error)
+type GetArticlesByTagIDUseCase interface {
+	Execute(ctx context.Context, tagID string, params gen.GetArticlesByTagIDParams) (*gen.ArticleList, error)
 }
 
-type getArticlesByTagIdUseCase struct{}
+type getArticlesByTagIDUseCase struct{}
 
-// NewGetArticlesByTagIdUseCase creates a new get articles by tag ID usecase
-func NewGetArticlesByTagIdUseCase() GetArticlesByTagIdUseCase {
-	return &getArticlesByTagIdUseCase{}
+func NewGetArticlesByTagIDUseCase() GetArticlesByTagIDUseCase {
+	return &getArticlesByTagIDUseCase{}
 }
 
-// Execute implements GetArticlesByTagIdUseCase
-func (u *getArticlesByTagIdUseCase) Execute(ctx context.Context, tagId string, params gen.GetArticlesByTagIdParams) (*gen.ArticleList, error) {
+func (u *getArticlesByTagIDUseCase) Execute(ctx context.Context, tagID string, params gen.GetArticlesByTagIDParams) (*gen.ArticleList, error) {
 	return &gen.ArticleList{
 		Articles: []gen.Article{},
 		Pagination: struct {
