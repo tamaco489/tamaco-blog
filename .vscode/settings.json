@@ -134,5 +134,23 @@
   ],
   "css.validate": false,
   "scss.validate": false,
-  "less.validate": false
+  "less.validate": false,
+
+  // OpenAPI/YAML関連の設定
+  "yaml.validate": true,
+  "yaml.schemaStore.enable": false,
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json": []
+  },
+
+  // YAMLファイルの設定
+  "[yaml]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+
+  // Red Hat YAML拡張の設定
+  "redhat.telemetry.enabled": false
 }
