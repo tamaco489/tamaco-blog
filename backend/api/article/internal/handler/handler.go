@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
@@ -21,6 +22,17 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 	r := gin.New()
 	r.Use(gin.LoggerWithFormatter(logger.GinLogFormatter))
 	r.Use(gin.Recovery())
+
+	// CORS設定
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{
+		"http://localhost:3000",  // フロントエンド開発環境
+		"https://tamaco-blog.com", // 本番環境（予定）
+	}
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
+	corsConfig.AllowCredentials = true
+	r.Use(cors.New(corsConfig))
 
 	ctrl := controller.NewServerController()
 
