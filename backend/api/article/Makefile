@@ -114,16 +114,11 @@ get-secret-value: ## dev: get secret value from secrets manager
 # =================================================================
 # api request
 # =================================================================
-.PHONY: healthcheck get-users-me
-healthcheck:
+.PHONY: health
+health: ## dev: check health of api server
 	curl -sX 'GET' \
-		'http://localhost:8080/article/v1/health' \
+		'http://localhost:8080/v1/health' \
 		-H 'accept: application/json' | jq .
-
-get-me:
-	curl -i -X 'GET' \
-		'http://localhost:8080/article/v1/users/me' \
-		-H 'accept: application/json'
 
 
 # =================================================================
