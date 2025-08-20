@@ -1,0 +1,15 @@
+title: TagUpdateRequest
+type: object
+description: タグ更新リクエスト
+properties:
+  name:
+    type: string
+    description: タグ名
+    minLength: 1
+    maxLength: 50
+    example: "Go言語"
+  slug:
+    type: string
+    description: URL用の識別子
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    example: "go-lang"

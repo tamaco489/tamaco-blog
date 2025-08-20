@@ -1,0 +1,38 @@
+/v1/search:
+  get:
+    tags:
+      - search
+    summary: 記事検索
+    description: |
+      キーワードを指定して記事を検索します。
+      タイトル、内容、要約を対象に検索を行います。
+    operationId: searchArticles
+    parameters:
+      - $ref: "../parameters/common.yaml#/SearchParam"
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+      - $ref: "../parameters/pagination.yaml#/SortParam"
+      - $ref: "../parameters/pagination.yaml#/OrderParam"
+      - $ref: "../parameters/common.yaml#/StatusParam"
+      - $ref: "../parameters/common.yaml#/CategoryParam"
+      - $ref: "../parameters/common.yaml#/TagParam"
+    responses:
+      "200":
+        description: 検索結果の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []

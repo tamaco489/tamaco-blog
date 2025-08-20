@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  title: article api
+  description: |
+    tamaco-blog 記事管理システムのバックエンドAPIサービス。
+    ブログ記事のCRUD操作、カテゴリ・タグの管理、
+    記事関連の各種操作を提供するRESTful APIです。
+  version: 1.0.0
+servers:
+  - url: "http://localhost:{port}/article/"
+    description: dev
+    variables:
+      port:
+        default: "8080"
+  - url: "https://api.<stg-domain-name>/article/"
+    description: stg
+  - url: "https://api.<prd-domain-name>/article/"
+    description: prd
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /v1/health:
+    get:
+      tags:
+        - healthcheck
+      summary: ヘルスチェックAPI
+      description: APIが正常に動作しているかを確認します。
+      operationId: healthcheck
+      responses:
+        "200":
+          description: APIサービスが正常に稼働中であることを示すレスポンス
+          content:
+            application/json:
+              schema:
+                $ref: "./api/responses/HealthCheck.yaml"
+      security: [] # healthcheckでは認証を必要としないため
+
+  # 記事系API
+  /v1/articles:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles"
+  /v1/articles/{slug}:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1{slug}"
+  /v1/articles/{id}:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1{id}"
+  /v1/articles/{id}/publish:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1{id}~1publish"
+  /v1/articles/{id}/views:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1{id}~1views"
+  /v1/articles/popular:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1popular"
+  /v1/articles/recent:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1recent"
+  /v1/articles/archive/{year}/{month}:
+    $ref: "./api/paths/articles.yaml#/~1v1~1articles~1archive~1{year}~1{month}"
+
+  # カテゴリ系API
+  /v1/categories:
+    $ref: "./api/paths/categories.yaml#/~1v1~1categories"
+  /v1/categories/{slug}:
+    $ref: "./api/paths/categories.yaml#/~1v1~1categories~1{slug}"
+  /v1/categories/{slug}/articles:
+    $ref: "./api/paths/categories.yaml#/~1v1~1categories~1{slug}~1articles"
+  /v1/categories/{id}:
+    $ref: "./api/paths/categories.yaml#/~1v1~1categories~1{id}"
+
+  # タグ系API
+  /v1/tags:
+    $ref: "./api/paths/tags.yaml#/~1v1~1tags"
+  /v1/tags/{slug}:
+    $ref: "./api/paths/tags.yaml#/~1v1~1tags~1{slug}"
+  /v1/tags/{slug}/articles:
+    $ref: "./api/paths/tags.yaml#/~1v1~1tags~1{slug}~1articles"
+  /v1/tags/{id}:
+    $ref: "./api/paths/tags.yaml#/~1v1~1tags~1{id}"
+
+  # 検索API
+  /v1/search:
+    $ref: "./api/paths/search.yaml#/~1v1~1search"

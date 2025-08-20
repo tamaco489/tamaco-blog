@@ -5,9 +5,9 @@
 @.claude/rules/dev-rules/globals.md
 @.claude/rules/dev-rules/techstack.md
 @.claude/rules/dev-rules/frontend-structure.md
+@.claude/rules/dev-rules/openapi-spec.md
 @.claude/rules/domain/blog-domain.md
 @.claude/rules/domain/features.md
-@.claude/rules/domain/data-models.md
 @.claude/rules/domain/url-design.md
 
 ## プロジェクト概要
@@ -16,30 +16,37 @@ Next.js を使用したブログシステムです。AWS S3 と CloudFront で�
 
 ## 基本コマンド
 
-特記がない限り、すべてのコマンドは `frontend` ディレクトリから実行してください。
+### フロントエンド開発
 
-### 開発ワークフロー
+フロントエンドコマンドは `frontend` ディレクトリから実行してください。
+
 ```bash
 cd frontend
-npm ci                    # 依存関係のインストール
-npm run dev              # 開発サーバー起動
-npm run build            # 本番ビルド
-npm run start            # 本番サーバー起動
-npm run lint             # リント実行
-npm run typecheck        # 型チェック実行
+npm ci      # 依存関係のインストール
+npm run dev # 開発サーバー起動
 ```
 
-### エイリアス
+### バックエンド開発
+
+バックエンドコマンドは `backend/api/article` ディレクトリから実行してください。
+
+#### 初回セットアップと起動
+
 ```bash
-cd frontend
-npm run setup            # プロジェクトセットアップ (npm ci)
-npm run test             # テスト実行
-npm run deploy           # デプロイ用ビルド (npm run build)
-npm run typecheck        # TypeScript型チェック
+cd backend/api/article
+make install-tools # 環境変数ファイルの作成、開発ツールのインストール
+make up            # Docker環境起動（PostgreSQL含む）
+make migrate-up    # データベースマイグレーション
+make logs          # APIサーバのログ出力（起動確認）
 ```
 
-### 品質保証
-変更後は必ず `npm run lint` を実行してコード品質と一貫性を確保してください。
+#### OpenAPI 開発
+
+```bash
+cd backend/api/article
+make bundle-openapi # OpenAPI specのバンドル
+make gen-api        # APIインターフェースと型定義の生成
+```
 
 ## アーキテクチャ概要
 

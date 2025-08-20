@@ -1,0 +1,39 @@
+title: Tag
+type: object
+description: 記事タグのデータモデル
+required:
+  - id
+  - name
+  - slug
+properties:
+  id:
+    type: string
+    format: uuid
+    description: タグの一意識別子
+    example: "456e7890-e89b-12d3-a456-426614174000"
+  name:
+    type: string
+    description: タグ名
+    minLength: 1
+    maxLength: 50
+    example: "Go"
+  slug:
+    type: string
+    description: URL用の識別子
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    example: "golang"
+  usage_count:
+    type: integer
+    description: タグが使用されている記事数
+    minimum: 0
+    example: 15
+  created_at:
+    type: string
+    format: date-time
+    description: 作成日時
+    example: "2024-01-01T09:00:00Z"
+  updated_at:
+    type: string
+    format: date-time
+    description: 更新日時
+    example: "2024-01-02T10:30:00Z"

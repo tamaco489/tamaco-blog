@@ -1,0 +1,74 @@
+title: ArticleCreateRequest
+type: object
+description: 記事作成リクエスト
+required:
+  - title
+  - content
+  - slug
+  - status
+properties:
+  title:
+    type: string
+    description: 記事のタイトル
+    minLength: 1
+    maxLength: 200
+    example: "GoでRESTful APIを構築する方法"
+  content:
+    type: string
+    description: Markdown形式の記事本文
+    minLength: 1
+    example: "# はじめに\n\nこの記事では..."
+  slug:
+    type: string
+    description: URL用の識別子
+    pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    example: "how-to-build-restful-api-with-go"
+  summary:
+    type: string
+    description: 記事の要約（SEO用）
+    maxLength: 500
+    example: "Go言語を使用したRESTful APIの構築方法について解説します"
+  status:
+    type: string
+    description: 記事の公開状態
+    enum:
+      - draft
+      - published
+      - private
+    example: "draft"
+  category_id:
+    type: string
+    format: uuid
+    description: カテゴリID
+    example: "123e4567-e89b-12d3-a456-426614174000"
+  tag_ids:
+    type: array
+    description: タグIDのリスト
+    items:
+      type: string
+      format: uuid
+    example:
+      - "456e7890-e89b-12d3-a456-426614174000"
+      - "789e0123-e89b-12d3-a456-426614174000"
+  published_at:
+    type: string
+    format: date-time
+    description: 公開日時（予約投稿用）
+    example: "2024-01-01T09:00:00Z"
+  seo_metadata:
+    type: object
+    description: SEOメタデータ
+    properties:
+      description:
+        type: string
+        description: メタディスクリプション
+        maxLength: 160
+      keywords:
+        type: array
+        description: キーワード
+        items:
+          type: string
+      og_image:
+        type: string
+        description: OGP画像URL
+        format: uri
