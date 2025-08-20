@@ -10,9 +10,9 @@ awslocal secretsmanager create-secret \
   --name 'dev/tamaco-blog/article/core/rds' \
   --region ap-northeast-1 \
   --secret-string "{
-    \"username\":\"${POSTGRES_USER}\",
-    \"password\":\"${POSTGRES_PASSWORD}\",
     \"host\":\"${POSTGRES_HOST}\",
     \"port\":\"${POSTGRES_PORT}\",
+    \"username\":\"${POSTGRES_USER}\",
+    \"password\":\"${POSTGRES_PASSWORD}\",
     \"dbname\":\"${POSTGRES_DB}\"
   }"
