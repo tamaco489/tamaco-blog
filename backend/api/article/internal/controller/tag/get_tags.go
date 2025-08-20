@@ -4,9 +4,11 @@
 package tag
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/tag"
 )
 
@@ -14,9 +16,9 @@ type GetTagsController struct {
 	useCase tag.GetTagsUseCase
 }
 
-func NewGetTagsController() *GetTagsController {
+func NewGetTagsController(ctx context.Context, cfg *config.Config) *GetTagsController {
 	return &GetTagsController{
-		useCase: tag.NewGetTagsUseCase(),
+		useCase: tag.NewGetTagsUseCase(cfg),
 	}
 }
 

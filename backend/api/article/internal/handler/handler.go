@@ -3,10 +3,11 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
@@ -16,7 +17,7 @@ import (
 func NewHandler(ctx context.Context) (*http.Server, error) {
 	cfg, err := config.GetInstance(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get config instance: %w", err)
 	}
 
 	r := gin.New()
@@ -26,7 +27,7 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 	// CORS設定
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{
-		"http://localhost:3000",  // フロントエンド開発環境
+		"http://localhost:3000",   // フロントエンド開発環境
 		"https://tamaco-blog.com", // 本番環境（予定）
 	}
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
@@ -34,7 +35,7 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 	corsConfig.AllowCredentials = true
 	r.Use(cors.New(corsConfig))
 
-	ctrl := controller.NewServerController()
+	ctrl := controller.NewServerController(ctx, cfg)
 
 	gen.RegisterHandlers(r, ctrl)
 

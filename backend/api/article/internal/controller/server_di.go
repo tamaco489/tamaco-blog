@@ -4,11 +4,14 @@
 package controller
 
 import (
+	"context"
+
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/article"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/category"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/health"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/search"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/tag"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
 )
 
 type ServerController struct {
@@ -42,7 +45,7 @@ type ServerController struct {
 	searchArticlesCtrl *search.SearchArticlesController
 }
 
-func NewServerController() *ServerController {
+func NewServerController(ctx context.Context, cfg *config.Config) *ServerController {
 	return &ServerController{
 		healthcheckCtrl: health.NewHealthcheckController(),
 
@@ -65,7 +68,7 @@ func NewServerController() *ServerController {
 		updateCategoryCtrl:  category.NewUpdateCategoryController(),
 		getCategoryByIDCtrl: category.NewGetCategoryByIDController(),
 
-		getTagsCtrl:    tag.NewGetTagsController(),
+		getTagsCtrl:    tag.NewGetTagsController(ctx, cfg),
 		createTagCtrl:  tag.NewCreateTagController(),
 		deleteTagCtrl:  tag.NewDeleteTagController(),
 		updateTagCtrl:  tag.NewUpdateTagController(),
