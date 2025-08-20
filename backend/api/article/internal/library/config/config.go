@@ -12,7 +12,7 @@ import (
 const (
 	defaultTimeout   = 5 * time.Second
 	defaultAWSRegion = "ap-northeast-1"
-	localstackURL    = "http://localhost.localstack.cloud:4566"
+	localstackURL    = "http://localstack:4566"
 )
 
 // Config holds all application configuration
