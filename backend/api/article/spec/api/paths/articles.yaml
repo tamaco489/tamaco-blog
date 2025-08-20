@@ -1,0 +1,360 @@
+/v1/articles:
+  get:
+    tags:
+      - articles
+    summary: 記事一覧取得
+    description: |
+      記事の一覧を取得します。
+      ページネーション、フィルタリング、ソートに対応しています。
+    operationId: getArticles
+    parameters:
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+      - $ref: "../parameters/pagination.yaml#/SortParam"
+      - $ref: "../parameters/pagination.yaml#/OrderParam"
+      - $ref: "../parameters/common.yaml#/StatusParam"
+      - $ref: "../parameters/common.yaml#/CategoryParam"
+      - $ref: "../parameters/common.yaml#/TagParam"
+      - $ref: "../parameters/common.yaml#/SearchParam"
+    responses:
+      "200":
+        description: 記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+  post:
+    tags:
+      - articles
+    summary: 記事作成
+    description: 新しい記事を作成します。認証が必要です。
+    operationId: createArticle
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/ArticleCreate.yaml"
+    responses:
+      "201":
+        description: 記事の作成に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Article.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "409":
+        description: 同じスラッグの記事が既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+/v1/articles/{slug}:
+  get:
+    tags:
+      - articles
+    summary: 記事詳細取得
+    description: スラッグを指定して記事の詳細を取得します。
+    operationId: getArticleBySlug
+    parameters:
+      - $ref: "../parameters/common.yaml#/SlugParam"
+    responses:
+      "200":
+        description: 記事詳細の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Article.yaml"
+      "404":
+        description: 記事が見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/articles/{id}:
+  put:
+    tags:
+      - articles
+    summary: 記事更新
+    description: IDを指定して記事を更新します。認証が必要です。
+    operationId: updateArticleById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/ArticleUpdate.yaml"
+    responses:
+      "200":
+        description: 記事の更新に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Article.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: 記事が見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "409":
+        description: 同じスラッグの記事が既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+  delete:
+    tags:
+      - articles
+    summary: 記事削除
+    description: IDを指定して記事を削除します。認証が必要です。
+    operationId: deleteArticleById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    responses:
+      "204":
+        description: 記事の削除に成功
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: 記事が見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+/v1/articles/{id}/publish:
+  patch:
+    tags:
+      - articles
+    summary: 記事公開
+    description: IDを指定して記事を公開状態にします。認証が必要です。
+    operationId: publishArticleById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    responses:
+      "200":
+        description: 記事の公開に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Article.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: 記事が見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+/v1/articles/{id}/views:
+  patch:
+    tags:
+      - articles
+    summary: 閲覧数更新
+    description: IDを指定して記事の閲覧数を更新します。
+    operationId: incrementArticleViewCount
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    responses:
+      "200":
+        description: 閲覧数の更新に成功
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                view_count:
+                  type: integer
+                  description: 更新後の閲覧数
+                  example: 1235
+      "404":
+        description: 記事が見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/articles/popular:
+  get:
+    tags:
+      - articles
+    summary: 人気記事一覧取得
+    description: 閲覧数の多い記事一覧を取得します。
+    operationId: getPopularArticles
+    parameters:
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+    responses:
+      "200":
+        description: 人気記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/articles/recent:
+  get:
+    tags:
+      - articles
+    summary: 最新記事一覧取得
+    description: 最新の記事一覧を取得します。
+    operationId: getRecentArticles
+    parameters:
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+    responses:
+      "200":
+        description: 最新記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/articles/archive/{year}/{month}:
+  get:
+    tags:
+      - articles
+    summary: 月別アーカイブ取得
+    description: 指定された年月の記事一覧を取得します。
+    operationId: getArticlesByMonth
+    parameters:
+      - $ref: "../parameters/common.yaml#/YearParam"
+      - $ref: "../parameters/common.yaml#/MonthParam"
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+    responses:
+      "200":
+        description: 月別記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []

@@ -1,0 +1,29 @@
+title: CategoryListResponse
+type: object
+description: カテゴリ一覧レスポンス
+required:
+  - categories
+properties:
+  categories:
+    type: array
+    description: カテゴリのリスト
+    items:
+      $ref: "../schemas/Category.yaml"
+example:
+  categories:
+    - id: "123e4567-e89b-12d3-a456-426614174000"
+      name: "バックエンド開発"
+      slug: "backend-development"
+      description: "バックエンド開発に関する技術記事"
+      display_order: 1
+      article_count: 42
+      created_at: "2024-01-01T09:00:00Z"
+      updated_at: "2024-01-02T10:30:00Z"
+    - id: "234e5678-e89b-12d3-a456-426614174000"
+      name: "フロントエンド開発"
+      slug: "frontend-development"
+      description: "フロントエンド開発に関する技術記事"
+      display_order: 2
+      article_count: 38
+      created_at: "2024-01-01T09:00:00Z"
+      updated_at: "2024-01-02T10:30:00Z"

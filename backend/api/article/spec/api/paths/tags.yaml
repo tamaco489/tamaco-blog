@@ -1,0 +1,212 @@
+/v1/tags:
+  get:
+    tags:
+      - tags
+    summary: タグ一覧取得
+    description: すべてのタグの一覧を取得します。
+    operationId: getTags
+    responses:
+      "200":
+        description: タグ一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/TagList.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+  post:
+    tags:
+      - tags
+    summary: タグ作成
+    description: 新しいタグを作成します。認証が必要です。
+    operationId: createTag
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/TagCreate.yaml"
+    responses:
+      "201":
+        description: タグの作成に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Tag.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "409":
+        description: 同じスラッグのタグが既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+/v1/tags/{slug}:
+  get:
+    tags:
+      - tags
+    summary: タグ詳細取得
+    description: スラッグを指定してタグの詳細を取得します。
+    operationId: getTagBySlug
+    parameters:
+      - $ref: "../parameters/common.yaml#/SlugParam"
+    responses:
+      "200":
+        description: タグ詳細の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Tag.yaml"
+      "404":
+        description: タグが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/tags/{slug}/articles:
+  get:
+    tags:
+      - tags
+    summary: タグ別記事一覧取得
+    description: 指定されたタグの記事一覧を取得します。
+    operationId: getArticlesByTagSlug
+    parameters:
+      - $ref: "../parameters/common.yaml#/SlugParam"
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+      - $ref: "../parameters/pagination.yaml#/SortParam"
+      - $ref: "../parameters/pagination.yaml#/OrderParam"
+    responses:
+      "200":
+        description: タグ別記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "404":
+        description: タグが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/tags/{id}:
+  put:
+    tags:
+      - tags
+    summary: タグ更新
+    description: IDを指定してタグを更新します。認証が必要です。
+    operationId: updateTagById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/TagUpdate.yaml"
+    responses:
+      "200":
+        description: タグの更新に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Tag.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: タグが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "409":
+        description: 同じスラッグのタグが既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+  delete:
+    tags:
+      - tags
+    summary: タグ削除
+    description: IDを指定してタグを削除します。認証が必要です。
+    operationId: deleteTagById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    responses:
+      "204":
+        description: タグの削除に成功
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: タグが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"

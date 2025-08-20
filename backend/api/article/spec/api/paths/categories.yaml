@@ -1,0 +1,212 @@
+/v1/categories:
+  get:
+    tags:
+      - categories
+    summary: カテゴリ一覧取得
+    description: すべてのカテゴリの一覧を取得します。
+    operationId: getCategories
+    responses:
+      "200":
+        description: カテゴリ一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/CategoryList.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+  post:
+    tags:
+      - categories
+    summary: カテゴリ作成
+    description: 新しいカテゴリを作成します。認証が必要です。
+    operationId: createCategory
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/CategoryCreate.yaml"
+    responses:
+      "201":
+        description: カテゴリの作成に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Category.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "409":
+        description: 同じスラッグのカテゴリが既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+/v1/categories/{slug}:
+  get:
+    tags:
+      - categories
+    summary: カテゴリ詳細取得
+    description: スラッグを指定してカテゴリの詳細を取得します。
+    operationId: getCategoryBySlug
+    parameters:
+      - $ref: "../parameters/common.yaml#/SlugParam"
+    responses:
+      "200":
+        description: カテゴリ詳細の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Category.yaml"
+      "404":
+        description: カテゴリが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/categories/{slug}/articles:
+  get:
+    tags:
+      - categories
+    summary: カテゴリ別記事一覧取得
+    description: 指定されたカテゴリの記事一覧を取得します。
+    operationId: getArticlesByCategorySlug
+    parameters:
+      - $ref: "../parameters/common.yaml#/SlugParam"
+      - $ref: "../parameters/pagination.yaml#/PageParam"
+      - $ref: "../parameters/pagination.yaml#/PageSizeParam"
+      - $ref: "../parameters/pagination.yaml#/SortParam"
+      - $ref: "../parameters/pagination.yaml#/OrderParam"
+    responses:
+      "200":
+        description: カテゴリ別記事一覧の取得に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/ArticleList.yaml"
+      "404":
+        description: カテゴリが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+    security: []
+
+/v1/categories/{id}:
+  put:
+    tags:
+      - categories
+    summary: カテゴリ更新
+    description: IDを指定してカテゴリを更新します。認証が必要です。
+    operationId: updateCategoryById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../requests/CategoryUpdate.yaml"
+    responses:
+      "200":
+        description: カテゴリの更新に成功
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/Category.yaml"
+      "400":
+        description: リクエストパラメータが不正
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/BadRequest.yaml"
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: カテゴリが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "409":
+        description: 同じスラッグのカテゴリが既に存在
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/AlreadyExists.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
+
+  delete:
+    tags:
+      - categories
+    summary: カテゴリ削除
+    description: IDを指定してカテゴリを削除します。認証が必要です。
+    operationId: deleteCategoryById
+    parameters:
+      - $ref: "../parameters/common.yaml#/IdParam"
+    responses:
+      "204":
+        description: カテゴリの削除に成功
+      "401":
+        description: 認証が必要
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/Unauthorized.yaml"
+      "404":
+        description: カテゴリが見つからない
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/NotFound.yaml"
+      "500":
+        description: サーバー内部エラー
+        content:
+          application/json:
+            schema:
+              $ref: "../responses/InternalServerError.yaml"
