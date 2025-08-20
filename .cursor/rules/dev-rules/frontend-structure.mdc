@@ -1,6 +1,6 @@
 ---
 description: Frontend 配下のディレクトリ構成と役割の早見表
-globs: 
+globs:
 alwaysApply: true
 ---
 
