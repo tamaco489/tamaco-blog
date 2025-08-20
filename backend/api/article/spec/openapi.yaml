@@ -104,7 +104,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
         '409':
-          description: 同じスラッグの記事が既に存在
+          description: 同じIDの記事が既に存在
           content:
             application/json:
               schema:
@@ -115,15 +115,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-  /v1/articles/{slug}:
+  /v1/articles/{article_id}:
     get:
       tags:
         - articles
       summary: 記事詳細取得
-      description: スラッグを指定して記事の詳細を取得します。
-      operationId: getArticleBySlug
+      description: 記事IDを指定して記事の詳細を取得します。
+      operationId: getArticleById
       parameters:
-        - $ref: '#/components/parameters/SlugParam'
+        - name: article_id
+          in: path
+          required: true
+          description: 記事ID
+          schema:
+            type: string
+            example: how-to-use-golang
       responses:
         '200':
           description: 記事詳細の取得に成功
@@ -144,15 +150,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
       security: []
-  /v1/articles/{id}:
     put:
       tags:
         - articles
       summary: 記事更新
-      description: IDを指定して記事を更新します。認証が必要です。
+      description: 記事IDを指定して記事を更新します。認証が必要です。
       operationId: updateArticleById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: article_id
+          in: path
+          required: true
+          description: 記事ID
+          schema:
+            type: string
+            example: how-to-use-golang
       requestBody:
         required: true
         content:
@@ -185,7 +196,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
         '409':
-          description: 同じスラッグの記事が既に存在
+          description: 同じIDの記事が既に存在
           content:
             application/json:
               schema:
@@ -200,10 +211,16 @@ paths:
       tags:
         - articles
       summary: 記事削除
-      description: IDを指定して記事を削除します。認証が必要です。
+      description: 記事IDを指定して記事を削除します。認証が必要です。
       operationId: deleteArticleById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: article_id
+          in: path
+          required: true
+          description: 記事ID
+          schema:
+            type: string
+            example: how-to-use-golang
       responses:
         '204':
           description: 記事の削除に成功
@@ -225,15 +242,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-  /v1/articles/{id}/publish:
+  /v1/articles/{article_id}/publish:
     patch:
       tags:
         - articles
       summary: 記事公開
-      description: IDを指定して記事を公開状態にします。認証が必要です。
+      description: 記事IDを指定して記事を公開状態にします。認証が必要です。
       operationId: publishArticleById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: article_id
+          in: path
+          required: true
+          description: 記事ID
+          schema:
+            type: string
+            example: how-to-use-golang
       responses:
         '200':
           description: 記事の公開に成功
@@ -259,15 +282,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-  /v1/articles/{id}/views:
+  /v1/articles/{article_id}/views:
     patch:
       tags:
         - articles
       summary: 閲覧数更新
-      description: IDを指定して記事の閲覧数を更新します。
+      description: 記事IDを指定して記事の閲覧数を更新します。
       operationId: incrementArticleViewCount
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: article_id
+          in: path
+          required: true
+          description: 記事ID
+          schema:
+            type: string
+            example: how-to-use-golang
       responses:
         '200':
           description: 閲覧数の更新に成功
@@ -438,7 +467,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
         '409':
-          description: 同じスラッグのカテゴリが既に存在
+          description: 同じIDのカテゴリが既に存在
           content:
             application/json:
               schema:
@@ -449,15 +478,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-  /v1/categories/{slug}:
+  /v1/categories/{category_id}:
     get:
       tags:
         - categories
       summary: カテゴリ詳細取得
-      description: スラッグを指定してカテゴリの詳細を取得します。
-      operationId: getCategoryBySlug
+      description: カテゴリIDを指定してカテゴリの詳細を取得します。
+      operationId: getCategoryById
       parameters:
-        - $ref: '#/components/parameters/SlugParam'
+        - name: category_id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: string
+            example: technology
       responses:
         '200':
           description: カテゴリ詳細の取得に成功
@@ -478,48 +513,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
       security: []
-  /v1/categories/{slug}/articles:
-    get:
-      tags:
-        - categories
-      summary: カテゴリ別記事一覧取得
-      description: 指定されたカテゴリの記事一覧を取得します。
-      operationId: getArticlesByCategorySlug
-      parameters:
-        - $ref: '#/components/parameters/SlugParam'
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - $ref: '#/components/parameters/SortParam'
-        - $ref: '#/components/parameters/OrderParam'
-      responses:
-        '200':
-          description: カテゴリ別記事一覧の取得に成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArticleList'
-        '404':
-          description: カテゴリが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-        '500':
-          description: サーバー内部エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerError'
-      security: []
-  /v1/categories/{id}:
     put:
       tags:
         - categories
       summary: カテゴリ更新
-      description: IDを指定してカテゴリを更新します。認証が必要です。
+      description: カテゴリIDを指定してカテゴリを更新します。認証が必要です。
       operationId: updateCategoryById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: category_id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: string
+            example: technology
       requestBody:
         required: true
         content:
@@ -552,7 +559,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
         '409':
-          description: 同じスラッグのカテゴリが既に存在
+          description: 同じIDのカテゴリが既に存在
           content:
             application/json:
               schema:
@@ -567,10 +574,16 @@ paths:
       tags:
         - categories
       summary: カテゴリ削除
-      description: IDを指定してカテゴリを削除します。認証が必要です。
+      description: カテゴリIDを指定してカテゴリを削除します。認証が必要です。
       operationId: deleteCategoryById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: category_id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: string
+            example: technology
       responses:
         '204':
           description: カテゴリの削除に成功
@@ -592,6 +605,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /v1/categories/{category_id}/articles:
+    get:
+      tags:
+        - categories
+      summary: カテゴリ別記事一覧取得
+      description: 指定されたカテゴリの記事一覧を取得します。
+      operationId: getArticlesByCategoryId
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          description: カテゴリID
+          schema:
+            type: string
+            example: technology
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+      responses:
+        '200':
+          description: カテゴリ別記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '404':
+          description: カテゴリが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
   /v1/tags:
     get:
       tags:
@@ -645,7 +697,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Unauthorized'
         '409':
-          description: 同じスラッグのタグが既に存在
+          description: 同じIDのタグが既に存在
           content:
             application/json:
               schema:
@@ -656,15 +708,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
-  /v1/tags/{slug}:
+  /v1/tags/{tag_id}:
     get:
       tags:
         - tags
       summary: タグ詳細取得
-      description: スラッグを指定してタグの詳細を取得します。
-      operationId: getTagBySlug
+      description: タグIDを指定してタグの詳細を取得します。
+      operationId: getTagById
       parameters:
-        - $ref: '#/components/parameters/SlugParam'
+        - name: tag_id
+          in: path
+          required: true
+          description: タグID
+          schema:
+            type: string
+            example: golang
       responses:
         '200':
           description: タグ詳細の取得に成功
@@ -685,48 +743,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
       security: []
-  /v1/tags/{slug}/articles:
-    get:
-      tags:
-        - tags
-      summary: タグ別記事一覧取得
-      description: 指定されたタグの記事一覧を取得します。
-      operationId: getArticlesByTagSlug
-      parameters:
-        - $ref: '#/components/parameters/SlugParam'
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PageSizeParam'
-        - $ref: '#/components/parameters/SortParam'
-        - $ref: '#/components/parameters/OrderParam'
-      responses:
-        '200':
-          description: タグ別記事一覧の取得に成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ArticleList'
-        '404':
-          description: タグが見つからない
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NotFound'
-        '500':
-          description: サーバー内部エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InternalServerError'
-      security: []
-  /v1/tags/{id}:
     put:
       tags:
         - tags
       summary: タグ更新
-      description: IDを指定してタグを更新します。認証が必要です。
+      description: タグIDを指定してタグを更新します。認証が必要です。
       operationId: updateTagById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: tag_id
+          in: path
+          required: true
+          description: タグID
+          schema:
+            type: string
+            example: golang
       requestBody:
         required: true
         content:
@@ -759,7 +789,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/NotFound'
         '409':
-          description: 同じスラッグのタグが既に存在
+          description: 同じIDのタグが既に存在
           content:
             application/json:
               schema:
@@ -774,10 +804,16 @@ paths:
       tags:
         - tags
       summary: タグ削除
-      description: IDを指定してタグを削除します。認証が必要です。
+      description: タグIDを指定してタグを削除します。認証が必要です。
       operationId: deleteTagById
       parameters:
-        - $ref: '#/components/parameters/IdParam'
+        - name: tag_id
+          in: path
+          required: true
+          description: タグID
+          schema:
+            type: string
+            example: golang
       responses:
         '204':
           description: タグの削除に成功
@@ -799,6 +835,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /v1/tags/{tag_id}/articles:
+    get:
+      tags:
+        - tags
+      summary: タグ別記事一覧取得
+      description: 指定されたタグの記事一覧を取得します。
+      operationId: getArticlesByTagId
+      parameters:
+        - name: tag_id
+          in: path
+          required: true
+          description: タグID
+          schema:
+            type: string
+            example: golang
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - $ref: '#/components/parameters/OrderParam'
+      responses:
+        '200':
+          description: タグ別記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArticleList'
+        '404':
+          description: タグが見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+      security: []
   /v1/search:
     get:
       tags:
@@ -1633,24 +1708,6 @@ components:
         minLength: 1
         maxLength: 100
       example: RESTful API
-    SlugParam:
-      name: slug
-      in: path
-      description: URL用の識別子
-      required: true
-      schema:
-        type: string
-        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
-      example: how-to-build-restful-api
-    IdParam:
-      name: id
-      in: path
-      description: リソースのID（UUID）
-      required: true
-      schema:
-        type: string
-        format: uuid
-      example: 550e8400-e29b-41d4-a716-446655440000
     YearParam:
       name: year
       in: path

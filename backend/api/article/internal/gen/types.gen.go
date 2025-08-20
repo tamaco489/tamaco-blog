@@ -76,18 +76,18 @@ const (
 	GetArticlesParamsStatusPublished GetArticlesParamsStatus = "published"
 )
 
-// Defines values for GetArticlesByCategorySlugParamsSort.
+// Defines values for GetArticlesByCategoryIdParamsSort.
 const (
-	GetArticlesByCategorySlugParamsSortCreatedAt   GetArticlesByCategorySlugParamsSort = "created_at"
-	GetArticlesByCategorySlugParamsSortPublishedAt GetArticlesByCategorySlugParamsSort = "published_at"
-	GetArticlesByCategorySlugParamsSortUpdatedAt   GetArticlesByCategorySlugParamsSort = "updated_at"
-	GetArticlesByCategorySlugParamsSortViewCount   GetArticlesByCategorySlugParamsSort = "view_count"
+	GetArticlesByCategoryIdParamsSortCreatedAt   GetArticlesByCategoryIdParamsSort = "created_at"
+	GetArticlesByCategoryIdParamsSortPublishedAt GetArticlesByCategoryIdParamsSort = "published_at"
+	GetArticlesByCategoryIdParamsSortUpdatedAt   GetArticlesByCategoryIdParamsSort = "updated_at"
+	GetArticlesByCategoryIdParamsSortViewCount   GetArticlesByCategoryIdParamsSort = "view_count"
 )
 
-// Defines values for GetArticlesByCategorySlugParamsOrder.
+// Defines values for GetArticlesByCategoryIdParamsOrder.
 const (
-	GetArticlesByCategorySlugParamsOrderAsc  GetArticlesByCategorySlugParamsOrder = "asc"
-	GetArticlesByCategorySlugParamsOrderDesc GetArticlesByCategorySlugParamsOrder = "desc"
+	GetArticlesByCategoryIdParamsOrderAsc  GetArticlesByCategoryIdParamsOrder = "asc"
+	GetArticlesByCategoryIdParamsOrderDesc GetArticlesByCategoryIdParamsOrder = "desc"
 )
 
 // Defines values for SearchArticlesParamsSort.
@@ -111,18 +111,18 @@ const (
 	SearchArticlesParamsStatusPublished SearchArticlesParamsStatus = "published"
 )
 
-// Defines values for GetArticlesByTagSlugParamsSort.
+// Defines values for GetArticlesByTagIdParamsSort.
 const (
-	CreatedAt   GetArticlesByTagSlugParamsSort = "created_at"
-	PublishedAt GetArticlesByTagSlugParamsSort = "published_at"
-	UpdatedAt   GetArticlesByTagSlugParamsSort = "updated_at"
-	ViewCount   GetArticlesByTagSlugParamsSort = "view_count"
+	CreatedAt   GetArticlesByTagIdParamsSort = "created_at"
+	PublishedAt GetArticlesByTagIdParamsSort = "published_at"
+	UpdatedAt   GetArticlesByTagIdParamsSort = "updated_at"
+	ViewCount   GetArticlesByTagIdParamsSort = "view_count"
 )
 
-// Defines values for GetArticlesByTagSlugParamsOrder.
+// Defines values for GetArticlesByTagIdParamsOrder.
 const (
-	Asc  GetArticlesByTagSlugParamsOrder = "asc"
-	Desc GetArticlesByTagSlugParamsOrder = "desc"
+	Asc  GetArticlesByTagIdParamsOrder = "asc"
+	Desc GetArticlesByTagIdParamsOrder = "desc"
 )
 
 // AlreadyExists リソースが既に存在する場合のエラーレスポンス
@@ -476,9 +476,6 @@ type Unauthorized struct {
 // CategoryParam defines model for CategoryParam.
 type CategoryParam = string
 
-// IdParam defines model for IdParam.
-type IdParam = openapi_types.UUID
-
 // MonthParam defines model for MonthParam.
 type MonthParam = int
 
@@ -493,9 +490,6 @@ type PageSizeParam = int
 
 // SearchParam defines model for SearchParam.
 type SearchParam = string
-
-// SlugParam defines model for SlugParam.
-type SlugParam = string
 
 // SortParam defines model for SortParam.
 type SortParam string
@@ -572,8 +566,8 @@ type GetRecentArticlesParams struct {
 	PageSize *PageSizeParam `form:"page_size,omitempty" json:"page_size,omitempty"`
 }
 
-// GetArticlesByCategorySlugParams defines parameters for GetArticlesByCategorySlug.
-type GetArticlesByCategorySlugParams struct {
+// GetArticlesByCategoryIdParams defines parameters for GetArticlesByCategoryId.
+type GetArticlesByCategoryIdParams struct {
 	// Page ページ番号
 	Page *PageParam `form:"page,omitempty" json:"page,omitempty"`
 
@@ -581,17 +575,17 @@ type GetArticlesByCategorySlugParams struct {
 	PageSize *PageSizeParam `form:"page_size,omitempty" json:"page_size,omitempty"`
 
 	// Sort ソート項目
-	Sort *GetArticlesByCategorySlugParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+	Sort *GetArticlesByCategoryIdParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
 
 	// Order ソート順
-	Order *GetArticlesByCategorySlugParamsOrder `form:"order,omitempty" json:"order,omitempty"`
+	Order *GetArticlesByCategoryIdParamsOrder `form:"order,omitempty" json:"order,omitempty"`
 }
 
-// GetArticlesByCategorySlugParamsSort defines parameters for GetArticlesByCategorySlug.
-type GetArticlesByCategorySlugParamsSort string
+// GetArticlesByCategoryIdParamsSort defines parameters for GetArticlesByCategoryId.
+type GetArticlesByCategoryIdParamsSort string
 
-// GetArticlesByCategorySlugParamsOrder defines parameters for GetArticlesByCategorySlug.
-type GetArticlesByCategorySlugParamsOrder string
+// GetArticlesByCategoryIdParamsOrder defines parameters for GetArticlesByCategoryId.
+type GetArticlesByCategoryIdParamsOrder string
 
 // SearchArticlesParams defines parameters for SearchArticles.
 type SearchArticlesParams struct {
@@ -629,8 +623,8 @@ type SearchArticlesParamsOrder string
 // SearchArticlesParamsStatus defines parameters for SearchArticles.
 type SearchArticlesParamsStatus string
 
-// GetArticlesByTagSlugParams defines parameters for GetArticlesByTagSlug.
-type GetArticlesByTagSlugParams struct {
+// GetArticlesByTagIdParams defines parameters for GetArticlesByTagId.
+type GetArticlesByTagIdParams struct {
 	// Page ページ番号
 	Page *PageParam `form:"page,omitempty" json:"page,omitempty"`
 
@@ -638,17 +632,17 @@ type GetArticlesByTagSlugParams struct {
 	PageSize *PageSizeParam `form:"page_size,omitempty" json:"page_size,omitempty"`
 
 	// Sort ソート項目
-	Sort *GetArticlesByTagSlugParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
+	Sort *GetArticlesByTagIdParamsSort `form:"sort,omitempty" json:"sort,omitempty"`
 
 	// Order ソート順
-	Order *GetArticlesByTagSlugParamsOrder `form:"order,omitempty" json:"order,omitempty"`
+	Order *GetArticlesByTagIdParamsOrder `form:"order,omitempty" json:"order,omitempty"`
 }
 
-// GetArticlesByTagSlugParamsSort defines parameters for GetArticlesByTagSlug.
-type GetArticlesByTagSlugParamsSort string
+// GetArticlesByTagIdParamsSort defines parameters for GetArticlesByTagId.
+type GetArticlesByTagIdParamsSort string
 
-// GetArticlesByTagSlugParamsOrder defines parameters for GetArticlesByTagSlug.
-type GetArticlesByTagSlugParamsOrder string
+// GetArticlesByTagIdParamsOrder defines parameters for GetArticlesByTagId.
+type GetArticlesByTagIdParamsOrder string
 
 // CreateArticleJSONRequestBody defines body for CreateArticle for application/json ContentType.
 type CreateArticleJSONRequestBody = ArticleCreate

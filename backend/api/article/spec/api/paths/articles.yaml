@@ -69,7 +69,7 @@
             schema:
               $ref: "../responses/Unauthorized.yaml"
       "409":
-        description: 同じスラッグの記事が既に存在
+        description: 同じIDの記事が既に存在
         content:
           application/json:
             schema:
@@ -81,15 +81,21 @@
             schema:
               $ref: "../responses/InternalServerError.yaml"
 
-/v1/articles/{slug}:
+/v1/articles/{article_id}:
   get:
     tags:
       - articles
     summary: 記事詳細取得
-    description: スラッグを指定して記事の詳細を取得します。
-    operationId: getArticleBySlug
+    description: 記事IDを指定して記事の詳細を取得します。
+    operationId: getArticleById
     parameters:
-      - $ref: "../parameters/common.yaml#/SlugParam"
+      - name: article_id
+        in: path
+        required: true
+        description: 記事ID
+        schema:
+          type: string
+          example: "how-to-use-golang"
     responses:
       "200":
         description: 記事詳細の取得に成功
@@ -111,15 +117,20 @@
               $ref: "../responses/InternalServerError.yaml"
     security: []
 
-/v1/articles/{id}:
   put:
     tags:
       - articles
     summary: 記事更新
-    description: IDを指定して記事を更新します。認証が必要です。
+    description: 記事IDを指定して記事を更新します。認証が必要です。
     operationId: updateArticleById
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: article_id
+        in: path
+        required: true
+        description: 記事ID
+        schema:
+          type: string
+          example: "how-to-use-golang"
     requestBody:
       required: true
       content:
@@ -152,7 +163,7 @@
             schema:
               $ref: "../responses/NotFound.yaml"
       "409":
-        description: 同じスラッグの記事が既に存在
+        description: 同じIDの記事が既に存在
         content:
           application/json:
             schema:
@@ -168,10 +179,16 @@
     tags:
       - articles
     summary: 記事削除
-    description: IDを指定して記事を削除します。認証が必要です。
+    description: 記事IDを指定して記事を削除します。認証が必要です。
     operationId: deleteArticleById
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: article_id
+        in: path
+        required: true
+        description: 記事ID
+        schema:
+          type: string
+          example: "how-to-use-golang"
     responses:
       "204":
         description: 記事の削除に成功
@@ -194,15 +211,21 @@
             schema:
               $ref: "../responses/InternalServerError.yaml"
 
-/v1/articles/{id}/publish:
+/v1/articles/{article_id}/publish:
   patch:
     tags:
       - articles
     summary: 記事公開
-    description: IDを指定して記事を公開状態にします。認証が必要です。
+    description: 記事IDを指定して記事を公開状態にします。認証が必要です。
     operationId: publishArticleById
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: article_id
+        in: path
+        required: true
+        description: 記事ID
+        schema:
+          type: string
+          example: "how-to-use-golang"
     responses:
       "200":
         description: 記事の公開に成功
@@ -229,15 +252,21 @@
             schema:
               $ref: "../responses/InternalServerError.yaml"
 
-/v1/articles/{id}/views:
+/v1/articles/{article_id}/views:
   patch:
     tags:
       - articles
     summary: 閲覧数更新
-    description: IDを指定して記事の閲覧数を更新します。
+    description: 記事IDを指定して記事の閲覧数を更新します。
     operationId: incrementArticleViewCount
     parameters:
-      - $ref: "../parameters/common.yaml#/IdParam"
+      - name: article_id
+        in: path
+        required: true
+        description: 記事ID
+        schema:
+          type: string
+          example: "how-to-use-golang"
     responses:
       "200":
         description: 閲覧数の更新に成功
