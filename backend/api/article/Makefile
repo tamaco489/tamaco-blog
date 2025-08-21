@@ -22,7 +22,7 @@ install-tools: setup-env ## dev: Install tools used in the project
 # =================================================================
 # generate open api spec and sqlc interfaces
 # =================================================================
-.PHONY: gen-api bundle-openapi
+.PHONY: gen-api bundle-openapi gen-sqlc
 gen-api: bundle-openapi ## dev: generate api server interface and type definitions based on the open api schema
 	oapi-codegen -package gen -generate types -o internal/gen/types.gen.go ./spec/openapi.yaml
 	oapi-codegen -package gen -generate strict-server,gin -templates ./spec/templates -o internal/gen/server.gen.go ./spec/openapi.yaml
@@ -34,6 +34,17 @@ gen-sqlc: ## dev: generate sqlc interfaces and types
 	sqlc generate -f internal/repository/sqlc.yaml
 	mockgen -source=./internal/repository/gen_sqlc/querier.go -package mock -destination=./internal/repository/gen_mock/mock_querier.go
 	mockgen -source=./internal/repository/gen_sqlc/db.go -package mock -destination=./internal/repository/gen_mock/mock_db.go
+
+.PHONY: sqlc-lint sqlc-diff sqlc-vet
+SQLC_DIRS := ./internal/repository
+
+sqlc-lint: sqlc-diff sqlc-vet ## dev: run sqlc schema diff check and static analysis
+
+sqlc-diff: ## dev: check sqlc schema differences
+	@for dir in $(SQLC_DIRS); do echo "Running sqlc diff in $$dir"; cd $$dir && sqlc diff && cd - > /dev/null; done
+
+sqlc-vet: ## dev: run sqlc static analysis
+	@for dir in $(SQLC_DIRS); do echo "Running sqlc vet in $$dir"; cd $$dir && sqlc vet && cd - > /dev/null; done
 
 
 # =================================================================
@@ -76,6 +87,7 @@ rebuild: ## dev: rebuild containers
 	docker compose down -v
 	docker compose build --no-cache
 	docker compose up -d api postgres localstack
+
 
 # =================================================================
 # datastore operations
@@ -154,6 +166,7 @@ get-tags: ## dev: get tags
 	curl -sX 'GET' \
 		'http://localhost:8080/v1/tags' \
 		-H 'accept: application/json' | jq .
+
 
 # =================================================================
 # other
