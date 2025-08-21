@@ -1,0 +1,5 @@
+# Local settings (contains environment-specific configurations)
+settings.local.json
+
+# Keep the sample file
+!settings.local.json.sample

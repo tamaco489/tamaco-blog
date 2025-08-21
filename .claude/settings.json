@@ -14,11 +14,21 @@
       "Bash(npm run test:*)",
       "Bash(git *)",
       "Bash(echo *)",
+      "Bash(curl http://localhost:*)",
+      "Bash(curl http://127.0.0.1:*)",
+      "Bash(curl http://0.0.0.0:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(cd backend/api/article && make *)",
       "Grep(*)",
       "Glob(*)",
       "LS(*)"
     ],
-    "deny": ["Bash(rm -rf /)", "Bash(curl:*)", "WebFetch(*)"]
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(curl https://*)",
+      "Bash(curl http://*[!localhost]*)",
+      "WebFetch(*)"
+    ]
   },
   "hooks": {
     "UserPromptSubmit": [
