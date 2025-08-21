@@ -1,0 +1,21 @@
+{
+  "name": "format-files",
+  "description": "ファイル末尾改行の追加と行末トレーリング空白の削除",
+  "steps": [
+    {
+      "tool": "bash",
+      "command": "find . -type f \\( -name \"*.go\" -o -name \"*.js\" -o -name \"*.ts\" -o -name \"*.jsx\" -o -name \"*.tsx\" -o -name \"*.sql\" -o -name \"*.yaml\" -o -name \"*.yml\" -o -name \"*.json\" -o -name \"*.md\" -o -name \"*.sh\" -o -name \"Makefile\" \\) ! -path \"./node_modules/*\" ! -path \"./frontend/node_modules/*\" ! -path \"./.git/*\" ! -path \"./build/*\" ! -path \"./dist/*\" ! -path \"./tmp/*\" ! -name \"*.gen.go\" ! -name \"*.gen.ts\" ! -name \"openapi.yaml\" ! -name \"file-formatting-rules.md\" | head -20",
+      "description": "対象ファイルを検索（最初の20件を表示）"
+    },
+    {
+      "tool": "bash",
+      "command": "find . -type f \\( -name \"*.go\" -o -name \"*.js\" -o -name \"*.ts\" -o -name \"*.jsx\" -o -name \"*.tsx\" -o -name \"*.sql\" -o -name \"*.yaml\" -o -name \"*.yml\" -o -name \"*.json\" -o -name \"*.md\" -o -name \"*.sh\" -o -name \"Makefile\" \\) ! -path \"./node_modules/*\" ! -path \"./frontend/node_modules/*\" ! -path \"./.git/*\" ! -path \"./build/*\" ! -path \"./dist/*\" ! -path \"./tmp/*\" ! -name \"*.gen.go\" ! -name \"*.gen.ts\" ! -name \"openapi.yaml\" ! -name \"file-formatting-rules.md\" | xargs -I {} sh -c 'echo \"Processing: {}\"; sed -i \"s/[[:space:]]*$//\" \"{}\"; [ -n \"$(tail -c1 \"{}\")\" ] && echo >> \"{}\" || true'",
+      "description": "行末空白を削除し、ファイル末尾に改行を追加"
+    },
+    {
+      "tool": "bash",
+      "command": "echo \"ファイルフォーマット処理が完了しました\"",
+      "description": "完了メッセージ"
+    }
+  ]
+}
