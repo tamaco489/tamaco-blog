@@ -12,6 +12,7 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/search"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/tag"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository"
 )
 
 type ServerController struct {
@@ -45,7 +46,7 @@ type ServerController struct {
 	searchArticlesCtrl *search.SearchArticlesController
 }
 
-func NewServerController(ctx context.Context, cfg *config.Config) *ServerController {
+func NewServerController(ctx context.Context, cfg *config.Config, db *repository.PostgreSQLDB) *ServerController {
 	return &ServerController{
 		healthcheckCtrl: health.NewHealthcheckController(),
 
@@ -68,7 +69,7 @@ func NewServerController(ctx context.Context, cfg *config.Config) *ServerControl
 		updateCategoryCtrl:  category.NewUpdateCategoryController(),
 		getCategoryByIDCtrl: category.NewGetCategoryByIDController(),
 
-		getTagsCtrl:    tag.NewGetTagsController(ctx, cfg),
+		getTagsCtrl:    tag.NewGetTagsController(ctx, cfg, db),
 		createTagCtrl:  tag.NewCreateTagController(),
 		deleteTagCtrl:  tag.NewDeleteTagController(),
 		updateTagCtrl:  tag.NewUpdateTagController(),

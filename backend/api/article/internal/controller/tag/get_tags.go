@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/usecase/tag"
 )
 
@@ -16,9 +17,10 @@ type GetTagsController struct {
 	useCase tag.GetTagsUseCase
 }
 
-func NewGetTagsController(ctx context.Context, cfg *config.Config) *GetTagsController {
+func NewGetTagsController(ctx context.Context, cfg *config.Config, db *repository.PostgreSQLDB) *GetTagsController {
+	tagRepo := repository.NewTagRepository(db)
 	return &GetTagsController{
-		useCase: tag.NewGetTagsUseCase(cfg),
+		useCase: tag.NewGetTagsUseCase(cfg, tagRepo),
 	}
 }
 
