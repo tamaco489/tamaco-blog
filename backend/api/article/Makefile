@@ -85,8 +85,15 @@ pg: ## dev: connect to postgres
 	PGPASSWORD="password#0" docker compose exec postgres psql -U core -h localhost -p 5432 -d core
 
 .PHONY: migrate-new migrate-up migrate-down migrate-status
-migrate-new: ## dev: create a new migration schema
-	sql-migrate new -env='dev' -config=./_tools/sql-migrate/config.yaml $(NAME)
+
+migrate-new: ## dev: create a new migration with sequential numbering (e.g., make migrate-create NAME=create_users_table)
+	@if [ -z "$(NAME)" ]; then \
+		echo "Error: NAME is required"; \
+		echo "Usage: make migrate-create NAME=<migration_name>"; \
+		echo "Example: make migrate-create NAME=create_users_table"; \
+		exit 1; \
+	fi
+	@./scripts/migration/create_migration.sh $(NAME)
 
 migrate-up: ## dev: apply migration
 	sql-migrate up -env='dev' -config=./_tools/sql-migrate/config.yaml
