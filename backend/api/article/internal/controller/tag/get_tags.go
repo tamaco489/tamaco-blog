@@ -5,6 +5,7 @@ package tag
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,9 @@ type GetTagsController struct {
 	useCase tag.GetTagsUseCase
 }
 
-func NewGetTagsController(ctx context.Context, cfg *config.Config) *GetTagsController {
+func NewGetTagsController(ctx context.Context, cfg *config.Config, db *sql.DB) *GetTagsController {
 	return &GetTagsController{
-		useCase: tag.NewGetTagsUseCase(cfg),
+		useCase: tag.NewGetTagsUseCase(cfg, db),
 	}
 }
 

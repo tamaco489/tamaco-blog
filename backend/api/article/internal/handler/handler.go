@@ -12,6 +12,8 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/logger"
+
+	datastore "github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository/data_store"
 )
 
 func NewHandler(ctx context.Context) (*http.Server, error) {
@@ -19,6 +21,8 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get config instance: %w", err)
 	}
+
+	db := datastore.InitDB(ctx)
 
 	r := gin.New()
 	r.Use(gin.LoggerWithFormatter(logger.GinLogFormatter))
@@ -35,7 +39,7 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 	corsConfig.AllowCredentials = true
 	r.Use(cors.New(corsConfig))
 
-	ctrl := controller.NewServerController(ctx, cfg)
+	ctrl := controller.NewServerController(ctx, cfg, db)
 
 	gen.RegisterHandlers(r, ctrl)
 

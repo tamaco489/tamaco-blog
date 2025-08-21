@@ -8,6 +8,7 @@
 @.claude/rules/dev-rules/backend-structure.md
 @.claude/rules/dev-rules/go-coding-rules.md
 @.claude/rules/dev-rules/openapi-spec.md
+@.claude/rules/dev-rules/file-formatting-rules.md
 @.claude/rules/domain/blog-domain.md
 @.claude/rules/domain/features.md
 @.claude/rules/domain/url-design.md
@@ -39,6 +40,7 @@ cd backend/api/article
 make install-tools # 環境変数ファイルの作成、開発ツールのインストール
 make up            # Docker環境起動（PostgreSQL含む）
 make migrate-up    # データベースマイグレーション
+make load-masters  # マスタデータ投入
 make logs          # APIサーバのログ出力（起動確認）
 ```
 
@@ -48,6 +50,38 @@ make logs          # APIサーバのログ出力（起動確認）
 cd backend/api/article
 make bundle-openapi # OpenAPI specのバンドル
 make gen-api        # APIインターフェースと型定義の生成
+```
+
+#### データベース開発手順
+
+##### 1. マイグレーションファイルの追加
+
+```bash
+# 新しいマイグレーションファイルを作成
+make migrate-create NAME=create_users_table
+
+# マイグレーションの適用・確認
+make migrate-up     # マイグレーション適用
+make migrate-status # ステータス確認
+make migrate-down   # ロールバック（必要時）
+```
+
+##### 2. sqlc用クエリファイルの追加
+
+```bash
+# クエリファイル作成 (internal/repository/queries/テーブル名.sql)
+# sqlcコード生成
+make gen-sqlc
+```
+
+##### 3. マスタデータの投入
+
+```bash
+# マスタデータ投入
+make load-masters   # マスタデータ投入
+make reset-masters  # 全削除してマスタデータ再投入
+
+# 新しいマスタファイル作成 (scripts/masters/番号_テーブル名.sql)
 ```
 
 ## アーキテクチャ概要
