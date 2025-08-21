@@ -1,3 +1,10 @@
+// Package datastore provides database connection management for the article API.
+// This package handles PostgreSQL database initialization using pgx driver with
+// database/sql compatibility layer for sqlc integration.
+//
+// The package manages singleton database connections with proper configuration
+// from AWS Secrets Manager through the config system, ensuring efficient
+// connection pooling and lifecycle management.
 package datastore
 
 import (
