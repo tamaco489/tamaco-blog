@@ -1,0 +1,22 @@
+{
+  "outputStyle": "default",
+  "permissions": {
+    "allow": []
+  },
+  "cleanupPeriodDays": 7,
+  "env": {
+    "AWS_PROFILE": "your-aws-profile"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Local environment loaded'"
+          }
+        ]
+      }
+    ]
+  }
+}

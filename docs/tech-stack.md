@@ -10,36 +10,36 @@ graph LR
     subgraph "Frontend"
         A[Next.js<br/>SSG + ISR]
     end
-    
+
     subgraph "Hosting"
         B[AWS S3]
         C[CloudFront]
     end
-    
+
     subgraph "Data Store"
         D[Supabase]
         E[DynamoDB<br/>Future]
     end
-    
+
     subgraph "API Server"
         F[API Gateway]
         G[Lambda]
         H[ECR]
     end
-    
+
     subgraph "CMS"
         I[Strapi<br/>Headless CMS]
     end
-    
+
     subgraph "CI/CD"
         J[GitHub Actions]
     end
-    
+
     subgraph "Monitoring"
         K[NewRelic]
         L[Google Analytics]
     end
-    
+
     A --> B
     B --> C
     A --> F

@@ -113,7 +113,7 @@ describe("Sitemap Page", () => {
     expect(
       screen.getByText(/Next.js 14 \+ TypeScript \+ TailwindCSSを使用して構築されており/)
     ).toBeInTheDocument();
-    
+
     const aboutPageLink = screen.getByRole("link", { name: "Aboutページ" });
     expect(aboutPageLink).toHaveAttribute("href", "/about");
   });
