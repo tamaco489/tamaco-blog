@@ -3,46 +3,75 @@ package tag
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
+	"time"
 
+	"github.com/oapi-codegen/runtime/types"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository/gen_sqlc"
 )
 
-// GetTagsUseCase handles getting tags list
 type GetTagsUseCase interface {
 	GetTags(ctx context.Context) (*gen.TagList, error)
 }
 
 type getTagsUseCase struct {
 	config *config.Config
+	db     *sql.DB
 }
 
-// NewGetTagsUseCase creates a new get tags usecase
-func NewGetTagsUseCase(cfg *config.Config) GetTagsUseCase {
+func NewGetTagsUseCase(cfg *config.Config, db *sql.DB) GetTagsUseCase {
 	return &getTagsUseCase{
 		config: cfg,
+		db:     db,
 	}
 }
 
-// GetTags implements GetTagsUseCase
 func (u *getTagsUseCase) GetTags(ctx context.Context) (*gen.TagList, error) {
+	slog.InfoContext(ctx, "GetTags called")
 
-	slog.InfoContext(ctx, "[TEST] GetTags called")
+	queries := gen_sqlc.New()
+	tags, err := queries.ListTags(ctx, u.db)
+	if err != nil {
+		slog.ErrorContext(ctx, "failed to list tags", slog.String("error", err.Error()))
+		return nil, err
+	}
 
-	// DB接続情報をログ出力（デバッグ用）
-	slog.InfoContext(ctx, "[DEBUG] Database connection info",
-		slog.String("host", u.config.CoreDB.Host),
-		slog.String("port", u.config.CoreDB.Port),
-		slog.String("user", u.config.CoreDB.User),
-		slog.String("dbname", u.config.CoreDB.Name),
-		slog.String("dsn", u.config.GetDatabaseDSN()),
-		slog.Bool("is_production", u.config.IsProduction()),
-		slog.String("api_env", string(u.config.API.Env)),
-	)
+	response := &gen.TagList{Tags: make([]gen.Tag, len(tags))}
 
-	// TODO: 実装予定
-	return &gen.TagList{
-		Tags: []gen.Tag{},
-	}, nil
+	for i, tag := range tags {
+		response.Tags[i] = convertToGenTag(tag)
+	}
+
+	slog.InfoContext(ctx, "successfully retrieved tags", slog.Int("count", len(tags)))
+	return response, nil
+}
+
+func convertToGenTag(dbTag gen_sqlc.Tag) gen.Tag {
+	var usageCount *int
+	if dbTag.UsageCount.Valid {
+		count := int(dbTag.UsageCount.Int32)
+		usageCount = &count
+	}
+
+	var createdAt *time.Time
+	if dbTag.CreatedAt.Valid {
+		createdAt = &dbTag.CreatedAt.Time
+	}
+
+	var updatedAt *time.Time
+	if dbTag.UpdatedAt.Valid {
+		updatedAt = &dbTag.UpdatedAt.Time
+	}
+
+	return gen.Tag{
+		Id:         types.UUID(dbTag.ID),
+		Name:       dbTag.Name,
+		Slug:       dbTag.Slug,
+		UsageCount: usageCount,
+		CreatedAt:  createdAt,
+		UpdatedAt:  updatedAt,
+	}
 }

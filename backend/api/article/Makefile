@@ -22,7 +22,7 @@ install-tools: setup-env ## dev: Install tools used in the project
 # =================================================================
 # generate open api spec and sqlc interfaces
 # =================================================================
-.PHONY: gen-api bundle-openapi
+.PHONY: gen-api bundle-openapi gen-sqlc
 gen-api: bundle-openapi ## dev: generate api server interface and type definitions based on the open api schema
 	oapi-codegen -package gen -generate types -o internal/gen/types.gen.go ./spec/openapi.yaml
 	oapi-codegen -package gen -generate strict-server,gin -templates ./spec/templates -o internal/gen/server.gen.go ./spec/openapi.yaml
@@ -34,6 +34,17 @@ gen-sqlc: ## dev: generate sqlc interfaces and types
 	sqlc generate -f internal/repository/sqlc.yaml
 	mockgen -source=./internal/repository/gen_sqlc/querier.go -package mock -destination=./internal/repository/gen_mock/mock_querier.go
 	mockgen -source=./internal/repository/gen_sqlc/db.go -package mock -destination=./internal/repository/gen_mock/mock_db.go
+
+.PHONY: sqlc-lint sqlc-diff sqlc-vet
+SQLC_DIRS := ./internal/repository
+
+sqlc-lint: sqlc-diff sqlc-vet ## dev: run sqlc schema diff check and static analysis
+
+sqlc-diff: ## dev: check sqlc schema differences
+	@for dir in $(SQLC_DIRS); do echo "Running sqlc diff in $$dir"; cd $$dir && sqlc diff && cd - > /dev/null; done
+
+sqlc-vet: ## dev: run sqlc static analysis
+	@for dir in $(SQLC_DIRS); do echo "Running sqlc vet in $$dir"; cd $$dir && sqlc vet && cd - > /dev/null; done
 
 
 # =================================================================
@@ -77,6 +88,7 @@ rebuild: ## dev: rebuild containers
 	docker compose build --no-cache
 	docker compose up -d api postgres localstack
 
+
 # =================================================================
 # datastore operations
 # =================================================================
@@ -85,8 +97,15 @@ pg: ## dev: connect to postgres
 	PGPASSWORD="password#0" docker compose exec postgres psql -U core -h localhost -p 5432 -d core
 
 .PHONY: migrate-new migrate-up migrate-down migrate-status
-migrate-new: ## dev: create a new migration schema
-	sql-migrate new -env='dev' -config=./_tools/sql-migrate/config.yaml $(NAME)
+
+migrate-new: ## dev: create a new migration with sequential numbering (e.g., make migrate-create NAME=create_users_table)
+	@if [ -z "$(NAME)" ]; then \
+		echo "Error: NAME is required"; \
+		echo "Usage: make migrate-create NAME=<migration_name>"; \
+		echo "Example: make migrate-create NAME=create_users_table"; \
+		exit 1; \
+	fi
+	@./scripts/migration/create_migration.sh $(NAME)
 
 migrate-up: ## dev: apply migration
 	sql-migrate up -env='dev' -config=./_tools/sql-migrate/config.yaml
@@ -96,6 +115,18 @@ migrate-down: ## dev: rollback migration
 
 migrate-status: ## dev: show migration status
 	sql-migrate status -env='dev' -config=./_tools/sql-migrate/config.yaml
+
+.PHONY: load-masters reset-masters
+load-masters: ## dev: load master data into database
+	@echo "Loading master data..."
+	@./scripts/masters/load_masters.sh
+
+reset-masters: ## dev: reset and reload master data
+	@echo "Resetting master data..."
+	@echo "Deleting existing master data..."
+	@PGPASSWORD="password#0" docker compose exec -T postgres psql -U core -h localhost -p 5432 -d core -c "TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
+	@echo "Reloading master data..."
+	@./scripts/masters/load_masters.sh
 
 
 # =================================================================
@@ -135,6 +166,7 @@ get-tags: ## dev: get tags
 	curl -sX 'GET' \
 		'http://localhost:8080/v1/tags' \
 		-H 'accept: application/json' | jq .
+
 
 # =================================================================
 # other

@@ -1,0 +1,4 @@
+dev:
+  dialect: postgres
+  datasource: host=localhost port=55432 user=core password=password#0 dbname=core sslmode=disable
+  dir: ./internal/repository/migrations
