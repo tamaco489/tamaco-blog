@@ -104,6 +104,18 @@ migrate-down: ## dev: rollback migration
 migrate-status: ## dev: show migration status
 	sql-migrate status -env='dev' -config=./_tools/sql-migrate/config.yaml
 
+.PHONY: load-masters reset-masters
+load-masters: ## dev: load master data into database
+	@echo "Loading master data..."
+	@./scripts/masters/load_masters.sh
+
+reset-masters: ## dev: reset and reload master data
+	@echo "Resetting master data..."
+	@echo "Deleting existing master data..."
+	@PGPASSWORD="password#0" docker compose exec -T postgres psql -U core -h localhost -p 5432 -d core -c "TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
+	@echo "Reloading master data..."
+	@./scripts/masters/load_masters.sh
+
 
 # =================================================================
 # aws operations
