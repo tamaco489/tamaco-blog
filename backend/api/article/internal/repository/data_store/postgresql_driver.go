@@ -2,48 +2,42 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
-	"os"
+	"net/url"
 	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
 )
 
-type DBConfig struct {
-	User     string
-	Password string
-	Host     string
-	Port     string
-	DBName   string
-	SSLMode  string
-}
-
-func GetDBConfig() DBConfig {
-	return DBConfig{
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		DBName:   os.Getenv("DB_NAME"),
-		SSLMode:  os.Getenv("DB_SSL_MODE"),
-	}
-}
-
-func getDSN(cfg DBConfig) string {
-	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s", cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
+func getDSN(dbConfig config.DatabaseConfig) string {
+	// URL encode password to handle special characters
+	password := url.QueryEscape(dbConfig.Pass)
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
+		dbConfig.User, password, dbConfig.Host, dbConfig.Port, dbConfig.Name)
 }
 
 var (
 	dbPool *pgxpool.Pool
+	sqlDB  *sql.DB
 	once   sync.Once
 )
 
 func InitDB(ctx context.Context) {
 	once.Do(func() {
-		cfg, err := pgxpool.ParseConfig(getDSN(GetDBConfig()))
+		// Get config from singleton
+		appConfig, err := config.GetInstance(ctx)
+		if err != nil {
+			log.Fatalf("failed to get config instance: %v", err)
+		}
+
+		// Parse database connection string
+		cfg, err := pgxpool.ParseConfig(getDSN(appConfig.CoreDB))
 		if err != nil {
 			log.Fatalf("failed to parse DB config: %v", err)
 		}
@@ -55,9 +49,19 @@ func InitDB(ctx context.Context) {
 		if err != nil {
 			log.Fatalf("failed to connect to database: %v", err)
 		}
+
+		// Create database/sql compatible connection
+		connConfig := cfg.ConnConfig
+		sqlDB = stdlib.OpenDB(*connConfig)
+		sqlDB.SetMaxOpenConns(int(cfg.MaxConns))
+		sqlDB.SetConnMaxLifetime(cfg.MaxConnLifetime)
 	})
 }
 
 func GetPool() *pgxpool.Pool {
 	return dbPool
+}
+
+func GetSQLDB() *sql.DB {
+	return sqlDB
 }
