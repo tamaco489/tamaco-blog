@@ -12,7 +12,8 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/logger"
-	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository"
+
+	datastore "github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository/data_store"
 )
 
 func NewHandler(ctx context.Context) (*http.Server, error) {
@@ -21,8 +22,7 @@ func NewHandler(ctx context.Context) (*http.Server, error) {
 		return nil, fmt.Errorf("failed to get config instance: %w", err)
 	}
 
-	// Initialize database connection
-	db := repository.NewPostgreSQLDB(ctx)
+	db := datastore.InitDB(ctx)
 
 	r := gin.New()
 	r.Use(gin.LoggerWithFormatter(logger.GinLogFormatter))

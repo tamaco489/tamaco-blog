@@ -3,49 +3,43 @@ package tag
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"time"
 
 	"github.com/oapi-codegen/runtime/types"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/gen"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
-	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository/gen_sqlc"
 )
 
-// GetTagsUseCase handles getting tags list
 type GetTagsUseCase interface {
 	GetTags(ctx context.Context) (*gen.TagList, error)
 }
 
 type getTagsUseCase struct {
-	config    *config.Config
-	tagRepo   repository.TagRepository
+	config *config.Config
+	db     *sql.DB
 }
 
-// NewGetTagsUseCase creates a new get tags usecase
-func NewGetTagsUseCase(cfg *config.Config, tagRepo repository.TagRepository) GetTagsUseCase {
+func NewGetTagsUseCase(cfg *config.Config, db *sql.DB) GetTagsUseCase {
 	return &getTagsUseCase{
-		config:  cfg,
-		tagRepo: tagRepo,
+		config: cfg,
+		db:     db,
 	}
 }
 
-// GetTags implements GetTagsUseCase
 func (u *getTagsUseCase) GetTags(ctx context.Context) (*gen.TagList, error) {
 	slog.InfoContext(ctx, "GetTags called")
 
-	// Retrieve tags from database
-	tags, err := u.tagRepo.ListTags(ctx)
+	queries := gen_sqlc.New()
+	tags, err := queries.ListTags(ctx, u.db)
 	if err != nil {
 		slog.ErrorContext(ctx, "failed to list tags", slog.String("error", err.Error()))
 		return nil, err
 	}
 
-	// Convert database models to API response models
-	response := &gen.TagList{
-		Tags: make([]gen.Tag, len(tags)),
-	}
+	response := &gen.TagList{Tags: make([]gen.Tag, len(tags))}
 
 	for i, tag := range tags {
 		response.Tags[i] = convertToGenTag(tag)
@@ -55,7 +49,6 @@ func (u *getTagsUseCase) GetTags(ctx context.Context) (*gen.TagList, error) {
 	return response, nil
 }
 
-// convertToGenTag converts database model to API response model
 func convertToGenTag(dbTag gen_sqlc.Tag) gen.Tag {
 	var usageCount *int
 	if dbTag.UsageCount.Valid {

@@ -5,6 +5,7 @@ package controller
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/article"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/category"
@@ -12,7 +13,6 @@ import (
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/search"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/controller/tag"
 	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/library/config"
-	"github.com/tamaco489/tamaco-blog/backend/api/article/internal/repository"
 )
 
 type ServerController struct {
@@ -46,7 +46,7 @@ type ServerController struct {
 	searchArticlesCtrl *search.SearchArticlesController
 }
 
-func NewServerController(ctx context.Context, cfg *config.Config, db *repository.PostgreSQLDB) *ServerController {
+func NewServerController(ctx context.Context, cfg *config.Config, db *sql.DB) *ServerController {
 	return &ServerController{
 		healthcheckCtrl: health.NewHealthcheckController(),
 
