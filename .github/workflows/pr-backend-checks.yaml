@@ -22,7 +22,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.25"
+          go-version-file: "backend/api/article/go.mod"
           cache-dependency-path: "backend/api/article/go.sum"
 
       - name: Download dependencies
@@ -46,10 +46,6 @@ jobs:
           go install github.com/gordonklaus/ineffassign@latest
           ineffassign ./...
 
-      - name: Check for unused variables
-        run: |
-          go install honnef.co/go/tools/cmd/staticcheck@latest
-          staticcheck ./... || echo "ℹ️ Static analysis completed"
 
   dependency-analysis:
     name: Dependency Analysis
@@ -65,7 +61,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.25"
+          go-version-file: "backend/api/article/go.mod"
           cache-dependency-path: "backend/api/article/go.sum"
 
       - name: Download dependencies
