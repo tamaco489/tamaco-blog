@@ -34,7 +34,7 @@ jobs:
     environment: prd
     strategy:
       matrix:
-        module: [ecr] # Add new modules here: lambda, aurora, etc.
+        module: [ecr, acm, network, route53, service]
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}
