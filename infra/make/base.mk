@@ -15,12 +15,18 @@ ifeq ($(ENV),prd)
 endif
 
 
-.PHONY: fmt validate init list show plan apply destroy import remove
+.PHONY: fmt validate lint lint-init init list show plan apply destroy import remove
 fmt: ## format terraform files
 	terraform fmt
 
 validate: ## validate terraform configuration
 	terraform validate
+
+lint-init: ## initialize tflint plugins
+	tflint --init
+
+lint: ## run tflint checks
+	tflint --recursive
 
 init: ## initialize terraform workspace
 	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) \

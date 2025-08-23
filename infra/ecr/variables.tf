@@ -10,6 +10,5 @@ variable "project" {
 }
 
 locals {
-  fqn         = "${var.env}-${var.project}"
   article_api = "${var.env}-article-api"
 }
