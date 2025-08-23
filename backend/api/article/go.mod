@@ -3,7 +3,7 @@ module github.com/tamaco489/tamaco-blog/backend/api/article
 go 1.25.0
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.38.0
+	github.com/aws/aws-sdk-go-v2 v1.38.1
 	github.com/aws/aws-sdk-go-v2/config v1.31.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.38.0
 	github.com/gin-contrib/cors v1.7.6
