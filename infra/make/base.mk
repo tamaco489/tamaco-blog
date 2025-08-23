@@ -1,19 +1,7 @@
 ENV      ?= dev
 VAR_FILE := ./tfvars/${ENV}.tfvars
 VAR_OPTS := -var-file "$(VAR_FILE)"
-
-# default configuration
-AWS_PROFILE           := ""
-AWS_REGION            := "ap-northeast-1"
-SOPS_KMS_ARN          := "arn:aws:kms:ap-northeast-1:<account_id>:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-# environment specific overrides
-ifeq ($(ENV),prd)
-    AWS_PROFILE           := ""
-    AWS_REGION            := "ap-northeast-1"
-    SOPS_KMS_ARN          := "arn:aws:kms:ap-northeast-1:<account_id>:key/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-endif
-
+AWS_REGION   := "ap-northeast-1"
 
 .PHONY: fmt fmt-check validate lint-init lint security check ci-check full-check
 fmt: ## format terraform files
