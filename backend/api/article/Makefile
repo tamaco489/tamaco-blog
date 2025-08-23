@@ -143,7 +143,7 @@ get-secret-value: ## dev: get secret value from secrets manager
 		--region ap-northeast-1
 
 # ecr
-VERSION := shop_api_v0.0.0
+VERSION := article_api_v0.0.0
 .PHONY: auth push get-images delete-images
 auth: ## prd: authenticate ecr
 	aws ecr get-login-password --region ap-northeast-1 --profile ${AWS_PROFILE} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com
