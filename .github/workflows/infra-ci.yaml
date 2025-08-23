@@ -18,7 +18,7 @@ concurrency:
 
 # GitHub Security タブへのセキュリティスキャン結果アップロードに必要
 permissions:
-  contents: read         # リポジトリの読み取り
+  contents: read # リポジトリの読み取り
   security-events: write # Trivy結果のSARIFアップロード用
 
 jobs:
@@ -124,11 +124,11 @@ jobs:
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: './infra'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          scanners: 'misconfig,secret'
+          scan-type: "fs"
+          scan-ref: "./infra"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          scanners: "misconfig,secret"
         continue-on-error: true
 
       - name: Upload Trivy Security Results
