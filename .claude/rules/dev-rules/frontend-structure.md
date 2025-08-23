@@ -119,3 +119,4 @@ frontend/
 - **フレームワーク**: Next.js 14（App Router）
 - **言語**: TypeScript / React 18
 - **スタイリング**: TailwindCSS 3
+

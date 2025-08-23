@@ -71,3 +71,4 @@ grep "[[:space:]]$" /path/to/created/file.ext
 ## 例外ケース
 
 **Markdownでの行末2スペース**: 改行を意味するため意図的な場合は許可
+
