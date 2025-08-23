@@ -1,0 +1,4 @@
+bucket = "prd-tamaco-blog-tfstate"
+key    = "vpc_endpoint/terraform.tfstate"
+region = "ap-northeast-1"
+encrypt = true
