@@ -15,9 +15,12 @@ ifeq ($(ENV),prd)
 endif
 
 
-.PHONY: fmt init list show plan apply destroy import remove
+.PHONY: fmt validate init list show plan apply destroy import remove
 fmt: ## format terraform files
 	terraform fmt
+
+validate: ## validate terraform configuration
+	terraform validate
 
 init: ## initialize terraform workspace
 	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) \
