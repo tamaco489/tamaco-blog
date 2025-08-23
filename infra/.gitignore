@@ -3,7 +3,4 @@
 *.tfstate
 *.tfstate.*
 
-*.tfvars
-*.tfvars.json
-
 !dev.tfvars
