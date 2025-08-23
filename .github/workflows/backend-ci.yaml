@@ -153,7 +153,17 @@ jobs:
           go-version-file: "backend/api/article/go.mod"
           cache-dependency-path: "backend/api/article/go.sum"
 
+      - name: Cache sqlc binary
+        uses: actions/cache@v4
+        id: sqlc-cache
+        with:
+          path: ~/go/bin/sqlc
+          key: sqlc-${{ runner.os }}-${{ hashFiles('backend/api/article/go.mod') }}
+          restore-keys: |
+            sqlc-${{ runner.os }}-
+
       - name: Install sqlc
+        if: steps.sqlc-cache.outputs.cache-hit != 'true'
         run: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
       - name: Run sqlc static analysis
