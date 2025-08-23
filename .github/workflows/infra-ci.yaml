@@ -17,6 +17,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Terraformコードの基本的な検証とプランニングを実行
+  # - フォーマットチェック: terraform fmt で統一されたコードスタイルを確保
+  # - 初期化: S3バックエンド（prd環境）またはローカル状態での初期化
+  # - 構文検証: terraform validate でコード構文の正当性を確認
+  # - プラン作成: AWS認証情報がある場合、prd環境での実行計画を作成
+  # - 各AWSリソースモジュール（ecr, lambda, aurora等）に対してマトリックス実行
   terraform-ci:
     name: Terraform CI (${{ matrix.module }})
     runs-on: ubuntu-latest
@@ -70,6 +76,12 @@ jobs:
           AWS_DEFAULT_REGION: ap-northeast-1
         continue-on-error: true
 
+  # コード品質チェックとセキュリティスキャンを実行
+  # - TFLint: Terraformのベストプラクティス、命名規則、未使用リソースをチェック
+  # - tfsec: AWSリソース設定のセキュリティ脆弱性をスキャン
+  # - キャッシュ活用: TFLintプラグインをキャッシュして実行時間を短縮
+  # - SARIF形式: セキュリティ結果をGitHub Security タブに統合
+  # - mainブランチのみ: セキュリティ結果のアップロードはmainブランチに限定
   quality-checks:
     name: Code Quality & Security
     runs-on: ubuntu-latest
