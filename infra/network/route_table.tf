@@ -8,7 +8,7 @@ resource "aws_route_table" "public" {
 
   tags = {
     Name = "${var.env}-${var.project}-public-rt-${each.value["az"]}"
-    AZ   = "${each.value["az"]}"
+    AZ   = each.value["az"]
   }
 }
 
@@ -37,7 +37,7 @@ resource "aws_route_table_association" "public" {
 
 #   tags = {
 #     Name = "${var.env}-${var.project}-private-rt-${each.value["az"]}"
-#     AZ   = "${each.value["az"]}"
+#     AZ   = each.value["az"]
 #   }
 # }
 
