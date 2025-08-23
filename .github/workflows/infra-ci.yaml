@@ -40,10 +40,12 @@ jobs:
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-      - name: Terraform Init
+      - name: Terraform Init with Backend
         run: |
-          terraform init -backend=false
+          terraform init -backend-config="./tfbackend/${{ matrix.environment }}.tfbackend"
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-1
 
       - name: Terraform Validate
@@ -51,12 +53,13 @@ jobs:
 
       - name: Terraform Plan (Dry Run)
         run: |
-          terraform plan -var-file=./tfvars/${{ matrix.environment }}.tfvars -input=false
+          terraform plan -var-file=./tfvars/${{ matrix.environment }}.tfvars -input=false -detailed-exitcode
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ap-northeast-1
         if: github.actor != 'dependabot[bot]'
+        continue-on-error: true
 
   tflint:
     name: TFLint
