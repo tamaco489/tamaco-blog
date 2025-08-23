@@ -1,7 +1,6 @@
 variable "env" {
   description = "The environment in which the ecr will be created"
   type        = string
-  default     = "stg"
 }
 
 variable "project" {
