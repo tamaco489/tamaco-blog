@@ -138,3 +138,25 @@ jobs:
               repo: context.repo.repo,
               body: output
             });
+
+  # PRでのセキュリティスキャン実行（Trivyによる包括的チェック）
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './infra'
+          format: 'table'
+          scanners: 'misconfig,secret'
+          exit-code: '0'  # PRでは失敗させない
+          severity: 'CRITICAL,HIGH'

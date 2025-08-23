@@ -19,7 +19,7 @@ concurrency:
 # GitHub Security タブへのセキュリティスキャン結果アップロードに必要
 permissions:
   contents: read         # リポジトリの読み取り
-  security-events: write # tfsec結果のSARIFアップロード用
+  security-events: write # Trivy結果のSARIFアップロード用
 
 jobs:
   # Terraformコードの基本的な検証とプランニングを実行
@@ -90,7 +90,7 @@ jobs:
 
   # コード品質チェックとセキュリティスキャンを実行
   # - TFLint: Terraformのベストプラクティス、命名規則、未使用リソースをチェック
-  # - tfsec: AWSリソース設定のセキュリティ脆弱性をスキャン
+  # - Trivy: 包括的なセキュリティ脆弱性スキャン（IaC、設定、依存関係）
   # - キャッシュ活用: TFLintプラグインをキャッシュして実行時間を短縮
   # - SARIF形式: セキュリティ結果をGitHub Security タブに統合
   # - mainブランチのみ: セキュリティ結果のアップロードはmainブランチに限定
@@ -121,16 +121,18 @@ jobs:
           tflint --init
           tflint --recursive
 
-      - name: Run tfsec Security Scan
-        uses: aquasecurity/tfsec-action@v1.0.3
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
         with:
-          working_directory: ./infra
-          soft_fail: true
-          format: sarif
-          out: tfsec-results.sarif
+          scan-type: 'fs'
+          scan-ref: './infra'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          scanners: 'misconfig,secret'
+        continue-on-error: true
 
-      - name: Upload Security Results
+      - name: Upload Trivy Security Results
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: tfsec-results.sarif
-        if: github.ref == 'refs/heads/main'
+          sarif_file: trivy-results.sarif
+        if: github.ref == 'refs/heads/main' && hashFiles('trivy-results.sarif') != ''

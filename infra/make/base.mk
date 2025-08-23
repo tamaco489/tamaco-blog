@@ -37,7 +37,7 @@ lint: ## run tflint checks
 	tflint --recursive
 
 security: ## run security scan with trivy
-	trivy fs --scanners config,secret --severity CRITICAL,HIGH .
+	trivy fs --scanners misconfig,secret --severity CRITICAL,HIGH .
 
 ci-check: fmt-check validate lint-init lint security ## comprehensive ci-like checks (includes format check)
 
