@@ -20,7 +20,8 @@ fmt: ## format terraform files
 	terraform fmt
 
 init: ## initialize terraform workspace
-	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) terraform init -reconfigure
+	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) \
+		terraform init -reconfigure $(if $(BACKEND_CONFIG),$(BACKEND_CONFIG),)
 
 list: ## list terraform state resources
 	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) terraform state list
