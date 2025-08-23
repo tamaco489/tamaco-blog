@@ -7,6 +7,11 @@ on:
       - "infra/**"
       - ".github/workflows/pr-infra-checks.yaml"
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   # PRでのTerraformコード検証（フォーマット・バリデーション・プラン確認）
   # - フォーマットチェック: terraform fmt でコードスタイル違反を検出
@@ -86,7 +91,7 @@ jobs:
 
             // Format check result
             const fmtStatus = '${{ steps.fmt.outcome }}' === 'success' ? '✅' : '⚠️';
-            const fmtMessage = '${{ steps.fmt.outcome }}' === 'success' 
+            const fmtMessage = '${{ steps.fmt.outcome }}' === 'success'
               ? 'All files are properly formatted'
               : 'Some files need formatting. Run `terraform fmt -recursive` in infra/';
 
@@ -105,7 +110,7 @@ jobs:
               } else if (planContent.includes('AWS credentials not found')) {
                 planMessage = '⚠️ Plan skipped - AWS credentials not available';
               } else {
-                const changes = planContent.split('\n').filter(line => 
+                const changes = planContent.split('\n').filter(line =>
                   line.match(/^  [+\-~#]/)
                 ).slice(0, 10);
                 planMessage = `📋 Infrastructure changes planned:\n\`\`\`\n${changes.join('\n')}\n${changes.length >= 10 ? '...' : ''}\n\`\`\``;

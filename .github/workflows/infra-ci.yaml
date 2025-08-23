@@ -16,6 +16,11 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# GitHub Security タブへのセキュリティスキャン結果アップロードに必要
+permissions:
+  contents: read         # リポジトリの読み取り
+  security-events: write # tfsec結果のSARIFアップロード用
+
 jobs:
   # Terraformコードの基本的な検証とプランニングを実行
   # - フォーマットチェック: terraform fmt で統一されたコードスタイルを確保
