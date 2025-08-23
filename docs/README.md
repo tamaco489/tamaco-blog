@@ -19,6 +19,18 @@ For detailed technical architecture, please refer to [Technology Stack](./tech-s
 
 ## Development Environment Setup
 
+### Infrastructure Development
+
+Execute infrastructure commands from the `infra/ecr` directory.
+
+```bash
+cd infra/ecr
+make init AWS_PROFILE=xxx ENV=xxx   # Initialize Terraform workspace
+make plan AWS_PROFILE=xxx ENV=xxx   # Plan infrastructure changes
+make apply AWS_PROFILE=xxx ENV=xxx  # Apply infrastructure changes
+make ci-check       # Run quality checks (format + validate + lint + security)
+```
+
 ### Frontend Development
 
 Execute frontend commands from the `frontend` directory.
