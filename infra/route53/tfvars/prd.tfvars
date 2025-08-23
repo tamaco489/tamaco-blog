@@ -1,2 +1,2 @@
-env = "prd"
+env    = "prd"
 domain = "halu-ulala-proto.com"
