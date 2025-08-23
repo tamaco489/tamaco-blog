@@ -42,7 +42,7 @@ jobs:
 
       - name: Terraform Init with Backend
         run: |
-          terraform init -backend-config="./tfbackend/${{ matrix.environment }}.tfbackend"
+          terraform init -backend-config="./tfbackend/prd.tfbackend"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
