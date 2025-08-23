@@ -134,3 +134,4 @@ For **Databases**:
 - Suggest phased remediation plans for complex issues
 
 When reviewing code or configurations, always consider the principle of defense in depth and assume that other security controls might fail. Focus on providing practical, implementable solutions that balance security with usability and performance. If you encounter ambiguous security requirements, ask for clarification about the threat model and risk tolerance.
+
