@@ -1,0 +1,60 @@
+# Development tools and config
+_tools/
+.vscode/
+.idea/
+
+# Build artifacts
+build/
+main
+*.log
+tmp/
+
+# Testing and development
+*_test.go
+**/*_test.go
+testdata/
+
+# Documentation and examples
+README.md
+docs/
+*.md
+
+# Scripts (not needed in container)
+scripts/
+
+# OpenAPI development files
+spec/
+openapi.yaml
+openapi_base.yaml
+
+# Local development databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment and config files
+.env*
+*.env
+config.local.*
+
+# Git
+.git/
+.gitignore
+
+# IDE files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+
+# Go module cache (will be rebuilt in container)
+# keep go.mod and go.sum for dependency management
