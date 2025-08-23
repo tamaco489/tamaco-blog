@@ -15,9 +15,17 @@ ifeq ($(ENV),prd)
 endif
 
 
-.PHONY: fmt validate lint lint-init init list show plan apply destroy import remove
+.PHONY: fmt fmt-check validate lint-init lint security check ci-check full-check
 fmt: ## format terraform files
 	terraform fmt
+
+fmt-check: ## check if terraform files are formatted
+	@terraform fmt -check=true -diff=true -recursive || { \
+		echo ""; \
+		echo "Error: Terraform files are not properly formatted."; \
+		echo "Run 'make fmt' to fix formatting issues."; \
+		exit 1; \
+	}
 
 validate: ## validate terraform configuration
 	terraform validate
@@ -28,6 +36,13 @@ lint-init: ## initialize tflint plugins
 lint: ## run tflint checks
 	tflint --recursive
 
+security: ## run security scan with trivy
+	trivy fs --scanners config,secret --severity CRITICAL,HIGH .
+
+ci-check: fmt-check validate lint-init lint security ## comprehensive ci-like checks (includes format check)
+
+
+.PHONY: init list show plan apply destroy remove import
 init: ## initialize terraform workspace
 	@AWS_PROFILE=$(AWS_PROFILE) AWS_DEFAULT_REGION=$(AWS_REGION) \
 		terraform init -reconfigure $(if $(BACKEND_CONFIG),$(BACKEND_CONFIG),)
