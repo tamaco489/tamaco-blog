@@ -1,0 +1,58 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+
+# Terraform directories
+**/.terraform/
+**/.terraform.lock.hcl
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Override files as they are usually used to override resources locally
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore environment-specific variable files that may contain sensitive data
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Ignore any .env files
+.env
+.env.*
+
+# SSH Keys
+*.pem
+*.key
+*.pub
+
+# Mac files
+.DS_Store
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Backup files
+*.backup
+*.bak
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+temp/
+tmp/
