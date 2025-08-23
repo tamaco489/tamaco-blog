@@ -34,7 +34,7 @@ jobs:
     environment: prd
     strategy:
       matrix:
-        module: [ecr, acm, network, route53]
+        module: [ecr, acm, network, route53, vpc_endpoint]
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}
