@@ -107,6 +107,43 @@ updates:
           - "*mysql*"
           - "*redis*"
 
+  # Infrastructure Terraform modules
+  - package-ecosystem: "terraform"
+    directory: "/infra/ecr"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    assignees:
+      - "tamaco489"
+    commit-message:
+      prefix: "infra"
+      prefix-development: "infra(dev)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "infrastructure"
+      - "terraform"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    ignore:
+      # Major provider updates require manual review
+      - dependency-name: "hashicorp/aws"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group AWS provider and modules
+      aws-ecosystem:
+        patterns:
+          - "hashicorp/aws"
+          - "terraform-aws-modules/*"
+      # Group HashiCorp providers
+      hashicorp-providers:
+        patterns:
+          - "hashicorp/*"
+
   # GitHub Actions dependencies
   - package-ecosystem: "github-actions"
     directory: "/"

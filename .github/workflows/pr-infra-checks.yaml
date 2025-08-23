@@ -1,0 +1,162 @@
+name: PR Infrastructure Checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/pr-infra-checks.yaml"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  # PRでのTerraformコード検証（フォーマット・バリデーション・プラン確認）
+  # - フォーマットチェック: terraform fmt でコードスタイル違反を検出
+  # - 初期化と検証: S3バックエンドまたはローカル状態での初期化と構文検証
+  # - プラン実行: AWS認証情報がある場合、prd環境での変更計画を生成
+  # - 統合レポート: 全ての検証結果を1つのPRコメントにまとめて表示
+  # - dependabot除外: 自動更新PRでのプラン実行をスキップ
+  # - マトリックス実行: 各AWSリソースモジュールに対して並列実行
+  terraform-checks:
+    name: Terraform PR Checks
+    runs-on: ubuntu-latest
+    environment: prd
+    strategy:
+      matrix:
+        module: [ecr] # Add new modules here: lambda, aurora, etc.
+    defaults:
+      run:
+        working-directory: ./infra/${{ matrix.module }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.0"
+
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -recursive -diff
+        continue-on-error: true
+
+      - name: Terraform Init & Validate
+        id: validate
+        run: |
+          if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            terraform init -backend-config="./tfbackend/prd.tfbackend"
+          else
+            terraform init -backend=false
+          fi
+          terraform validate -no-color
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-1
+
+      - name: Terraform Plan
+        if: github.actor != 'dependabot[bot]'
+        id: plan
+        run: |
+          if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            # tfvarsファイルの存在確認
+            if [ -f "./tfvars/prd.tfvars" ]; then
+              terraform plan -var-file="./tfvars/prd.tfvars" -no-color -out=tfplan
+              terraform show -no-color tfplan > plan.txt
+            else
+              echo "❌ tfvars file not found: ./tfvars/prd.tfvars" > plan.txt
+              echo "Current directory: $(pwd)" >> plan.txt
+              ls -la ./tfvars/ >> plan.txt 2>&1 || echo "tfvars directory does not exist" >> plan.txt
+              exit 1
+            fi
+          else
+            echo "⚠️ AWS credentials not found. Skipping plan." > plan.txt
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-1
+
+      - name: Comment PR Results
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+
+            // Format check result
+            const fmtStatus = '${{ steps.fmt.outcome }}' === 'success' ? '✅' : '⚠️';
+            const fmtMessage = '${{ steps.fmt.outcome }}' === 'success'
+              ? 'All files are properly formatted'
+              : 'Some files need formatting. Run `terraform fmt -recursive` in infra/';
+
+            // Validation result
+            const validateStatus = '${{ steps.validate.outcome }}' === 'success' ? '✅' : '❌';
+            const validateMessage = '${{ steps.validate.outcome }}' === 'success'
+              ? 'Configuration is valid'
+              : 'Configuration validation failed';
+
+            // Plan result
+            let planMessage = '⚠️ Plan was skipped or failed';
+            if (fs.existsSync('plan.txt')) {
+              const planContent = fs.readFileSync('plan.txt', 'utf8');
+              if (planContent.includes('No changes')) {
+                planMessage = '✅ No infrastructure changes required';
+              } else if (planContent.includes('AWS credentials not found')) {
+                planMessage = '⚠️ Plan skipped - AWS credentials not available';
+              } else {
+                const changes = planContent.split('\n').filter(line =>
+                  line.match(/^  [+\-~#]/)
+                ).slice(0, 10);
+                planMessage = `📋 Infrastructure changes planned:\n\`\`\`\n${changes.join('\n')}\n${changes.length >= 10 ? '...' : ''}\n\`\`\``;
+              }
+            }
+
+            const output = `## Terraform PR Check Results
+
+            **Module:** \`${{ matrix.module }}\`
+
+            ### Format Check ${fmtStatus}
+            ${fmtMessage}
+
+            ### Validation ${validateStatus}
+            ${validateMessage}
+
+            ### Plan Result
+            ${planMessage}
+
+            *Pusher: @${{ github.actor }}*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+
+  # PRでのセキュリティスキャン実行（Trivyによる包括的チェック）
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './infra'
+          format: 'table'
+          scanners: 'misconfig,secret'
+          exit-code: '0'  # PRでは失敗させない
+          severity: 'CRITICAL,HIGH'

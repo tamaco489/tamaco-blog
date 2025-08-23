@@ -1,0 +1,138 @@
+name: Infrastructure CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-ci.yaml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra-ci.yaml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# GitHub Security タブへのセキュリティスキャン結果アップロードに必要
+permissions:
+  contents: read # リポジトリの読み取り
+  security-events: write # Trivy結果のSARIFアップロード用
+
+jobs:
+  # Terraformコードの基本的な検証とプランニングを実行
+  # - フォーマットチェック: terraform fmt で統一されたコードスタイルを確保
+  # - 初期化: S3バックエンド（prd環境）またはローカル状態での初期化
+  # - 構文検証: terraform validate でコード構文の正当性を確認
+  # - プラン作成: AWS認証情報がある場合、prd環境での実行計画を作成
+  # - 各AWSリソースモジュール（ecr, lambda, aurora等）に対してマトリックス実行
+  terraform-ci:
+    name: Terraform CI
+    runs-on: ubuntu-latest
+    environment: prd
+    strategy:
+      matrix:
+        module: [ecr] # Add new modules here: lambda, aurora, etc.
+    defaults:
+      run:
+        working-directory: ./infra/${{ matrix.module }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.13.0"
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: |
+          if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            terraform init -backend-config="./tfbackend/prd.tfbackend"
+          else
+            echo "⚠️ AWS credentials not found. Running without backend state."
+            terraform init -backend=false
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-1
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        if: github.actor != 'dependabot[bot]'
+        run: |
+          if [ -n "$AWS_ACCESS_KEY_ID" ] && [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
+            # tfvarsファイルの存在確認
+            if [ -f "./tfvars/prd.tfvars" ]; then
+              terraform plan -var-file="./tfvars/prd.tfvars" -no-color
+            else
+              echo "❌ tfvars file not found: ./tfvars/prd.tfvars"
+              echo "Current directory: $(pwd)"
+              ls -la ./tfvars/ || echo "tfvars directory does not exist"
+              exit 1
+            fi
+          else
+            echo "⚠️ AWS credentials not found. Skipping plan."
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ap-northeast-1
+
+  # コード品質チェックとセキュリティスキャンを実行
+  # - TFLint: Terraformのベストプラクティス、命名規則、未使用リソースをチェック
+  # - Trivy: 包括的なセキュリティ脆弱性スキャン（IaC、設定、依存関係）
+  # - キャッシュ活用: TFLintプラグインをキャッシュして実行時間を短縮
+  # - SARIF形式: セキュリティ結果をGitHub Security タブに統合
+  # - mainブランチのみ: セキュリティ結果のアップロードはmainブランチに限定
+  quality-checks:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infra
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: v0.50.0
+
+      - name: Cache TFLint plugins
+        uses: actions/cache@v4
+        with:
+          path: ~/.tflint.d/plugins
+          key: ${{ runner.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint --recursive
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "./infra"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          scanners: "misconfig,secret"
+        continue-on-error: true
+
+      - name: Upload Trivy Security Results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+        if: github.ref == 'refs/heads/main' && hashFiles('trivy-results.sarif') != ''
