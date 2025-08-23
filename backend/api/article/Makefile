@@ -142,6 +142,25 @@ get-secret-value: ## dev: get secret value from secrets manager
 		--secret-id dev/tamaco-blog/article/core/rds \
 		--region ap-northeast-1
 
+# ecr
+VERSION := shop_api_v0.0.0
+.PHONY: auth push get-images delete-images
+auth: ## prd: authenticate ecr
+	aws ecr get-login-password --region ap-northeast-1 --profile ${AWS_PROFILE} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com
+
+push: auth ## prd: push image to ecr
+	docker build --platform linux/amd64 --no-cache -t $(AWS_ACCOUNT_ID).dkr.ecr.ap-northeast-1.amazonaws.com/$(ENV)-article-api:$(VERSION) -f ./container/Dockerfile.article .
+	docker push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/$(ENV)-article-api:$(VERSION)
+
+get-images: ## prd: list images in ecr
+	aws ecr list-images --repository-name $(ENV)-article-api --region ap-northeast-1 --profile ${AWS_PROFILE} --query 'imageIds[*]' | jq .
+
+delete-images: ## prd: delete images in ecr
+	@aws ecr list-images --repository-name $(ENV)-article-api --region ap-northeast-1 --profile ${AWS_PROFILE} --query 'imageIds[*]' --output json > /tmp/images.json
+	@cat /tmp/images.json | jq -c '.[]' | while read -r image_id; do \
+		aws ecr batch-delete-image --repository-name $(ENV)-article-api --region ap-northeast-1 --profile ${AWS_PROFILE} --image-ids $${image_id}; \
+	done | jq .
+
 
 # =================================================================
 # api request
