@@ -20,8 +20,8 @@ resource "aws_lambda_function" "article_api" {
 
   environment {
     variables = {
-      API_SERVICE_NAME = "${local.service}"
-      API_ENV          = "${var.env}"
+      API_SERVICE_NAME = local.service
+      API_ENV          = var.env
       API_PORT         = "8080"
     }
   }
