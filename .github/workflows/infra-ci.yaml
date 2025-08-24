@@ -73,8 +73,17 @@ jobs:
 
           # JSON配列として出力
           if [ ${#MODULES[@]} -gt 0 ]; then
-            MODULE_JSON=$(printf '%s\n' "${MODULES[@]}" | jq -R . | jq -s .)
-            echo "modules=$MODULE_JSON" >> $GITHUB_OUTPUT
+            # bashの配列を直接JSON配列に変換
+            MODULE_JSON="["
+            for i in "${!MODULES[@]}"; do
+              if [ $i -gt 0 ]; then
+                MODULE_JSON="${MODULE_JSON},"
+              fi
+              MODULE_JSON="${MODULE_JSON}\"${MODULES[$i]}\""
+            done
+            MODULE_JSON="${MODULE_JSON}]"
+
+            echo "modules=${MODULE_JSON}" >> $GITHUB_OUTPUT
             echo "has-changes=true" >> $GITHUB_OUTPUT
             echo "Detected changed modules: ${MODULES[*]}"
           else
