@@ -133,16 +133,16 @@ jobs:
               } else if (planContent.includes('AWS credentials not found')) {
                 planMessage = '⚠️ Plan skipped - AWS credentials not available';
               } else {
-                const changes = planContent.split('\\n').filter(line =>
-                  line.match(/^  [+\\-~#]/)
+                const changes = planContent.split('\n').filter(line =>
+                  line.match(/^  [+\-~#]/)
                 ).slice(0, 10);
-                planMessage = `📋 Infrastructure changes planned:\\n\\`\\`\\`\\n${changes.join('\\n')}\\n${changes.length >= 10 ? '...' : ''}\\n\\`\\`\\``;
+                planMessage = `📋 Infrastructure changes planned:\n\`\`\`\n${changes.join('\n')}\n${changes.length >= 10 ? '...' : ''}\n\`\`\``;
               }
             }
 
             const output = `## Terraform PR Check Results
 
-            **Module:** \\`${{ matrix.module }}\\`
+            **Module:** \`${{ matrix.module }}\`
 
             ### Format Check ${fmtStatus}
             ${fmtMessage}
