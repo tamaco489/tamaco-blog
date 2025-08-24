@@ -30,19 +30,74 @@ permissions:
   security-events: write # Trivy結果のSARIFアップロード用
 
 jobs:
+  # 変更されたモジュールを検出して動的にマトリックスを生成
+  detect-changes:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.changes.outputs.modules }}
+      has-changes: ${{ steps.changes.outputs.has-changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed modules
+        id: changes
+        run: |
+          # 変更されたファイルを取得
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
+          else
+            CHANGED_FILES=$(git diff --name-only HEAD~1..HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # 変更されたモジュールを特定
+          MODULES=()
+
+          # 各モジュールディレクトリをチェック
+          for module in "ecr" "acm" "network" "route53" "vpc_endpoint" "service/api/article"; do
+            if echo "$CHANGED_FILES" | grep -q "^infra/$module/"; then
+              MODULES+=("$module")
+            fi
+          done
+
+          # CI設定ファイルが変更された場合は全モジュールを対象にする
+          if echo "$CHANGED_FILES" | grep -q "^\.github/workflows/infra-ci\.yaml"; then
+            MODULES=("ecr" "acm" "network" "route53" "vpc_endpoint" "service/api/article")
+          fi
+
+          # JSON配列として出力
+          if [ ${#MODULES[@]} -gt 0 ]; then
+            MODULE_JSON=$(printf '%s\n' "${MODULES[@]}" | jq -R . | jq -s .)
+            echo "modules=$MODULE_JSON" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "Detected changed modules: ${MODULES[*]}"
+          else
+            echo "modules=[]" >> $GITHUB_OUTPUT
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "No module changes detected"
+          fi
+
   # Terraformコードの基本的な検証とプランニングを実行
   # - フォーマットチェック: terraform fmt で統一されたコードスタイルを確保
   # - 初期化: S3バックエンド（prd環境）またはローカル状態での初期化
   # - 構文検証: terraform validate でコード構文の正当性を確認
   # - プラン作成: AWS認証情報がある場合、prd環境での実行計画を作成
-  # - 各AWSリソースモジュール（ecr, lambda, aurora等）に対してマトリックス実行
+  # - 変更されたモジュールのみに対してマトリックス実行
   terraform-ci:
     name: Terraform CI
     runs-on: ubuntu-latest
     environment: prd
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
     strategy:
       matrix:
-        module: [ecr, acm, network, route53, vpc_endpoint, service/api/article]
+        module: ${{ fromJson(needs.detect-changes.outputs.modules) }}
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}
