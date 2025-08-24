@@ -1,0 +1,93 @@
+name: Find terraform dirs for ci
+description: Terraform CIの対象となるディレクトリのリストを取得する。
+
+outputs:
+  dirs:
+    description: "Terraform CIの対象となるディレクトリのリスト"
+    value: ${{ steps.find_terraform_resource_dirs.outputs.dirs }}
+  has-changes:
+    description: "変更があったかどうか"
+    value: ${{ steps.find_terraform_resource_dirs.outputs.has-changes }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get changed files
+      id: get_changed_files
+      uses: tj-actions/changed-files@v43
+      with:
+        files: |
+          infra/**/*.{tf,tfvars,tfbackend,yaml,json}
+          infra/**/.terraform-version
+          infra/**/.terraform.lock.hcl
+          infra/**/Makefile
+        files_ignore: |
+          infra/README.md
+          infra/make/**
+
+    - name: Find terraform resource dirs
+      id: find_terraform_resource_dirs
+      shell: bash
+      run: |
+        if [[ ${{ steps.get_changed_files.outputs.all_changed_and_modified_files_count }} == 0 ]]; then
+          echo "変更されたファイルはありません。"
+          echo "dirs=[]" >> $GITHUB_OUTPUT
+          echo "has-changes=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        files=(${{ steps.get_changed_files.outputs.all_changed_and_modified_files }})
+        echo "変更のあったファイル一覧: ${files[*]}"
+
+        changed_dirs=()
+        for file_path in "${files[@]}"; do
+          dir_path=$(dirname "$file_path")
+
+          # .tfファイルの場合、そのディレクトリを追加
+          if [[ "$file_path" == *".tf" ]]; then
+            changed_dirs+=("$dir_path")
+          fi
+
+          # tfvars, tfbackend, templateディレクトリの場合、親ディレクトリを追加
+          if [[ $dir_path == *"tfvars"* || $dir_path == *"tfbackend"* || $dir_path == *"template"* ]]; then
+            parent_dir=$(dirname "$dir_path")
+            changed_dirs+=("$parent_dir")
+          fi
+
+          # その他のTerraform関連ファイルの場合、そのディレクトリを追加
+          if [[ "$file_path" == *"Makefile" || "$file_path" == *".terraform-version" || "$file_path" == *".terraform.lock.hcl" ]]; then
+            changed_dirs+=("$dir_path")
+          fi
+        done
+
+        # 重複除去とinfra/配下のみに絞る
+        unique_dirs=$(printf '%s\n' "${changed_dirs[@]}" | grep '^infra/' | sed 's|^infra/||' | sort -u)
+
+        if [[ -z "$unique_dirs" ]]; then
+          echo "dirs=[]" >> $GITHUB_OUTPUT
+          echo "has-changes=false" >> $GITHUB_OUTPUT
+          echo "Terraformモジュールの変更はありません。"
+          exit 0
+        fi
+
+        # JSON配列として出力（jqが利用可能かチェックして使い分け）
+        if command -v jq > /dev/null 2>&1; then
+          dirs_json=$(echo "$unique_dirs" | jq -R -s -c 'split("\n")[:-1]')
+        else
+          # jqが利用できない場合は従来の方法
+          dirs_json="["
+          first=true
+          for dir in $unique_dirs; do
+            if [[ "$first" == true ]]; then
+              first=false
+            else
+              dirs_json="${dirs_json},"
+            fi
+            dirs_json="${dirs_json}\"${dir}\""
+          done
+          dirs_json="${dirs_json}]"
+        fi
+
+        echo "dirs=${dirs_json}" >> $GITHUB_OUTPUT
+        echo "has-changes=true" >> $GITHUB_OUTPUT
+        echo "CIの対象となるterraformディレクトリのリスト: $dirs_json"

@@ -22,58 +22,17 @@ jobs:
     name: Detect Changed Modules
     runs-on: ubuntu-latest
     outputs:
-      modules: ${{ steps.changes.outputs.modules }}
-      has-changes: ${{ steps.changes.outputs.has-changes }}
+      modules: ${{ steps.find_dirs.outputs.dirs }}
+      has-changes: ${{ steps.find_dirs.outputs.has-changes }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Detect changed modules
-        id: changes
-        run: |
-          # 変更されたファイルを取得
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-
-          # 変更されたモジュールを特定
-          MODULES=()
-
-          # 各モジュールディレクトリをチェック
-          for module in "ecr" "acm" "network" "route53" "vpc_endpoint" "service/api/article"; do
-            if echo "$CHANGED_FILES" | grep -q "^infra/$module/"; then
-              MODULES+=("$module")
-            fi
-          done
-
-          # CI設定ファイルが変更された場合は全モジュールを対象にする
-          if echo "$CHANGED_FILES" | grep -q "^\.github/workflows/pr-infra-checks\.yaml"; then
-            MODULES=("ecr" "acm" "network" "route53" "vpc_endpoint" "service/api/article")
-          fi
-
-          # JSON配列として出力
-          if [ ${#MODULES[@]} -gt 0 ]; then
-            # bashの配列を直接JSON配列に変換
-            MODULE_JSON="["
-            for i in "${!MODULES[@]}"; do
-              if [ $i -gt 0 ]; then
-                MODULE_JSON="${MODULE_JSON},"
-              fi
-              MODULE_JSON="${MODULE_JSON}\"${MODULES[$i]}\""
-            done
-            MODULE_JSON="${MODULE_JSON}]"
-
-            echo "modules=${MODULE_JSON}" >> $GITHUB_OUTPUT
-            echo "has-changes=true" >> $GITHUB_OUTPUT
-            echo "Detected changed modules: ${MODULES[*]}"
-          else
-            echo "modules=[]" >> $GITHUB_OUTPUT
-            echo "has-changes=false" >> $GITHUB_OUTPUT
-            echo "No module changes detected"
-          fi
+      - name: Find terraform dirs for ci
+        id: find_dirs
+        uses: ./.github/actions/find-terraform-dirs-for-ci
 
   # PRでのTerraformコード検証（フォーマット・バリデーション・プラン確認）
   # - フォーマットチェック: terraform fmt でコードスタイル違反を検出
@@ -174,16 +133,16 @@ jobs:
               } else if (planContent.includes('AWS credentials not found')) {
                 planMessage = '⚠️ Plan skipped - AWS credentials not available';
               } else {
-                const changes = planContent.split('\n').filter(line =>
-                  line.match(/^  [+\-~#]/)
+                const changes = planContent.split('\\n').filter(line =>
+                  line.match(/^  [+\\-~#]/)
                 ).slice(0, 10);
-                planMessage = `📋 Infrastructure changes planned:\n\`\`\`\n${changes.join('\n')}\n${changes.length >= 10 ? '...' : ''}\n\`\`\``;
+                planMessage = `📋 Infrastructure changes planned:\\n\\`\\`\\`\\n${changes.join('\\n')}\\n${changes.length >= 10 ? '...' : ''}\\n\\`\\`\\``;
               }
             }
 
             const output = `## Terraform PR Check Results
 
-            **Module:** \`${{ matrix.module }}\`
+            **Module:** \\`${{ matrix.module }}\\`
 
             ### Format Check ${fmtStatus}
             ${fmtMessage}
