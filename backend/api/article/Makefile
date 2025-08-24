@@ -128,6 +128,16 @@ reset-masters: ## dev: reset and reload master data
 	@echo "Reloading master data..."
 	@./scripts/masters/load_masters.sh
 
+.PHONY: supabase-migrate-up supabase-migrate-down supabase-migrate-status
+supabase-migrate-up: ## prd: apply migrations to Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-up)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh up
+
+supabase-migrate-down: ## prd: rollback last migration from Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-down)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh down
+
+supabase-migrate-status: ## prd: show Supabase migration status (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-status)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh status
+
 
 # =================================================================
 # aws operations
