@@ -8,7 +8,3 @@ variable "project" {
   type        = string
   default     = "tamaco-blog"
 }
-
-locals {
-  fqn = "${var.env}-${var.project}"
-}
