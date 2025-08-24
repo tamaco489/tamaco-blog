@@ -3,6 +3,8 @@ resource "aws_kms_key" "this" {
   enable_key_rotation     = true
   rotation_period_in_days = 90
   deletion_window_in_days = 7
+
+  tags = { Name = local.fqn }
 }
 
 resource "aws_kms_alias" "this" {
