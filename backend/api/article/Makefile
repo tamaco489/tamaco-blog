@@ -128,6 +128,22 @@ reset-masters: ## dev: reset and reload master data
 	@echo "Reloading master data..."
 	@./scripts/masters/load_masters.sh
 
+.PHONY: supabase-migrate-up supabase-migrate-down supabase-migrate-status supabase-list-tables supabase-drop-tables
+supabase-migrate-up: ## prd: apply migrations to Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-up)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh up
+
+supabase-migrate-down: ## prd: rollback last migration from Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-down)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh down
+
+supabase-migrate-status: ## prd: show Supabase migration status (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-status)
+	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh status
+
+supabase-list-tables: ## prd: list all tables in core schema (usage: SUPABASE_DB_URL=postgresql:... make supabase-list-tables)
+	@psql "$(SUPABASE_DB_URL)" -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'core' ORDER BY table_name;"
+
+supabase-drop-tables: ## prd: drop all tables in core schema (usage: SUPABASE_DB_URL=postgresql:... make supabase-drop-tables)
+	@psql "$(SUPABASE_DB_URL)" -c "DROP TABLE IF EXISTS core.article_seo_metadata, core.article_tags, core.articles, core.categories, core.tags, core.schema_migrations CASCADE;"
+
 
 # =================================================================
 # aws operations
@@ -160,6 +176,13 @@ delete-images: ## prd: delete images in ecr
 	@cat /tmp/images.json | jq -c '.[]' | while read -r image_id; do \
 		aws ecr batch-delete-image --repository-name $(ENV)-article-api --region ap-northeast-1 --profile ${AWS_PROFILE} --image-ids $${image_id}; \
 	done | jq .
+
+# lambda
+.PHONY: deploy
+deploy: push ## prd: deploy lambda function
+	aws lambda update-function-code  --profile ${AWS_PROFILE} \
+		--function-name $(ENV)-tamaco-blog-article-api \
+		--image-uri $(AWS_ACCOUNT_ID).dkr.ecr.ap-northeast-1.amazonaws.com/$(ENV)-article-api:$(VERSION) | jq .
 
 
 # =================================================================
