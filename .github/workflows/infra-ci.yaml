@@ -30,19 +30,38 @@ permissions:
   security-events: write # Trivy結果のSARIFアップロード用
 
 jobs:
+  # 変更されたモジュールを検出して動的にマトリックスを生成
+  detect-changes:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.find_dirs.outputs.dirs }}
+      has-changes: ${{ steps.find_dirs.outputs.has-changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Find terraform dirs for ci
+        id: find_dirs
+        uses: ./.github/actions/find-terraform-dirs-for-ci
+
   # Terraformコードの基本的な検証とプランニングを実行
   # - フォーマットチェック: terraform fmt で統一されたコードスタイルを確保
   # - 初期化: S3バックエンド（prd環境）またはローカル状態での初期化
   # - 構文検証: terraform validate でコード構文の正当性を確認
   # - プラン作成: AWS認証情報がある場合、prd環境での実行計画を作成
-  # - 各AWSリソースモジュール（ecr, lambda, aurora等）に対してマトリックス実行
+  # - 変更されたモジュールのみに対してマトリックス実行
   terraform-ci:
     name: Terraform CI
     runs-on: ubuntu-latest
     environment: prd
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
     strategy:
       matrix:
-        module: [ecr, acm, network, route53, vpc_endpoint, service/api/article]
+        module: ${{ fromJson(needs.detect-changes.outputs.modules) }}
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}

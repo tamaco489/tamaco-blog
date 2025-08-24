@@ -4,7 +4,11 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "infra/**"
+      - "infra/**/*.tf"
+      - "infra/**/*.tfvars"
+      - "infra/**/Makefile"
+      - "infra/**/*.hcl"
+      - "!infra/**/README.md"
       - ".github/workflows/pr-infra-checks.yaml"
 
 permissions:
@@ -13,20 +17,39 @@ permissions:
   pull-requests: write
 
 jobs:
+  # 変更されたモジュールを検出して動的にマトリックスを生成
+  detect-changes:
+    name: Detect Changed Modules
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.find_dirs.outputs.dirs }}
+      has-changes: ${{ steps.find_dirs.outputs.has-changes }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Find terraform dirs for ci
+        id: find_dirs
+        uses: ./.github/actions/find-terraform-dirs-for-ci
+
   # PRでのTerraformコード検証（フォーマット・バリデーション・プラン確認）
   # - フォーマットチェック: terraform fmt でコードスタイル違反を検出
   # - 初期化と検証: S3バックエンドまたはローカル状態での初期化と構文検証
   # - プラン実行: AWS認証情報がある場合、prd環境での変更計画を生成
   # - 統合レポート: 全ての検証結果を1つのPRコメントにまとめて表示
   # - dependabot除外: 自動更新PRでのプラン実行をスキップ
-  # - マトリックス実行: 各AWSリソースモジュールに対して並列実行
+  # - 変更されたモジュールのみに対してマトリックス実行
   terraform-checks:
     name: Terraform PR Checks
     runs-on: ubuntu-latest
     environment: prd
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
     strategy:
       matrix:
-        module: [ecr, acm, network, route53, vpc_endpoint, service/api/article]
+        module: ${{ fromJson(needs.detect-changes.outputs.modules) }}
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}
