@@ -4,12 +4,20 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - "infra/**"
+      - "infra/**/*.tf"
+      - "infra/**/*.tfvars"
+      - "infra/**/Makefile"
+      - "infra/**/*.hcl"
+      - "!infra/**/README.md"
       - ".github/workflows/infra-ci.yaml"
   pull_request:
     branches: [main]
     paths:
-      - "infra/**"
+      - "infra/**/*.tf"
+      - "infra/**/*.tfvars"
+      - "infra/**/Makefile"
+      - "infra/**/*.hcl"
+      - "!infra/**/README.md"
       - ".github/workflows/infra-ci.yaml"
 
 concurrency:
