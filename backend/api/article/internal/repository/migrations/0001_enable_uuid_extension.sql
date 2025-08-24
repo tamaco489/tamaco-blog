@@ -1,7 +1,5 @@
 -- +migrate Up
--- Enable UUID extension for PostgreSQL
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- PostgreSQL 13+ has built-in UUID support, no extension needed
 
 -- +migrate Down
--- Note: Dropping extension might fail if tables are using UUID functions
-DROP EXTENSION IF EXISTS "uuid-ossp";
+-- No extension to drop
