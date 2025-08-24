@@ -30,17 +30,23 @@ fi
 create_migration_table() {
     echo -e "${YELLOW}Creating migration table if not exists...${NC}"
     psql "$SUPABASE_DB_URL" <<-EOF
+        -- Set search path to use core schema
+        SET search_path TO core, public;
+
         CREATE TABLE IF NOT EXISTS ${MIGRATION_TABLE} (
             id SERIAL PRIMARY KEY,
             version VARCHAR(255) NOT NULL UNIQUE,
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+
+        -- Enable Row Level Security to fix Supabase security warning
+        ALTER TABLE ${MIGRATION_TABLE} ENABLE ROW LEVEL SECURITY;
 EOF
 }
 
 # 適用済みマイグレーションの取得
 get_applied_migrations() {
-    psql "$SUPABASE_DB_URL" -t -A -c "SELECT version FROM ${MIGRATION_TABLE} ORDER BY version;"
+    psql "$SUPABASE_DB_URL" -t -A -c "SET search_path TO core, public; SELECT version FROM ${MIGRATION_TABLE} ORDER BY version;"
 }
 
 # マイグレーションの適用
@@ -75,7 +81,7 @@ EOF
 
 # マイグレーションのロールバック
 rollback_migration() {
-    local last_version=$(psql "$SUPABASE_DB_URL" -t -A -c "SELECT version FROM ${MIGRATION_TABLE} ORDER BY version DESC LIMIT 1;")
+    local last_version=$(psql "$SUPABASE_DB_URL" -t -A -c "SET search_path TO core, public; SELECT version FROM ${MIGRATION_TABLE} ORDER BY version DESC LIMIT 1;")
 
     if [ -z "$last_version" ]; then
         echo -e "${YELLOW}No migrations to rollback${NC}"
