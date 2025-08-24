@@ -161,6 +161,13 @@ delete-images: ## prd: delete images in ecr
 		aws ecr batch-delete-image --repository-name $(ENV)-article-api --region ap-northeast-1 --profile ${AWS_PROFILE} --image-ids $${image_id}; \
 	done | jq .
 
+# lambda
+.PHONY: deploy
+deploy: push ## prd: deploy lambda function
+	aws lambda update-function-code  --profile ${AWS_PROFILE} \
+		--function-name $(ENV)-tamaco-blog-article-api \
+		--image-uri $(AWS_ACCOUNT_ID).dkr.ecr.ap-northeast-1.amazonaws.com/$(ENV)-article-api:$(VERSION) | jq .
+
 
 # =================================================================
 # api request
