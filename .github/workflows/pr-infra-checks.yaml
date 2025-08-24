@@ -26,7 +26,7 @@ jobs:
     environment: prd
     strategy:
       matrix:
-        module: [ecr] # Add new modules here: lambda, aurora, etc.
+        module: [ecr, acm, network, route53, vpc_endpoint, service/api/article]
     defaults:
       run:
         working-directory: ./infra/${{ matrix.module }}
@@ -154,9 +154,9 @@ jobs:
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: './infra'
-          format: 'table'
-          scanners: 'misconfig,secret'
-          exit-code: '0'  # PRでは失敗させない
-          severity: 'CRITICAL,HIGH'
+          scan-type: "fs"
+          scan-ref: "./infra"
+          format: "table"
+          scanners: "misconfig,secret"
+          exit-code: "0" # PRでは失敗させない
+          severity: "CRITICAL,HIGH"
