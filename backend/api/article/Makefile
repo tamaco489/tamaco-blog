@@ -117,20 +117,20 @@ migrate-status: ## dev: show migration status
 	sql-migrate status -env='dev' -config=./_tools/sql-migrate/config.yaml
 
 .PHONY: supabase-migrate-up supabase-migrate-down supabase-migrate-status supabase-list-tables supabase-drop-tables
-supabase-migrate-up: ## prd: apply migrations to Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-up)
-	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh up
+supabase-migrate-up: ## prd: apply migrations to database (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-up)
+	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh up
 
-supabase-migrate-down: ## prd: rollback last migration from Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-down)
-	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh down
+supabase-migrate-down: ## prd: rollback last migration from database (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-down)
+	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh down
 
-supabase-migrate-status: ## prd: show Supabase migration status (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-status)
-	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh status
+supabase-migrate-status: ## prd: show migration status (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-status)
+	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh status
 
-supabase-list-tables: ## prd: list all tables in core schema (usage: SUPABASE_DB_URL=postgresql:... make supabase-list-tables)
-	@psql "$(SUPABASE_DB_URL)" -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'core' ORDER BY table_name;"
+supabase-list-tables: ## prd: list all tables in core schema (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-list-tables)
+	@PGPASSWORD="$(DB_PASSWORD)" psql -h "$(DB_HOST)" -p "$(DB_PORT)" -U "$(DB_USER)" -d "$(DB_NAME)" -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'core' ORDER BY table_name;"
 
-supabase-drop-tables: ## prd: drop all tables in core schema (usage: SUPABASE_DB_URL=postgresql:... make supabase-drop-tables)
-	@psql "$(SUPABASE_DB_URL)" -c "DROP TABLE IF EXISTS core.article_seo_metadata, core.article_tags, core.articles, core.categories, core.tags, core.schema_migrations CASCADE;"
+supabase-drop-tables: ## prd: drop all tables in core schema (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-drop-tables)
+	@PGPASSWORD="$(DB_PASSWORD)" psql -h "$(DB_HOST)" -p "$(DB_PORT)" -U "$(DB_USER)" -d "$(DB_NAME)" -c "DROP TABLE IF EXISTS core.article_seo_metadata, core.article_tags, core.articles, core.categories, core.tags, core.schema_migrations CASCADE;"
 
 .PHONY: load-masters clear-masters init-masters
 load-masters: ## dev/prd: load master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make load-masters)
