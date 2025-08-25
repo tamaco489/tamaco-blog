@@ -13,9 +13,9 @@ export PGPASSWORD="$DB_PASSWORD"
 echo -e "${GREEN}Clearing master data...${NC}"
 
 if [ "$DB_HOST" = "localhost" ]; then
-    docker compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -c "TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
+    docker compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -c "SET search_path TO core; TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
 else
-    psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" -c "TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
+    psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" -c "SET search_path TO core; TRUNCATE TABLE article_tags, articles, tags, categories RESTART IDENTITY CASCADE;"
 fi
 
 echo -e "${GREEN}✓ Master data cleared${NC}"

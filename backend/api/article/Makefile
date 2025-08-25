@@ -116,19 +116,6 @@ migrate-down: ## dev: rollback migration
 migrate-status: ## dev: show migration status
 	sql-migrate status -env='dev' -config=./_tools/sql-migrate/config.yaml
 
-# Master data management
-.PHONY: load-masters clear-masters init-masters
-
-load-masters: ## dev/prd: load master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make load-masters)
-	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/load_masters.sh
-
-clear-masters: ## dev/prd: clear all master data (usage: DB_HOST=localhost DB_PORT=5432 DB_NAME=core DB_USER=core DB_PASSWORD=password#0 make clear-masters)
-	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/clear_masters.sh
-
-init-masters: ## dev/prd: reset and reload master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make init-masters)
-	@$(MAKE) clear-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
-	@$(MAKE) load-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
-
 .PHONY: supabase-migrate-up supabase-migrate-down supabase-migrate-status supabase-list-tables supabase-drop-tables
 supabase-migrate-up: ## prd: apply migrations to Supabase database (usage: SUPABASE_DB_URL=postgresql:... make supabase-migrate-up)
 	@SUPABASE_DB_URL="$(SUPABASE_DB_URL)" ./scripts/migration/supabase_migrate.sh up
@@ -144,6 +131,17 @@ supabase-list-tables: ## prd: list all tables in core schema (usage: SUPABASE_DB
 
 supabase-drop-tables: ## prd: drop all tables in core schema (usage: SUPABASE_DB_URL=postgresql:... make supabase-drop-tables)
 	@psql "$(SUPABASE_DB_URL)" -c "DROP TABLE IF EXISTS core.article_seo_metadata, core.article_tags, core.articles, core.categories, core.tags, core.schema_migrations CASCADE;"
+
+.PHONY: load-masters clear-masters init-masters
+load-masters: ## dev/prd: load master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make load-masters)
+	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/load_masters.sh
+
+clear-masters: ## dev/prd: clear all master data (usage: DB_HOST=localhost DB_PORT=5432 DB_NAME=core DB_USER=core DB_PASSWORD=password#0 make clear-masters)
+	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/clear_masters.sh
+
+init-masters: ## dev/prd: reset and reload master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make init-masters)
+	@$(MAKE) clear-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
+	@$(MAKE) load-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
 
 
 # =================================================================
