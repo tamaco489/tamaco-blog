@@ -117,29 +117,29 @@ migrate-status: ## dev: show migration status
 	sql-migrate status -env='dev' -config=./_tools/sql-migrate/config.yaml
 
 .PHONY: supabase-migrate-up supabase-migrate-down supabase-migrate-status supabase-list-tables supabase-drop-tables
-supabase-migrate-up: ## prd: apply migrations to database (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-up)
+supabase-migrate-up: ## prd: apply migrations to database
 	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh up
 
-supabase-migrate-down: ## prd: rollback last migration from database (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-down)
+supabase-migrate-down: ## prd: rollback last migration from database
 	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh down
 
-supabase-migrate-status: ## prd: show migration status (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-migrate-status)
+supabase-migrate-status: ## prd: show migration status
 	@SUPABASE_DB_URL="postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)" ./scripts/migration/supabase_migrate.sh status
 
-supabase-list-tables: ## prd: list all tables in core schema (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-list-tables)
+supabase-list-tables: ## prd: list all tables in core schema
 	@PGPASSWORD="$(DB_PASSWORD)" psql -h "$(DB_HOST)" -p "$(DB_PORT)" -U "$(DB_USER)" -d "$(DB_NAME)" -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'core' ORDER BY table_name;"
 
-supabase-drop-tables: ## prd: drop all tables in core schema (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make supabase-drop-tables)
+supabase-drop-tables: ## prd: drop all tables in core schema
 	@PGPASSWORD="$(DB_PASSWORD)" psql -h "$(DB_HOST)" -p "$(DB_PORT)" -U "$(DB_USER)" -d "$(DB_NAME)" -c "DROP TABLE IF EXISTS core.article_seo_metadata, core.article_tags, core.articles, core.categories, core.tags, core.schema_migrations CASCADE;"
 
 .PHONY: load-masters clear-masters init-masters
-load-masters: ## dev/prd: load master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make load-masters)
+load-masters: ## dev/prd: load master data (usage: DB_HOST=localhost DB_PORT=5432 DB_NAME=core DB_USER=core DB_PASSWORD=password#0 make load-masters)
 	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/load_masters.sh
 
 clear-masters: ## dev/prd: clear all master data (usage: DB_HOST=localhost DB_PORT=5432 DB_NAME=core DB_USER=core DB_PASSWORD=password#0 make clear-masters)
 	@DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)" ./scripts/masters/clear_masters.sh
 
-init-masters: ## dev/prd: reset and reload master data (usage: DB_HOST=xxx DB_USER=yyy DB_PASSWORD=zzz make init-masters)
+init-masters: ## dev/prd: reset and reload master data (usage: DB_HOST=localhost DB_PORT=5432 DB_NAME=core DB_USER=core DB_PASSWORD=password#0 make init-masters)
 	@$(MAKE) clear-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
 	@$(MAKE) load-masters DB_HOST="$(DB_HOST)" DB_PORT="$(DB_PORT)" DB_NAME="$(DB_NAME)" DB_USER="$(DB_USER)" DB_PASSWORD="$(DB_PASSWORD)"
 

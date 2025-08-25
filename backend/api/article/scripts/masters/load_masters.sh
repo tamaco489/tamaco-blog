@@ -19,9 +19,7 @@ execute_sql() {
     local desc="$2"
 
     if [ "$DB_HOST" = "localhost" ]; then
-        docker compose cp "$file" postgres:/tmp/$(basename "$file")
-        docker compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -c "SET search_path TO core; \i /tmp/$(basename "$file")" > /dev/null 2>&1
-        docker compose exec -T postgres rm -f "/tmp/$(basename "$file")"
+        (echo "SET search_path TO core;"; cat "$file") | docker compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" > /dev/null 2>&1
     else
         (echo "SET search_path TO core;"; cat "$file") | psql -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "$DB_USER" -d "$DB_NAME" > /dev/null 2>&1
     fi
